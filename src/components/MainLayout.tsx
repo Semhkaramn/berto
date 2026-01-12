@@ -5,39 +5,18 @@ import Header from "./Header";
 import Sidebar from "./Sidebar";
 import Footer from "./Footer";
 
-interface Settings {
-  siteName: string;
-  logoUrl: string | null;
-  telegramUrl: string | null;
-}
+// Sabit site bilgileri - GitHub'dan logo
+const SITE_NAME = "Berto";
+const SITE_LOGO = "https://raw.githubusercontent.com/bertogg/berto-website/main/logo.png";
 
 interface MainLayoutProps {
   children: React.ReactNode;
 }
 
 export default function MainLayout({ children }: MainLayoutProps) {
-  const [settings, setSettings] = useState<Settings>({
-    siteName: "",
-    logoUrl: null,
-    telegramUrl: null,
-  });
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
   useEffect(() => {
-    // Fetch settings
-    const fetchSettings = async () => {
-      try {
-        const res = await fetch("/api/settings");
-        if (res.ok) {
-          const data = await res.json();
-          setSettings(data);
-        }
-      } catch (error) {
-        console.error("Settings fetch error:", error);
-      }
-    };
-    fetchSettings();
-
     // Track visit
     const trackVisit = async () => {
       try {
@@ -76,8 +55,8 @@ export default function MainLayout({ children }: MainLayoutProps) {
   return (
     <div className="min-h-screen bg-[var(--background)]">
       <Header
-        siteName={settings.siteName}
-        logoUrl={settings.logoUrl || undefined}
+        siteName={SITE_NAME}
+        logoUrl={SITE_LOGO}
         onMenuToggle={toggleMobileMenu}
         isMobileMenuOpen={isMobileMenuOpen}
       />
@@ -91,7 +70,7 @@ export default function MainLayout({ children }: MainLayoutProps) {
         <main className="flex-1">
           {children}
         </main>
-        <Footer telegramUrl={settings.telegramUrl || undefined} />
+        <Footer />
       </div>
     </div>
   );
