@@ -7,7 +7,6 @@ import ImageUpload from "@/components/ImageUpload";
 interface Settings {
   siteName: string;
   logoUrl: string | null;
-  telegramUrl: string | null;
   youtubeChannelId: string | null;
   youtubeApiKey: string | null;
 }
@@ -25,7 +24,6 @@ export default function SettingsPage() {
   const [settings, setSettings] = useState<Settings>({
     siteName: "",
     logoUrl: null,
-    telegramUrl: null,
     youtubeChannelId: null,
     youtubeApiKey: null
   });
