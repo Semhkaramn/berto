@@ -20,15 +20,48 @@ export async function GET() {
       },
     });
 
+    // Get click statistics
+    const totalClicks = await prisma.clickEvent.count();
+
+    const sponsorClicks = await prisma.clickEvent.count({
+      where: { type: "sponsor" },
+    });
+
+    const bannerClicks = await prisma.clickEvent.count({
+      where: { type: "banner" },
+    });
+
+    const eventClicks = await prisma.clickEvent.count({
+      where: { type: "event" },
+    });
+
+    const popupClicks = await prisma.clickEvent.count({
+      where: { type: "popup" },
+    });
+
     return NextResponse.json({
       totalVisitors,
       uniqueVisitors,
       todayVisitors,
+      totalClicks,
+      sponsorClicks,
+      bannerClicks,
+      eventClicks,
+      popupClicks,
     });
   } catch (error) {
     console.error("Stats error:", error);
     return NextResponse.json(
-      { totalVisitors: 0, uniqueVisitors: 0, todayVisitors: 0 },
+      {
+        totalVisitors: 0,
+        uniqueVisitors: 0,
+        todayVisitors: 0,
+        totalClicks: 0,
+        sponsorClicks: 0,
+        bannerClicks: 0,
+        eventClicks: 0,
+        popupClicks: 0,
+      },
       { status: 200 }
     );
   }
