@@ -7,9 +7,23 @@ import { normalizeUrl } from "@/lib/utils";
 export default function EventsPage() {
   const { events, isLoading } = useData();
 
-  const handleEventClick = (linkUrl: string) => {
-    if (linkUrl) {
-      window.open(normalizeUrl(linkUrl), "_blank", "noopener,noreferrer");
+  // Tıklama takibi fonksiyonu
+  const trackClick = async (type: string, targetId: string) => {
+    try {
+      await fetch("/api/track-click", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ type, targetId }),
+      });
+    } catch (error) {
+      console.error("Track click error:", error);
+    }
+  };
+
+  const handleEventClick = (event: { id: string; linkUrl: string }) => {
+    if (event.linkUrl) {
+      trackClick("event", event.id);
+      window.open(normalizeUrl(event.linkUrl), "_blank", "noopener,noreferrer");
     }
   };
 
@@ -34,7 +48,7 @@ export default function EventsPage() {
               {events.map((event, index) => (
                 <div
                   key={event.id}
-                  onClick={() => handleEventClick(event.linkUrl)}
+                  onClick={() => handleEventClick(event)}
                   className="card group animate-fadeIn cursor-pointer"
                   style={{ animationDelay: `${index * 100}ms` }}
                 >
