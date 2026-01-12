@@ -1,16 +1,8 @@
 "use client";
 
-import { useEffect, useState, useMemo } from "react";
+import { useMemo } from "react";
 import MainLayout from "@/components/MainLayout";
-
-interface Sponsor {
-  id: string;
-  name: string;
-  description: string | null;
-  imageUrl: string;
-  linkUrl: string;
-  type: string;
-}
+import { useData } from "@/lib/DataContext";
 
 // Particle component for background effects
 const Particles = ({ count = 6, color = "primary" }: { count?: number; color?: string }) => {
@@ -57,24 +49,7 @@ const StarIcon = ({ className = "" }: { className?: string }) => (
 );
 
 export default function SponsorsPage() {
-  const [sponsors, setSponsors] = useState<Sponsor[]>([]);
-  const [loading, setLoading] = useState(true);
-
-  useEffect(() => {
-    const fetchSponsors = async () => {
-      try {
-        const res = await fetch("/api/sponsors");
-        if (res.ok) {
-          setSponsors(await res.json());
-        }
-      } catch (error) {
-        console.error("Fetch error:", error);
-      } finally {
-        setLoading(false);
-      }
-    };
-    fetchSponsors();
-  }, []);
+  const { sponsors, isLoading } = useData();
 
   const mainSponsors = sponsors.filter((s) => s.type === "main");
   const vipSponsors = sponsors.filter((s) => s.type === "vip");
@@ -100,7 +75,7 @@ export default function SponsorsPage() {
             </p>
           </div>
 
-          {loading && (
+          {isLoading && (
             <div className="text-center py-20">
               <div className="w-12 h-12 border-3 border-[var(--primary)] border-t-transparent rounded-full animate-spin mx-auto mb-4" />
               <p className="text-[var(--text-muted)]">Sponsorlar yukleniyor...</p>
@@ -108,7 +83,7 @@ export default function SponsorsPage() {
           )}
 
           {/* ==================== MAIN SPONSORS ==================== */}
-          {mainSponsors.length > 0 && (
+          {!isLoading && mainSponsors.length > 0 && (
             <section className="mb-16">
               <div className="flex items-center justify-center gap-4 mb-8">
                 <div className="h-px flex-1 bg-gradient-to-r from-transparent via-orange-500/50 to-transparent" />
@@ -180,7 +155,7 @@ export default function SponsorsPage() {
           )}
 
           {/* ==================== VIP SPONSORS ==================== */}
-          {vipSponsors.length > 0 && (
+          {!isLoading && vipSponsors.length > 0 && (
             <section className="mb-16">
               <div className="flex items-center justify-center gap-4 mb-8">
                 <div className="h-px flex-1 bg-gradient-to-r from-transparent via-purple-500/50 to-transparent" />
@@ -242,7 +217,7 @@ export default function SponsorsPage() {
           )}
 
           {/* ==================== NORMAL SPONSORS ==================== */}
-          {normalSponsors.length > 0 && (
+          {!isLoading && normalSponsors.length > 0 && (
             <section>
               <div className="flex items-center justify-center gap-4 mb-8">
                 <div className="h-px flex-1 bg-gradient-to-r from-transparent via-blue-500/30 to-transparent" />
@@ -283,7 +258,7 @@ export default function SponsorsPage() {
           )}
 
           {/* Empty State */}
-          {!loading && sponsors.length === 0 && (
+          {!isLoading && sponsors.length === 0 && (
             <div className="text-center py-20">
               <div className="w-24 h-24 mx-auto rounded-full bg-[var(--surface)] flex items-center justify-center mb-6">
                 <svg className="w-12 h-12 text-[var(--text-muted)]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
