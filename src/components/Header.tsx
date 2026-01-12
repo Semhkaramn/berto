@@ -17,7 +17,9 @@ export default function Header({ siteName, logoUrl }: HeaderProps) {
         {/* Logo & Site Name */}
         <Link href="/" className="flex items-center gap-3">
           {logoUrl ? (
-            <img src={logoUrl} alt={siteName} className="w-10 h-10 rounded-lg object-cover" />
+            <div className="w-10 h-10 rounded-lg bg-zinc-800 flex items-center justify-center overflow-hidden">
+              <img src={logoUrl} alt={siteName} className="max-w-full max-h-full w-auto h-auto object-contain" />
+            </div>
           ) : (
             <div className="w-10 h-10 rounded-lg gradient-main flex items-center justify-center">
               <span className="text-xl font-bold text-white">S</span>
