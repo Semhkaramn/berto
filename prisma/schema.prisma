@@ -153,3 +153,17 @@ model SocialMedia {
   sortOrder Int      @default(0)
   createdAt DateTime @default(now())
 }
+
+// Telegram Kanalları
+model TelegramChannel {
+  id          String   @id @default(cuid())
+  username    String   @unique // @kullaniciadi
+  title       String?  // Kanal adı (API'den çekilir)
+  description String?  // Kanal açıklaması (API'den çekilir)
+  photoUrl    String?  // Kanal fotoğrafı (API'den çekilir)
+  memberCount Int?     // Üye sayısı (API'den çekilir)
+  isActive    Boolean  @default(true)
+  sortOrder   Int      @default(0)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
