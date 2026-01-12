@@ -76,7 +76,7 @@ export default function PopupPage() {
               <tbody>
                 {popups.map((popup) => (
                   <tr key={popup.id}>
-                    <td><img src={popup.imageUrl} alt={popup.title} className="w-12 h-12 rounded-lg object-cover" /></td>
+                    <td><div className="w-16 h-12 bg-zinc-800 rounded-lg flex items-center justify-center overflow-hidden"><img src={popup.imageUrl} alt={popup.title} className="max-w-full max-h-full w-auto h-auto object-contain" /></div></td>
                     <td><p className="font-medium text-white">{popup.title}</p></td>
                     <td><span className="text-[var(--primary)] font-semibold">{popup.clickCount || 0}</span></td>
                     <td><span className={`badge ${popup.isActive ? "bg-green-500/20 text-green-400" : "bg-red-500/20 text-red-400"}`}>{popup.isActive ? "Aktif" : "Pasif"}</span></td>
