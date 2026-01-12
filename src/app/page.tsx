@@ -196,7 +196,7 @@ export default function HomePage() {
                 <div className="h-32 sm:h-36 md:h-40 relative overflow-hidden">
                   {/* Background Image */}
                   <img
-                    src="/sponsorlar.png"
+                    src="/sponsorlar.jpg"
                     alt="Sponsorlar"
                     className="absolute inset-0 w-full h-full object-cover"
                   />
@@ -235,7 +235,7 @@ export default function HomePage() {
                 <div className="h-32 sm:h-36 md:h-40 relative overflow-hidden">
                   {/* Background Image */}
                   <img
-                    src="/etkinlikler.png"
+                    src="/etkinlikler.jpg"
                     alt="Etkinlikler"
                     className="absolute inset-0 w-full h-full object-cover"
                   />
@@ -274,7 +274,7 @@ export default function HomePage() {
                 <div className="h-32 sm:h-36 md:h-40 relative overflow-hidden">
                   {/* Background Image */}
                   <img
-                    src="/yayinlar.png"
+                    src="/yayinlar.jpg"
                     alt="Yayinlar"
                     className="absolute inset-0 w-full h-full object-cover"
                   />
