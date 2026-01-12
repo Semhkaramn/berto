@@ -12,6 +12,7 @@ interface Event {
   imageUrl: string;
   linkUrl: string;
   isActive: boolean;
+  status: string;
   clickCount: number;
 }
 
@@ -19,7 +20,7 @@ export default function EventsPage() {
   const [events, setEvents] = useState<Event[]>([]);
   const [showModal, setShowModal] = useState(false);
   const [editingItem, setEditingItem] = useState<Event | null>(null);
-  const [formData, setFormData] = useState({ title: "", description: "", imageUrl: "", linkUrl: "", isActive: true });
+  const [formData, setFormData] = useState({ title: "", description: "", imageUrl: "", linkUrl: "", isActive: true, status: "active" });
 
   useEffect(() => { fetchEvents(); }, []);
 
@@ -32,13 +33,13 @@ export default function EventsPage() {
 
   const openAddModal = () => {
     setEditingItem(null);
-    setFormData({ title: "", description: "", imageUrl: "", linkUrl: "", isActive: true });
+    setFormData({ title: "", description: "", imageUrl: "", linkUrl: "", isActive: true, status: "active" });
     setShowModal(true);
   };
 
   const openEditModal = (item: Event) => {
     setEditingItem(item);
-    setFormData({ title: item.title, description: item.description || "", imageUrl: item.imageUrl, linkUrl: item.linkUrl, isActive: item.isActive });
+    setFormData({ title: item.title, description: item.description || "", imageUrl: item.imageUrl, linkUrl: item.linkUrl, isActive: item.isActive, status: item.status || "active" });
     setShowModal(true);
   };
 
@@ -63,6 +64,17 @@ export default function EventsPage() {
     } catch (error) { console.error("Delete error:", error); }
   };
 
+  const getStatusBadge = (status: string) => {
+    switch (status) {
+      case "active":
+        return <span className="badge bg-green-500/20 text-green-400">Aktif</span>;
+      case "completed":
+        return <span className="badge bg-gray-500/20 text-gray-400">Bitti</span>;
+      default:
+        return <span className="badge bg-green-500/20 text-green-400">Aktif</span>;
+    }
+  };
+
   return (
     <AdminLayout>
       <div className="p-4 md:p-6">
@@ -77,7 +89,7 @@ export default function EventsPage() {
         <div className="bg-[var(--surface)] rounded-xl border border-[var(--border)] overflow-hidden">
           <div className="overflow-x-auto">
             <table className="table w-full">
-              <thead><tr><th>Gorsel</th><th>Baslik</th><th>Tiklanma</th><th>Durum</th><th>Islemler</th></tr></thead>
+              <thead><tr><th>Gorsel</th><th>Baslik</th><th>Tiklanma</th><th>Durum</th><th>Etkinlik Durumu</th><th>Islemler</th></tr></thead>
               <tbody>
                 {events.map((event) => (
                   <tr key={event.id}>
@@ -85,6 +97,7 @@ export default function EventsPage() {
                     <td><p className="font-medium text-white">{event.title}</p></td>
                     <td><span className="text-[var(--primary)] font-semibold">{event.clickCount || 0}</span></td>
                     <td><span className={`badge ${event.isActive ? "bg-green-500/20 text-green-400" : "bg-red-500/20 text-red-400"}`}>{event.isActive ? "Aktif" : "Pasif"}</span></td>
+                    <td>{getStatusBadge(event.status)}</td>
                     <td>
                       <div className="flex gap-2">
                         <button type="button" onClick={() => openEditModal(event)} className="btn btn-secondary text-xs py-1 px-3">Duzenle</button>
@@ -93,7 +106,7 @@ export default function EventsPage() {
                     </td>
                   </tr>
                 ))}
-                {events.length === 0 && <tr><td colSpan={5} className="text-center py-8 text-[var(--text-muted)]">Henuz etkinlik yok</td></tr>}
+                {events.length === 0 && <tr><td colSpan={6} className="text-center py-8 text-[var(--text-muted)]">Henuz etkinlik yok</td></tr>}
               </tbody>
             </table>
           </div>
@@ -101,8 +114,8 @@ export default function EventsPage() {
       </div>
 
       {showModal && (
-        <div className="modal-overlay">
-          <div className="modal-content p-6">
+        <div className="modal-overlay" onClick={(e) => e.stopPropagation()}>
+          <div className="modal-content p-6" onClick={(e) => e.stopPropagation()}>
             <div className="flex items-center justify-between mb-6">
               <h3 className="text-lg font-bold text-white">{editingItem ? "Etkinlik Duzenle" : "Yeni Etkinlik"}</h3>
               <button type="button" onClick={() => setShowModal(false)} className="text-[var(--text-muted)] hover:text-white">
@@ -114,7 +127,18 @@ export default function EventsPage() {
               <div><label className="block text-sm font-medium text-[var(--text-muted)] mb-2">Aciklama</label><textarea value={formData.description} onChange={(e) => setFormData({ ...formData, description: e.target.value })} className="input" rows={3} /></div>
               <ImageUpload label="Gorsel" value={formData.imageUrl} onChange={(url) => setFormData({ ...formData, imageUrl: url })} />
               <div><label className="block text-sm font-medium text-[var(--text-muted)] mb-2">Link URL</label><input type="text" value={formData.linkUrl} onChange={(e) => setFormData({ ...formData, linkUrl: e.target.value })} className="input" /></div>
-              <div className="flex items-center gap-2"><input type="checkbox" id="isActive" checked={formData.isActive} onChange={(e) => setFormData({ ...formData, isActive: e.target.checked })} className="w-4 h-4" /><label htmlFor="isActive" className="text-sm text-[var(--text-muted)]">Aktif</label></div>
+              <div>
+                <label className="block text-sm font-medium text-[var(--text-muted)] mb-2">Etkinlik Durumu</label>
+                <select
+                  value={formData.status}
+                  onChange={(e) => setFormData({ ...formData, status: e.target.value })}
+                  className="input"
+                >
+                  <option value="active">Aktif</option>
+                  <option value="completed">Bitti</option>
+                </select>
+              </div>
+              <div className="flex items-center gap-2"><input type="checkbox" id="isActive" checked={formData.isActive} onChange={(e) => setFormData({ ...formData, isActive: e.target.checked })} className="w-4 h-4" /><label htmlFor="isActive" className="text-sm text-[var(--text-muted)]">Gorunur</label></div>
             </div>
             <div className="flex gap-3 mt-6"><button type="button" onClick={handleSubmit} className="btn btn-primary flex-1">Kaydet</button><button type="button" onClick={() => setShowModal(false)} className="btn btn-secondary">Iptal</button></div>
           </div>
