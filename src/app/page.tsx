@@ -26,15 +26,30 @@ export default function HomePage() {
 
   const activeLiveStream = liveStreams.find((s) => s.isLive);
 
-  const handleEventClick = (linkUrl: string) => {
-    if (linkUrl) {
-      window.open(normalizeUrl(linkUrl), "_blank", "noopener,noreferrer");
+  // Tıklama takibi fonksiyonu
+  const trackClick = async (type: string, targetId: string) => {
+    try {
+      await fetch("/api/track-click", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ type, targetId }),
+      });
+    } catch (error) {
+      console.error("Track click error:", error);
     }
   };
 
-  const handleBannerClick = (linkUrl: string | null) => {
-    if (linkUrl) {
-      window.open(normalizeUrl(linkUrl), "_blank", "noopener,noreferrer");
+  const handleEventClick = (event: { id: string; linkUrl: string }) => {
+    if (event.linkUrl) {
+      trackClick("event", event.id);
+      window.open(normalizeUrl(event.linkUrl), "_blank", "noopener,noreferrer");
+    }
+  };
+
+  const handleBannerClick = (banner: { id: string; linkUrl: string | null }) => {
+    if (banner.linkUrl) {
+      trackClick("banner", banner.id);
+      window.open(normalizeUrl(banner.linkUrl), "_blank", "noopener,noreferrer");
     }
   };
 
@@ -60,7 +75,7 @@ export default function HomePage() {
           {leftBanner && (
             <div className="hidden xl:block w-44 2xl:w-52 flex-shrink-0">
               <div
-                onClick={() => handleBannerClick(leftBanner.linkUrl)}
+                onClick={() => handleBannerClick(leftBanner)}
                 className="sticky top-4 hover:opacity-90 transition-opacity cursor-pointer"
               >
                 <img
@@ -74,36 +89,36 @@ export default function HomePage() {
 
           {/* Ana İçerik */}
           <div className="flex-1 min-w-0">
-            {/* Üst Yatay Bannerlar - Responsive grid */}
+            {/* Üst Yatay Bannerlar - Tam genişlik */}
             {hasTopBanners && (
-              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 mb-6">
+              <div className="space-y-3 mb-6">
                 {topBanner1 && (
                   <div
-                    onClick={() => handleBannerClick(topBanner1.linkUrl)}
-                    className="block hover:opacity-90 transition-opacity cursor-pointer bg-[var(--surface)] rounded-lg overflow-hidden"
+                    onClick={() => handleBannerClick(topBanner1)}
+                    className="block hover:opacity-90 transition-opacity cursor-pointer bg-[var(--surface)] rounded-lg overflow-hidden w-full"
                   >
-                    <div className="h-20 md:h-24 flex items-center justify-center p-2">
-                      <img src={topBanner1.imageUrl} alt="Banner" className="max-w-full max-h-full object-contain" />
+                    <div className="w-full">
+                      <img src={topBanner1.imageUrl} alt="Banner" className="w-full h-auto object-cover" />
                     </div>
                   </div>
                 )}
                 {topBanner2 && (
                   <div
-                    onClick={() => handleBannerClick(topBanner2.linkUrl)}
-                    className="block hover:opacity-90 transition-opacity cursor-pointer bg-[var(--surface)] rounded-lg overflow-hidden"
+                    onClick={() => handleBannerClick(topBanner2)}
+                    className="block hover:opacity-90 transition-opacity cursor-pointer bg-[var(--surface)] rounded-lg overflow-hidden w-full"
                   >
-                    <div className="h-20 md:h-24 flex items-center justify-center p-2">
-                      <img src={topBanner2.imageUrl} alt="Banner" className="max-w-full max-h-full object-contain" />
+                    <div className="w-full">
+                      <img src={topBanner2.imageUrl} alt="Banner" className="w-full h-auto object-cover" />
                     </div>
                   </div>
                 )}
                 {topBanner3 && (
                   <div
-                    onClick={() => handleBannerClick(topBanner3.linkUrl)}
-                    className="block hover:opacity-90 transition-opacity cursor-pointer bg-[var(--surface)] rounded-lg overflow-hidden sm:col-span-2 lg:col-span-1"
+                    onClick={() => handleBannerClick(topBanner3)}
+                    className="block hover:opacity-90 transition-opacity cursor-pointer bg-[var(--surface)] rounded-lg overflow-hidden w-full"
                   >
-                    <div className="h-20 md:h-24 flex items-center justify-center p-2">
-                      <img src={topBanner3.imageUrl} alt="Banner" className="max-w-full max-h-full object-contain" />
+                    <div className="w-full">
+                      <img src={topBanner3.imageUrl} alt="Banner" className="w-full h-auto object-cover" />
                     </div>
                   </div>
                 )}
@@ -224,7 +239,7 @@ export default function HomePage() {
                   {events.slice(0, 2).map((event) => (
                     <div
                       key={event.id}
-                      onClick={() => handleEventClick(event.linkUrl)}
+                      onClick={() => handleEventClick(event)}
                       className="card cursor-pointer group overflow-hidden"
                     >
                       {/* Mobilde dikey, tablet ve üstünde yatay layout */}
@@ -256,7 +271,7 @@ export default function HomePage() {
           {rightBanner && (
             <div className="hidden xl:block w-44 2xl:w-52 flex-shrink-0">
               <div
-                onClick={() => handleBannerClick(rightBanner.linkUrl)}
+                onClick={() => handleBannerClick(rightBanner)}
                 className="sticky top-4 hover:opacity-90 transition-opacity cursor-pointer"
               >
                 <img
