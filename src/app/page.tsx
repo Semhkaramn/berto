@@ -198,7 +198,7 @@ export default function HomePage() {
                   <img
                     src="/sponsorlar.jpg"
                     alt="Sponsorlar"
-                    className="absolute inset-0 w-full h-full object-cover"
+                    className="absolute inset-0 w-full h-full object-fill"
                   />
                   {/* Fallback gradient */}
                   <div className="absolute inset-0 gradient-main opacity-0" />
@@ -237,7 +237,7 @@ export default function HomePage() {
                   <img
                     src="/etkinlikler.jpg"
                     alt="Etkinlikler"
-                    className="absolute inset-0 w-full h-full object-cover"
+                    className="absolute inset-0 w-full h-full object-fill"
                   />
                   {/* Fallback gradient */}
                   <div className="absolute inset-0 gradient-vip opacity-0" />
@@ -276,7 +276,7 @@ export default function HomePage() {
                   <img
                     src="/yayinlar.jpg"
                     alt="Yayinlar"
-                    className="absolute inset-0 w-full h-full object-cover"
+                    className="absolute inset-0 w-full h-full object-fill"
                   />
                   {/* Fallback gradient */}
                   <div className="absolute inset-0 bg-gradient-to-br from-red-600 to-rose-700 opacity-0" />
