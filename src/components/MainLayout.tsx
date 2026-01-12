@@ -7,7 +7,7 @@ import Footer from "./Footer";
 
 // Sabit site bilgileri - GitHub'dan logo
 const SITE_NAME = "Berto";
-const SITE_LOGO = "https://raw.githubusercontent.com/bertogg/berto-website/main/logo.png";
+const SITE_LOGO = "/logo.png";
 
 interface MainLayoutProps {
   children: React.ReactNode;
