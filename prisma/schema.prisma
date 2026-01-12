@@ -106,7 +106,6 @@ model SiteSettings {
   id               String  @id @default(cuid())
   siteName         String  @default("Sponsor Portal")
   logoUrl          String?
-  telegramUrl      String?
   youtubeChannelId String?
   youtubeApiKey    String?
 }
