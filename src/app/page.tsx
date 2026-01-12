@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import Link from "next/link";
 import MainLayout from "@/components/MainLayout";
+import SponsorPopup from "@/components/SponsorPopup";
 
 interface Banner {
   id: string;
@@ -272,6 +273,7 @@ export default function HomePage() {
           )}
         </div>
       </div>
+      <SponsorPopup />
     </MainLayout>
   );
 }
