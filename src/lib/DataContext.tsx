@@ -1,6 +1,7 @@
 "use client";
 
 import { createContext, useContext, useEffect, useState, ReactNode, useRef } from "react";
+import { createPortal } from "react-dom";
 
 interface Banner {
   id: string;
@@ -90,13 +91,19 @@ interface DataContextType {
 
 const DataContext = createContext<DataContextType | null>(null);
 
-// Global Loading Screen Component
+// Global Loading Screen Component - Portal ile body'ye eklenir
 function GlobalLoadingScreen({ onComplete }: { onComplete: () => void }) {
   const [videoError, setVideoError] = useState(false);
   const [isClosing, setIsClosing] = useState(false);
   const [animationComplete, setAnimationComplete] = useState(false);
   const [isPortrait, setIsPortrait] = useState(true);
+  const [mounted, setMounted] = useState(false);
   const videoRef = useRef<HTMLVideoElement>(null);
+
+  // Client-side mount kontrolü
+  useEffect(() => {
+    setMounted(true);
+  }, []);
 
   // Ekran yönünü kontrol et
   useEffect(() => {
@@ -133,52 +140,61 @@ function GlobalLoadingScreen({ onComplete }: { onComplete: () => void }) {
     }
   }, [isClosing, animationComplete, onComplete]);
 
-  // Animasyon tamamlandıysa hiçbir şey render etme
-  if (animationComplete) {
+  // Animasyon tamamlandıysa veya mount olmadıysa hiçbir şey render etme
+  if (animationComplete || !mounted) {
     return null;
   }
 
-  // Video varsa göster
-  if (!videoError) {
-    return (
-      <div
-        className={`fixed inset-0 z-[99999] bg-black transition-opacity duration-1000 ease-out ${
-          isClosing ? 'opacity-0' : 'opacity-100'
-        }`}
-        style={{
-          willChange: 'opacity',
-          pointerEvents: isClosing ? 'none' : 'auto'
-        }}
-      >
-        {/* Video - tam ekran */}
-        <video
-          ref={videoRef}
-          autoPlay
-          muted
-          playsInline
-          className="absolute inset-0 w-full h-full"
-          style={{
-            // Dikey ekranlarda tam görünsün, yatay ekranlarda kırpılsın
-            objectFit: isPortrait ? 'contain' : 'cover',
-          }}
-          onEnded={handleVideoEnd}
-          onError={handleVideoError}
-        >
-          <source src="/load.webm" type="video/webm" />
-        </video>
-      </div>
-    );
-  }
-
-  // Video yoksa veya hata varsa basit loading ekranı
-  return (
+  const loadingContent = !videoError ? (
+    // Video varsa göster
     <div
-      className={`fixed inset-0 z-[99999] bg-[#0a0a0a] transition-opacity duration-1000 ease-out ${
-        isClosing ? 'opacity-0' : 'opacity-100'
-      }`}
       style={{
-        willChange: 'opacity',
-        pointerEvents: isClosing ? 'none' : 'auto'
+        position: 'fixed',
+        top: 0,
+        left: 0,
+        right: 0,
+        bottom: 0,
+        zIndex: 2147483647, // Maksimum z-index
+        backgroundColor: '#000',
+        opacity: isClosing ? 0 : 1,
+        transition: 'opacity 1000ms ease-out',
+        pointerEvents: isClosing ? 'none' : 'auto',
+      }}
+    >
+      {/* Video - tam ekran */}
+      <video
+        ref={videoRef}
+        autoPlay
+        muted
+        playsInline
+        style={{
+          position: 'absolute',
+          top: 0,
+          left: 0,
+          width: '100%',
+          height: '100%',
+          objectFit: isPortrait ? 'contain' : 'cover',
+        }}
+        onEnded={handleVideoEnd}
+        onError={handleVideoError}
+      >
+        <source src="/load.webm" type="video/webm" />
+      </video>
+    </div>
+  ) : (
+    // Video yoksa veya hata varsa basit loading ekranı
+    <div
+      style={{
+        position: 'fixed',
+        top: 0,
+        left: 0,
+        right: 0,
+        bottom: 0,
+        zIndex: 2147483647,
+        backgroundColor: '#0a0a0a',
+        opacity: isClosing ? 0 : 1,
+        transition: 'opacity 1000ms ease-out',
+        pointerEvents: isClosing ? 'none' : 'auto',
       }}
     >
       {/* Loading content */}
@@ -221,6 +237,9 @@ function GlobalLoadingScreen({ onComplete }: { onComplete: () => void }) {
       </div>
     </div>
   );
+
+  // Portal ile body'nin en sonuna ekle
+  return createPortal(loadingContent, document.body);
 }
 
 export function DataProvider({ children }: { children: ReactNode }) {
