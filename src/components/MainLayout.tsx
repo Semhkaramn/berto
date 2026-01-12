@@ -17,9 +17,9 @@ interface MainLayoutProps {
 
 export default function MainLayout({ children }: MainLayoutProps) {
   const [settings, setSettings] = useState<Settings>({
-    siteName: "Sponsor Portal",
+    siteName: "",
     logoUrl: null,
-    telegramUrl: "https://t.me/username",
+    telegramUrl: null,
   });
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
