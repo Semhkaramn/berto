@@ -6,10 +6,9 @@ interface ImageUploadProps {
   value: string;
   onChange: (url: string) => void;
   label?: string;
-  placeholder?: string;
 }
 
-export default function ImageUpload({ value, onChange, label = "Gorsel", placeholder = "https://..." }: ImageUploadProps) {
+export default function ImageUpload({ value, onChange, label = "Gorsel" }: ImageUploadProps) {
   const [uploading, setUploading] = useState(false);
   const [error, setError] = useState("");
   const [dragOver, setDragOver] = useState(false);
@@ -72,37 +71,6 @@ export default function ImageUpload({ value, onChange, label = "Gorsel", placeho
     <div className="space-y-2">
       <label className="block text-sm font-medium text-[var(--text-muted)]">{label}</label>
 
-      {/* URL Input */}
-      <div className="flex gap-2">
-        <input
-          type="text"
-          value={value}
-          onChange={(e) => onChange(e.target.value)}
-          className="input flex-1"
-          placeholder={placeholder}
-        />
-        <button
-          type="button"
-          onClick={() => fileInputRef.current?.click()}
-          disabled={uploading}
-          className="btn btn-secondary whitespace-nowrap"
-        >
-          {uploading ? (
-            <svg className="animate-spin w-4 h-4" fill="none" viewBox="0 0 24 24">
-              <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
-              <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z" />
-            </svg>
-          ) : (
-            <>
-              <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
-              </svg>
-              Yukle
-            </>
-          )}
-        </button>
-      </div>
-
       {/* Hidden File Input */}
       <input
         ref={fileInputRef}
@@ -122,9 +90,17 @@ export default function ImageUpload({ value, onChange, label = "Gorsel", placeho
             ? "border-[var(--primary)] bg-[var(--primary)]/10"
             : "border-[var(--border)] hover:border-[var(--primary)]/50"
         }`}
-        onClick={() => fileInputRef.current?.click()}
+        onClick={() => !uploading && fileInputRef.current?.click()}
       >
-        {value ? (
+        {uploading ? (
+          <div className="py-4">
+            <svg className="animate-spin w-8 h-8 mx-auto text-[var(--primary)] mb-2" fill="none" viewBox="0 0 24 24">
+              <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
+              <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z" />
+            </svg>
+            <p className="text-sm text-[var(--text-muted)]">Yukleniyor...</p>
+          </div>
+        ) : value ? (
           <div className="relative">
             <img src={value} alt="Preview" className="max-h-32 mx-auto rounded-lg object-contain" />
             <button
@@ -139,6 +115,7 @@ export default function ImageUpload({ value, onChange, label = "Gorsel", placeho
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
               </svg>
             </button>
+            <p className="text-xs text-[var(--text-muted)] mt-2">Degistirmek icin tiklayin</p>
           </div>
         ) : (
           <div className="py-4">
