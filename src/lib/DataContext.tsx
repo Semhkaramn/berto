@@ -94,15 +94,12 @@ const DataContext = createContext<DataContextType | null>(null);
 function GlobalLoadingScreen({ onComplete }: { onComplete: () => void }) {
   const [videoError, setVideoError] = useState(false);
   const [isClosing, setIsClosing] = useState(false);
+  const [animationComplete, setAnimationComplete] = useState(false);
   const videoRef = useRef<HTMLVideoElement>(null);
 
   const handleVideoEnd = () => {
     // Video bittiğinde animasyonu başlat
     setIsClosing(true);
-    // Animasyon bitince onComplete çağır
-    setTimeout(() => {
-      onComplete();
-    }, 800); // Animasyon süresi
   };
 
   const handleVideoError = () => {
@@ -110,31 +107,48 @@ function GlobalLoadingScreen({ onComplete }: { onComplete: () => void }) {
     // Hata durumunda 2 saniye bekle ve kapat
     setTimeout(() => {
       setIsClosing(true);
-      setTimeout(() => {
-        onComplete();
-      }, 800);
     }, 2000);
   };
+
+  // Animasyon tamamlandığında onComplete çağır
+  useEffect(() => {
+    if (isClosing && !animationComplete) {
+      const timer = setTimeout(() => {
+        setAnimationComplete(true);
+        onComplete();
+      }, 800);
+      return () => clearTimeout(timer);
+    }
+  }, [isClosing, animationComplete, onComplete]);
+
+  // Animasyon tamamlandıysa hiçbir şey render etme
+  if (animationComplete) {
+    return null;
+  }
 
   // Video varsa göster
   if (!videoError) {
     return (
-      <div className="fixed inset-0 z-[9999] bg-black">
+      <div className="fixed inset-0 z-[9999] pointer-events-none">
         {/* Sol perde */}
         <div
-          className={`absolute top-0 left-0 w-1/2 h-full bg-black z-10 transition-transform duration-700 ease-in-out ${
+          className={`absolute top-0 left-0 w-1/2 h-full bg-black z-20 transition-transform duration-700 ease-in-out ${
             isClosing ? '-translate-x-full' : 'translate-x-0'
           }`}
+          style={{ willChange: 'transform' }}
         />
         {/* Sağ perde */}
         <div
-          className={`absolute top-0 right-0 w-1/2 h-full bg-black z-10 transition-transform duration-700 ease-in-out ${
+          className={`absolute top-0 right-0 w-1/2 h-full bg-black z-20 transition-transform duration-700 ease-in-out ${
             isClosing ? 'translate-x-full' : 'translate-x-0'
           }`}
+          style={{ willChange: 'transform' }}
         />
 
-        {/* Video */}
-        <div className="absolute inset-0 flex items-center justify-center">
+        {/* Video - perdelerin arkasında */}
+        <div className={`absolute inset-0 flex items-center justify-center bg-black z-10 transition-opacity duration-300 ${
+          isClosing ? 'opacity-0' : 'opacity-100'
+        }`}>
           <video
             ref={videoRef}
             autoPlay
@@ -153,21 +167,26 @@ function GlobalLoadingScreen({ onComplete }: { onComplete: () => void }) {
 
   // Video yoksa veya hata varsa basit loading ekranı
   return (
-    <div className="fixed inset-0 z-[9999] bg-[var(--background)]">
+    <div className="fixed inset-0 z-[9999] pointer-events-none">
       {/* Sol perde */}
       <div
-        className={`absolute top-0 left-0 w-1/2 h-full bg-[var(--background)] z-10 transition-transform duration-700 ease-in-out ${
+        className={`absolute top-0 left-0 w-1/2 h-full bg-[#0a0a0a] z-20 transition-transform duration-700 ease-in-out ${
           isClosing ? '-translate-x-full' : 'translate-x-0'
         }`}
+        style={{ willChange: 'transform' }}
       />
       {/* Sağ perde */}
       <div
-        className={`absolute top-0 right-0 w-1/2 h-full bg-[var(--background)] z-10 transition-transform duration-700 ease-in-out ${
+        className={`absolute top-0 right-0 w-1/2 h-full bg-[#0a0a0a] z-20 transition-transform duration-700 ease-in-out ${
           isClosing ? 'translate-x-full' : 'translate-x-0'
         }`}
+        style={{ willChange: 'transform' }}
       />
 
-      <div className="absolute inset-0 flex flex-col items-center justify-center">
+      {/* Loading content - perdelerin arkasında */}
+      <div className={`absolute inset-0 flex flex-col items-center justify-center bg-[#0a0a0a] z-10 transition-opacity duration-300 ${
+        isClosing ? 'opacity-0' : 'opacity-100'
+      }`}>
         {/* Animated Background */}
         <div className="absolute inset-0 overflow-hidden">
           <div className="absolute top-1/4 left-1/4 w-96 h-96 bg-[var(--primary)]/10 rounded-full blur-3xl animate-pulse" />
@@ -228,7 +247,7 @@ export function DataProvider({ children }: { children: ReactNode }) {
   const [dataReady, setDataReady] = useState(false);
 
   const fetchAllData = async () => {
-    if (dataReady) return; // Zaten yüklendiyse tekrar çekme
+    if (dataReady) return;
 
     setIsLoading(true);
     try {
@@ -268,7 +287,6 @@ export function DataProvider({ children }: { children: ReactNode }) {
       setIsLoaded(true);
     } catch (error) {
       console.error("Data fetch error:", error);
-      // Hata olsa bile loading'i kapat ki kullanıcı takılmasın
       setDataReady(true);
       setIsLoaded(true);
     } finally {
@@ -290,38 +308,7 @@ export function DataProvider({ children }: { children: ReactNode }) {
     setShowLoading(false);
   };
 
-  // Video bitene kadar loading ekranı göster
-  if (showLoading) {
-    return (
-      <>
-        {/* Ana içerik arka planda hazır olsun */}
-        {dataReady && (
-          <div style={{ visibility: 'hidden', position: 'absolute' }}>
-            <DataContext.Provider
-              value={{
-                banners,
-                sponsors,
-                events,
-                liveStreams,
-                videos,
-                socialMedia,
-                siteSettings,
-                stats,
-                telegramChannels,
-                isLoading,
-                isLoaded,
-                refetch,
-              }}
-            >
-              {children}
-            </DataContext.Provider>
-          </div>
-        )}
-        <GlobalLoadingScreen onComplete={handleLoadingComplete} />
-      </>
-    );
-  }
-
+  // Ana içerik her zaman renderlanacak, loading screen üstüne binecek
   return (
     <DataContext.Provider
       value={{
@@ -335,11 +322,17 @@ export function DataProvider({ children }: { children: ReactNode }) {
         stats,
         telegramChannels,
         isLoading,
-        isLoaded,
+        isLoaded: dataReady,
         refetch,
       }}
     >
-      {children}
+      {/* Ana içerik - her zaman renderlanır */}
+      {dataReady ? children : (
+        <div className="min-h-screen bg-[var(--background)]" />
+      )}
+
+      {/* Loading screen - üstte overlay olarak */}
+      {showLoading && <GlobalLoadingScreen onComplete={handleLoadingComplete} />}
     </DataContext.Provider>
   );
 }
