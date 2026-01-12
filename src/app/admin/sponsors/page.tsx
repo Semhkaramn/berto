@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from "react";
 import AdminLayout from "@/components/AdminLayout";
+import ImageUpload from "@/components/ImageUpload";
 
 interface Sponsor {
   id: string;
@@ -184,10 +185,11 @@ export default function SponsorsPage() {
                 <label className="block text-sm font-medium text-[var(--text-muted)] mb-2">Aciklama</label>
                 <textarea value={formData.description} onChange={(e) => setFormData({ ...formData, description: e.target.value })} className="input" rows={3} />
               </div>
-              <div>
-                <label className="block text-sm font-medium text-[var(--text-muted)] mb-2">Gorsel URL</label>
-                <input type="text" value={formData.imageUrl} onChange={(e) => setFormData({ ...formData, imageUrl: e.target.value })} className="input" />
-              </div>
+              <ImageUpload
+                label="Gorsel"
+                value={formData.imageUrl}
+                onChange={(url) => setFormData({ ...formData, imageUrl: url })}
+              />
               <div>
                 <label className="block text-sm font-medium text-[var(--text-muted)] mb-2">Link URL</label>
                 <input type="text" value={formData.linkUrl} onChange={(e) => setFormData({ ...formData, linkUrl: e.target.value })} className="input" />
