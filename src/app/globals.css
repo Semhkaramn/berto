@@ -684,3 +684,99 @@ body {
   opacity: 0.5;
   animation: particleFloat 4s ease-in-out infinite;
 }
+
+/* ========================================
+   TELEGRAM WEBVIEW & LOW PERFORMANCE FIX
+   ======================================== */
+
+/* Reduce motion for users who prefer it or low-end devices */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
+/* Telegram in-app browser detection - disable heavy effects */
+@supports not (backdrop-filter: blur(1px)) {
+  .glass,
+  .modal-overlay,
+  .sponsor-card-main,
+  .sponsor-card-vip {
+    backdrop-filter: none !important;
+    -webkit-backdrop-filter: none !important;
+  }
+}
+
+/* Mobile optimization - reduce animations on touch devices */
+@media (hover: none) and (pointer: coarse) {
+  /* Disable heavy blur effects */
+  .blur-3xl,
+  .blur-2xl,
+  .blur-xl {
+    filter: none !important;
+  }
+
+  /* Simplify backdrop filters */
+  .backdrop-blur-xl,
+  .backdrop-blur-lg,
+  .backdrop-blur-sm,
+  .backdrop-blur {
+    backdrop-filter: none !important;
+    -webkit-backdrop-filter: none !important;
+    background-color: rgba(0, 0, 0, 0.8) !important;
+  }
+
+  /* Disable rotating glow animation */
+  .sponsor-card-main::after {
+    display: none !important;
+  }
+
+  /* Simplify particle animations */
+  .particle {
+    display: none !important;
+  }
+
+  /* Reduce transform animations */
+  .animate-float {
+    animation: none !important;
+  }
+
+  /* Simplify card hover effects */
+  .card:hover,
+  .sponsor-card-normal:hover {
+    transform: none !important;
+  }
+
+  /* Disable shine sweep effect */
+  .shine-effect {
+    display: none !important;
+  }
+
+  /* Simplify glow effects */
+  .glow-main,
+  .glow-vip {
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3) !important;
+  }
+
+  /* Disable spring hover animation */
+  .spring-hover:hover {
+    animation: none !important;
+  }
+
+  /* Simplify gradient borders */
+  .sponsor-card-main::before,
+  .sponsor-card-vip::before {
+    animation: none !important;
+    background-size: 100% 100% !important;
+  }
+}
+
+/* Extra safety for very old webviews */
+.no-blur {
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
+}
