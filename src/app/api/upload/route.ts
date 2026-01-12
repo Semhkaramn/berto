@@ -14,31 +14,7 @@ export async function POST(request: NextRequest) {
     const buffer = Buffer.from(bytes);
     const base64 = buffer.toString("base64");
 
-    // imgbb API kullan (ücretsiz image hosting)
-    const imgbbApiKey = process.env.IMGBB_API_KEY;
-
-    if (imgbbApiKey) {
-      // imgbb'ye yükle
-      const imgbbFormData = new FormData();
-      imgbbFormData.append("key", imgbbApiKey);
-      imgbbFormData.append("image", base64);
-
-      const imgbbRes = await fetch("https://api.imgbb.com/1/upload", {
-        method: "POST",
-        body: imgbbFormData,
-      });
-
-      const imgbbData = await imgbbRes.json();
-
-      if (imgbbData.success) {
-        return NextResponse.json({
-          success: true,
-          url: imgbbData.data.url,
-        });
-      }
-    }
-
-    // Cloudinary kullan (alternatif)
+    // Cloudinary kullan
     const cloudinaryCloudName = process.env.CLOUDINARY_CLOUD_NAME;
     const cloudinaryUploadPreset = process.env.CLOUDINARY_UPLOAD_PRESET;
 
@@ -62,25 +38,31 @@ export async function POST(request: NextRequest) {
           success: true,
           url: cloudinaryData.secure_url,
         });
+      } else {
+        console.error("Cloudinary error:", cloudinaryData);
+        return NextResponse.json(
+          { error: "Cloudinary yukleme hatasi. Lutfen tekrar deneyin." },
+          { status: 500 }
+        );
       }
     }
 
-    // Hiçbir servis yapılandırılmamışsa, data URL olarak döndür (küçük dosyalar için)
-    if (buffer.length < 500 * 1024) { // 500KB'dan küçükse
+    // Cloudinary yapılandırılmamışsa ve dosya küçükse data URL olarak döndür
+    if (buffer.length < 500 * 1024) {
       const dataUrl = `data:${file.type};base64,${base64}`;
       return NextResponse.json({
         success: true,
         url: dataUrl,
-        warning: "Gorsel hosting servisi yapilandirilmamis. Lutfen IMGBB_API_KEY veya CLOUDINARY ayarlarini ekleyin.",
+        warning: "Cloudinary yapilandirilmamis. Lutfen CLOUDINARY_CLOUD_NAME ve CLOUDINARY_UPLOAD_PRESET env degiskenlerini ekleyin.",
       });
     }
 
     return NextResponse.json(
-      { error: "Gorsel hosting servisi yapilandirilmamis. Lutfen IMGBB_API_KEY veya CLOUDINARY ayarlarini Netlify env'e ekleyin." },
+      { error: "Cloudinary yapilandirilmamis. Lutfen CLOUDINARY_CLOUD_NAME ve CLOUDINARY_UPLOAD_PRESET env degiskenlerini Netlify'a ekleyin." },
       { status: 500 }
     );
   } catch (error) {
     console.error("Upload error:", error);
-    return NextResponse.json({ error: "Failed to upload file" }, { status: 500 });
+    return NextResponse.json({ error: "Dosya yuklenirken hata olustu" }, { status: 500 });
   }
 }
