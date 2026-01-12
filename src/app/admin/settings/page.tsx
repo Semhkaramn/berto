@@ -102,7 +102,7 @@ export default function SettingsPage() {
                   value={settings.siteName}
                   onChange={(e) => setSettings({ ...settings, siteName: e.target.value })}
                   className="input"
-                  placeholder="Sponsor Portal"
+                  placeholder="Site adini girin"
                 />
                 <p className="text-xs text-[var(--text-muted)] mt-1">Sitenin ust kisminda gorunecek isim</p>
               </div>
@@ -111,7 +111,7 @@ export default function SettingsPage() {
                 label="Site Logosu"
                 value={settings.logoUrl || ""}
                 onChange={(url) => setSettings({ ...settings, logoUrl: url || null })}
-                placeholder="https://... (bos birakilirsa varsayilan logo kullanilir)"
+                placeholder="Logo URL'si girin"
               />
 
               {/* YouTube Ayarları */}
