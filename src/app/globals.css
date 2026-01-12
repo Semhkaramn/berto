@@ -407,3 +407,280 @@ body {
   font-size: 13px;
   background: linear-gradient(90deg, var(--surface) 0%, rgba(18, 20, 26, 0.8) 50%, var(--surface) 100%);
 }
+
+/* ========================================
+   PREMIUM SPONSOR CARD STYLES
+   ======================================== */
+
+/* Main Sponsor Card - En Premium */
+.sponsor-card-main {
+  position: relative;
+  background: linear-gradient(145deg, rgba(255, 107, 53, 0.15), rgba(255, 159, 28, 0.1));
+  border: 2px solid transparent;
+  background-clip: padding-box;
+  overflow: hidden;
+}
+
+.sponsor-card-main::before {
+  content: '';
+  position: absolute;
+  inset: -2px;
+  background: linear-gradient(135deg, #ff6b35, #ff9f1c, #ff6b35, #ff9f1c);
+  background-size: 400% 400%;
+  border-radius: inherit;
+  z-index: -1;
+  animation: borderGradient 4s ease infinite;
+}
+
+.sponsor-card-main::after {
+  content: '';
+  position: absolute;
+  top: -50%;
+  left: -50%;
+  width: 200%;
+  height: 200%;
+  background: radial-gradient(circle, rgba(255, 107, 53, 0.2) 0%, transparent 50%);
+  animation: rotateGlow 10s linear infinite;
+  pointer-events: none;
+}
+
+@keyframes borderGradient {
+  0%, 100% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+}
+
+@keyframes rotateGlow {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+/* VIP Sponsor Card */
+.sponsor-card-vip {
+  position: relative;
+  background: linear-gradient(145deg, rgba(168, 85, 247, 0.15), rgba(236, 72, 153, 0.1));
+  border: 2px solid transparent;
+  overflow: hidden;
+}
+
+.sponsor-card-vip::before {
+  content: '';
+  position: absolute;
+  inset: -2px;
+  background: linear-gradient(135deg, #a855f7, #ec4899, #a855f7, #ec4899);
+  background-size: 400% 400%;
+  border-radius: inherit;
+  z-index: -1;
+  animation: borderGradient 5s ease infinite;
+}
+
+/* Normal Sponsor Card */
+.sponsor-card-normal {
+  position: relative;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.sponsor-card-normal:hover {
+  border-color: rgba(59, 130, 246, 0.5);
+  box-shadow: 0 0 30px rgba(59, 130, 246, 0.2);
+  transform: translateY(-8px) scale(1.02);
+}
+
+/* Floating Animation */
+@keyframes float {
+  0%, 100% { transform: translateY(0px); }
+  50% { transform: translateY(-10px); }
+}
+
+.animate-float {
+  animation: float 3s ease-in-out infinite;
+}
+
+/* Sparkle Effect */
+@keyframes sparkle {
+  0%, 100% { opacity: 0; transform: scale(0); }
+  50% { opacity: 1; transform: scale(1); }
+}
+
+.sparkle {
+  position: absolute;
+  width: 4px;
+  height: 4px;
+  background: white;
+  border-radius: 50%;
+  animation: sparkle 2s ease-in-out infinite;
+}
+
+/* Shine Sweep Effect */
+@keyframes shineSweep {
+  0% { transform: translateX(-100%) rotate(45deg); }
+  100% { transform: translateX(300%) rotate(45deg); }
+}
+
+.shine-effect {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 50%;
+  height: 100%;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    rgba(255, 255, 255, 0.2),
+    transparent
+  );
+  transform: translateX(-100%) rotate(45deg);
+}
+
+.group:hover .shine-effect {
+  animation: shineSweep 0.8s ease-out;
+}
+
+/* Gradient Text Animation */
+@keyframes gradientText {
+  0%, 100% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+}
+
+.gradient-text {
+  background: linear-gradient(135deg, #ff6b35, #ff9f1c, #ff6b35);
+  background-size: 200% 200%;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  animation: gradientText 3s ease infinite;
+}
+
+/* Pulse Ring Effect */
+@keyframes pulseRing {
+  0% {
+    transform: scale(1);
+    opacity: 1;
+  }
+  100% {
+    transform: scale(1.5);
+    opacity: 0;
+  }
+}
+
+.pulse-ring {
+  position: absolute;
+  inset: 0;
+  border: 2px solid var(--primary);
+  border-radius: inherit;
+  animation: pulseRing 2s ease-out infinite;
+}
+
+/* Premium Crown Icon Animation */
+@keyframes crownBounce {
+  0%, 100% { transform: translateY(0) rotate(-5deg); }
+  50% { transform: translateY(-5px) rotate(5deg); }
+}
+
+.crown-icon {
+  animation: crownBounce 2s ease-in-out infinite;
+}
+
+/* Star Twinkle Animation */
+@keyframes twinkle {
+  0%, 100% { opacity: 0.3; transform: scale(0.8); }
+  50% { opacity: 1; transform: scale(1.2); }
+}
+
+.twinkle-star {
+  animation: twinkle 1.5s ease-in-out infinite;
+}
+
+/* Glow Effect for Cards */
+.glow-main {
+  box-shadow:
+    0 0 20px rgba(255, 107, 53, 0.3),
+    0 0 40px rgba(255, 107, 53, 0.2),
+    0 0 60px rgba(255, 107, 53, 0.1);
+}
+
+.glow-vip {
+  box-shadow:
+    0 0 20px rgba(168, 85, 247, 0.3),
+    0 0 40px rgba(168, 85, 247, 0.2),
+    0 0 60px rgba(168, 85, 247, 0.1);
+}
+
+/* Hover Scale with Spring Effect */
+@keyframes springScale {
+  0% { transform: scale(1); }
+  50% { transform: scale(1.05); }
+  75% { transform: scale(0.98); }
+  100% { transform: scale(1.02); }
+}
+
+.spring-hover:hover {
+  animation: springScale 0.4s ease forwards;
+}
+
+/* Ribbon Badge for Main Sponsors */
+.ribbon {
+  position: absolute;
+  top: -6px;
+  right: -6px;
+  width: 100px;
+  height: 100px;
+  overflow: hidden;
+  z-index: 10;
+}
+
+.ribbon::before {
+  content: 'MAIN';
+  position: absolute;
+  display: block;
+  width: 140px;
+  padding: 8px 0;
+  background: linear-gradient(135deg, #ff6b35, #ff9f1c);
+  box-shadow: 0 5px 10px rgba(0,0,0,0.3);
+  color: #fff;
+  font: 700 11px/1 'Inter', sans-serif;
+  text-shadow: 0 1px 1px rgba(0,0,0,0.2);
+  text-transform: uppercase;
+  text-align: center;
+  letter-spacing: 1px;
+  right: -35px;
+  top: 25px;
+  transform: rotate(45deg);
+}
+
+/* VIP Ribbon */
+.ribbon-vip::before {
+  content: 'VIP';
+  background: linear-gradient(135deg, #a855f7, #ec4899);
+}
+
+/* Background Particles */
+@keyframes particleFloat {
+  0%, 100% {
+    transform: translateY(0) translateX(0);
+    opacity: 0.5;
+  }
+  25% {
+    transform: translateY(-20px) translateX(10px);
+    opacity: 1;
+  }
+  50% {
+    transform: translateY(-40px) translateX(-10px);
+    opacity: 0.5;
+  }
+  75% {
+    transform: translateY(-20px) translateX(10px);
+    opacity: 1;
+  }
+}
+
+.particle {
+  position: absolute;
+  width: 4px;
+  height: 4px;
+  background: var(--primary);
+  border-radius: 50%;
+  opacity: 0.5;
+  animation: particleFloat 4s ease-in-out infinite;
+}
