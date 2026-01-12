@@ -1,33 +1,10 @@
 "use client";
 
-import { useEffect, useState } from "react";
 import MainLayout from "@/components/MainLayout";
-
-interface Event {
-  id: string;
-  title: string;
-  description: string | null;
-  imageUrl: string;
-  linkUrl: string;
-  createdAt: string;
-}
+import { useData } from "@/lib/DataContext";
 
 export default function EventsPage() {
-  const [events, setEvents] = useState<Event[]>([]);
-
-  useEffect(() => {
-    const fetchEvents = async () => {
-      try {
-        const res = await fetch("/api/events");
-        if (res.ok) {
-          setEvents(await res.json());
-        }
-      } catch (error) {
-        console.error("Fetch error:", error);
-      }
-    };
-    fetchEvents();
-  }, []);
+  const { events, isLoading } = useData();
 
   const handleEventClick = (linkUrl: string) => {
     if (linkUrl) {
@@ -44,7 +21,14 @@ export default function EventsPage() {
             Yaklasan ve devam eden etkinlikler
           </p>
 
-          {events.length > 0 ? (
+          {isLoading && (
+            <div className="text-center py-20">
+              <div className="w-12 h-12 border-3 border-[var(--primary)] border-t-transparent rounded-full animate-spin mx-auto mb-4" />
+              <p className="text-[var(--text-muted)]">Etkinlikler yukleniyor...</p>
+            </div>
+          )}
+
+          {!isLoading && events.length > 0 && (
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
               {events.map((event, index) => (
                 <div
@@ -75,9 +59,7 @@ export default function EventsPage() {
                       <svg className="w-4 h-4 text-[var(--primary)]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
                       </svg>
-                      <span className="text-xs text-[var(--text-muted)]">
-                        {new Date(event.createdAt).toLocaleDateString("tr-TR")}
-                      </span>
+                      <span className="text-xs text-[var(--text-muted)]">Etkinlik</span>
                     </div>
                     <h3 className="text-lg font-semibold text-white mb-2 group-hover:text-[var(--primary)] transition-colors">
                       {event.title}
@@ -91,7 +73,9 @@ export default function EventsPage() {
                 </div>
               ))}
             </div>
-          ) : (
+          )}
+
+          {!isLoading && events.length === 0 && (
             <div className="text-center py-20 bg-[var(--surface)] rounded-xl border border-[var(--border)]">
               <svg className="w-16 h-16 mx-auto text-[var(--text-muted)] mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
