@@ -1,0 +1,153 @@
+//
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+//
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// Admin kullanıcıları
+model Admin {
+  id        String   @id @default(cuid())
+  username  String   @unique
+  password  String
+  createdAt DateTime @default(now())
+}
+
+// Sponsorlar
+model Sponsor {
+  id          String       @id @default(cuid())
+  name        String
+  description String?
+  imageUrl    String
+  linkUrl     String
+  type        String       @default("normal") // main, vip, normal
+  isActive    Boolean      @default(true)
+  clickCount  Int          @default(0)
+  createdAt   DateTime     @default(now())
+  updatedAt   DateTime     @updatedAt
+  clicks      ClickEvent[]
+}
+
+// Popup Sponsorlar
+model PopupSponsor {
+  id          String       @id @default(cuid())
+  title       String
+  description String?
+  imageUrl    String
+  linkUrl     String
+  isActive    Boolean      @default(true)
+  clickCount  Int          @default(0)
+  createdAt   DateTime     @default(now())
+  clicks      ClickEvent[]
+}
+
+// Etkinlikler
+model Event {
+  id          String       @id @default(cuid())
+  title       String
+  description String?
+  imageUrl    String
+  linkUrl     String
+  isActive    Boolean      @default(true)
+  clickCount  Int          @default(0)
+  createdAt   DateTime     @default(now())
+  updatedAt   DateTime     @updatedAt
+  clicks      ClickEvent[]
+}
+
+// Canlı Yayınlar
+model LiveStream {
+  id           String   @id @default(cuid())
+  title        String
+  description  String?
+  embedUrl     String
+  thumbnailUrl String?
+  isLive       Boolean  @default(false)
+  viewCount    Int      @default(0)
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+}
+
+// Videolar
+model Video {
+  id           String   @id @default(cuid())
+  title        String
+  description  String?
+  embedUrl     String
+  thumbnailUrl String?
+  viewCount    Int      @default(0)
+  createdAt    DateTime @default(now())
+}
+
+// Bannerlar - pozisyonlar: top-1, top-2, top-3, left, right
+model Banner {
+  id          String       @id @default(cuid())
+  imageUrl    String
+  linkUrl     String?
+  position    String       // top-1, top-2, top-3, left, right
+  isActive    Boolean      @default(true)
+  clickCount  Int          @default(0)
+  createdAt   DateTime     @default(now())
+  clicks      ClickEvent[]
+}
+
+// Site Ayarları
+model SiteSettings {
+  id          String  @id @default(cuid())
+  siteName    String  @default("Sponsor Portal")
+  logoUrl     String?
+  telegramUrl String?
+}
+
+// Ziyaretçi İstatistikleri
+model Visitor {
+  visitorId   String   @id
+  visitorHash String   @unique
+  createdAt   DateTime @default(now())
+}
+
+model Visit {
+  id        String   @id @default(cuid())
+  visitorId String
+  page      String   @default("/")
+  visitedAt DateTime @default(now())
+}
+
+// Tıklanma İstatistikleri
+model ClickEvent {
+  id             String        @id @default(cuid())
+  type           String        // sponsor, popup, event, banner
+  targetId       String
+  visitorHash    String?
+  createdAt      DateTime      @default(now())
+
+  // İlişkiler (opsiyonel)
+  sponsor        Sponsor?      @relation(fields: [sponsorId], references: [id], onDelete: Cascade)
+  sponsorId      String?
+  popupSponsor   PopupSponsor? @relation(fields: [popupSponsorId], references: [id], onDelete: Cascade)
+  popupSponsorId String?
+  event          Event?        @relation(fields: [eventId], references: [id], onDelete: Cascade)
+  eventId        String?
+  banner         Banner?       @relation(fields: [bannerId], references: [id], onDelete: Cascade)
+  bannerId       String?
+}
+
+// Sosyal Medya Linkleri
+model SocialMedia {
+  id        String   @id @default(cuid())
+  platform  String
+  name      String
+  linkUrl   String
+  isActive  Boolean  @default(true)
+  sortOrder Int      @default(0)
+  createdAt DateTime @default(now())
+}
