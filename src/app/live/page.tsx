@@ -20,14 +20,42 @@ interface Video {
   thumbnailUrl: string | null;
 }
 
+interface YouTubeLive {
+  isLive: boolean;
+  liveVideoId: string | null;
+  liveTitle: string | null;
+  liveThumbnail: string | null;
+  embedUrl: string | null;
+  channelTitle: string;
+}
+
+interface YouTubeVideo {
+  videoId: string;
+  title: string;
+  description: string;
+  thumbnailUrl: string;
+  embedUrl: string;
+}
+
 export default function LivePage() {
   const [streams, setStreams] = useState<LiveStream[]>([]);
   const [videos, setVideos] = useState<Video[]>([]);
+  const [youtubeVideos, setYoutubeVideos] = useState<YouTubeVideo[]>([]);
+  const [youtubeLive, setYoutubeLive] = useState<YouTubeLive | null>(null);
   const [selectedVideo, setSelectedVideo] = useState<Video | null>(null);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     const fetchData = async () => {
       try {
+        // Önce settings'i al
+        const settingsRes = await fetch("/api/settings");
+        let settings = null;
+        if (settingsRes.ok) {
+          settings = await settingsRes.json();
+        }
+
+        // Normal streams ve videos
         const [streamsRes, videosRes] = await Promise.all([
           fetch("/api/livestreams"),
           fetch("/api/videos"),
@@ -35,8 +63,42 @@ export default function LivePage() {
 
         if (streamsRes.ok) setStreams(await streamsRes.json());
         if (videosRes.ok) setVideos(await videosRes.json());
+
+        // YouTube entegrasyonu varsa canlı yayın ve videoları çek
+        if (settings?.youtubeChannelId && settings?.youtubeApiKey) {
+          // Canlı yayın kontrolü
+          const liveRes = await fetch("/api/youtube/channel", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+              channelId: settings.youtubeChannelId,
+              apiKey: settings.youtubeApiKey,
+            }),
+          });
+          if (liveRes.ok) {
+            const liveData = await liveRes.json();
+            setYoutubeLive(liveData);
+          }
+
+          // YouTube videoları
+          const ytVideosRes = await fetch("/api/youtube/videos", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+              channelId: settings.youtubeChannelId,
+              apiKey: settings.youtubeApiKey,
+              maxResults: 12,
+            }),
+          });
+          if (ytVideosRes.ok) {
+            const ytData = await ytVideosRes.json();
+            setYoutubeVideos(ytData.videos || []);
+          }
+        }
       } catch (error) {
         console.error("Fetch error:", error);
+      } finally {
+        setLoading(false);
       }
     };
     fetchData();
@@ -44,6 +106,9 @@ export default function LivePage() {
 
   const activeLiveStream = streams.find((s) => s.isLive);
   const pastStreams = streams.filter((s) => !s.isLive);
+
+  // YouTube canlı yayın aktif mi?
+  const hasYoutubeLive = youtubeLive?.isLive && youtubeLive?.embedUrl;
 
   return (
     <MainLayout>
@@ -54,8 +119,47 @@ export default function LivePage() {
             Canli yayinlar ve gecmis videolar
           </p>
 
-          {/* Active Live Stream */}
-          {activeLiveStream && (
+          {loading && (
+            <div className="text-center py-12">
+              <div className="w-8 h-8 border-2 border-[var(--primary)] border-t-transparent rounded-full animate-spin mx-auto mb-4" />
+              <p className="text-[var(--text-muted)]">Yukleniyor...</p>
+            </div>
+          )}
+
+          {/* YouTube Live Stream */}
+          {hasYoutubeLive && (
+            <section className="mb-10">
+              <div className="flex items-center gap-3 mb-4">
+                <span className="badge badge-live flex items-center gap-2">
+                  <span className="w-2 h-2 rounded-full bg-white animate-pulse" />
+                  CANLI
+                </span>
+                <div className="flex items-center gap-2">
+                  <svg className="w-5 h-5 text-red-500" fill="currentColor" viewBox="0 0 24 24">
+                    <path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/>
+                  </svg>
+                  <h2 className="text-xl font-bold text-white">{youtubeLive?.liveTitle}</h2>
+                </div>
+              </div>
+              <div className="relative bg-black rounded-xl overflow-hidden">
+                <div className="aspect-video">
+                  <iframe
+                    src={youtubeLive?.embedUrl || ""}
+                    title={youtubeLive?.liveTitle || "Canli Yayin"}
+                    className="w-full h-full"
+                    allowFullScreen
+                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                  />
+                </div>
+              </div>
+              <p className="mt-2 text-sm text-[var(--text-muted)]">
+                {youtubeLive?.channelTitle} kanalindan canli yayin
+              </p>
+            </section>
+          )}
+
+          {/* Active Manual Live Stream */}
+          {activeLiveStream && !hasYoutubeLive && (
             <section className="mb-10">
               <div className="flex items-center gap-3 mb-4">
                 <span className="badge badge-live flex items-center gap-2">
@@ -82,7 +186,7 @@ export default function LivePage() {
           )}
 
           {/* No Live Stream */}
-          {!activeLiveStream && (
+          {!activeLiveStream && !hasYoutubeLive && !loading && (
             <section className="mb-10">
               <div className="text-center py-16 bg-[var(--surface)] rounded-xl border border-[var(--border)]">
                 <div className="w-20 h-20 mx-auto rounded-full bg-red-500/20 flex items-center justify-center mb-4">
@@ -92,6 +196,51 @@ export default function LivePage() {
                 </div>
                 <h3 className="text-xl font-semibold text-white mb-2">Simdilik canli yayin yok</h3>
                 <p className="text-[var(--text-muted)]">Yayin baslayinca burada gosterilecek</p>
+              </div>
+            </section>
+          )}
+
+          {/* YouTube Videos */}
+          {youtubeVideos.length > 0 && (
+            <section className="mb-10">
+              <h2 className="text-xl font-bold text-white mb-4 flex items-center gap-2">
+                <svg className="w-5 h-5 text-red-500" fill="currentColor" viewBox="0 0 24 24">
+                  <path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/>
+                </svg>
+                YouTube Videolari
+              </h2>
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+                {youtubeVideos.map((video) => (
+                  <div
+                    key={video.videoId}
+                    className="card cursor-pointer"
+                    onClick={() => setSelectedVideo({
+                      id: video.videoId,
+                      title: video.title,
+                      description: video.description,
+                      embedUrl: video.embedUrl,
+                      thumbnailUrl: video.thumbnailUrl,
+                    })}
+                  >
+                    <div className="relative">
+                      <img
+                        src={video.thumbnailUrl}
+                        alt={video.title}
+                        className="w-full h-40 object-cover"
+                      />
+                      <div className="absolute inset-0 bg-black/40 flex items-center justify-center opacity-0 hover:opacity-100 transition-opacity">
+                        <div className="w-14 h-14 rounded-full bg-white/90 flex items-center justify-center">
+                          <svg className="w-6 h-6 text-black ml-1" fill="currentColor" viewBox="0 0 24 24">
+                            <path d="M8 5v14l11-7z" />
+                          </svg>
+                        </div>
+                      </div>
+                    </div>
+                    <div className="p-4">
+                      <h3 className="font-semibold text-white truncate">{video.title}</h3>
+                    </div>
+                  </div>
+                ))}
               </div>
             </section>
           )}
@@ -142,7 +291,7 @@ export default function LivePage() {
             </section>
           )}
 
-          {/* Videos */}
+          {/* Manual Videos */}
           {videos.length > 0 && (
             <section>
               <h2 className="text-xl font-bold text-white mb-4">Videolar</h2>
