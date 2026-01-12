@@ -50,6 +50,11 @@ interface SocialMedia {
   linkUrl: string;
 }
 
+interface SiteSettings {
+  siteName: string;
+  logoUrl: string | null;
+}
+
 interface DataContextType {
   banners: Banner[];
   sponsors: Sponsor[];
@@ -57,12 +62,56 @@ interface DataContextType {
   liveStreams: LiveStream[];
   videos: Video[];
   socialMedia: SocialMedia[];
+  siteSettings: SiteSettings | null;
   isLoading: boolean;
   isLoaded: boolean;
   refetch: () => Promise<void>;
 }
 
 const DataContext = createContext<DataContextType | null>(null);
+
+// Global Loading Screen Component
+function GlobalLoadingScreen() {
+  return (
+    <div className="fixed inset-0 z-[9999] bg-[var(--background)] flex flex-col items-center justify-center">
+      {/* Animated Background */}
+      <div className="absolute inset-0 overflow-hidden">
+        <div className="absolute top-1/4 left-1/4 w-96 h-96 bg-[var(--primary)]/10 rounded-full blur-3xl animate-pulse" />
+        <div className="absolute bottom-1/4 right-1/4 w-96 h-96 bg-purple-500/10 rounded-full blur-3xl animate-pulse" style={{ animationDelay: '1s' }} />
+      </div>
+
+      {/* Content */}
+      <div className="relative z-10 text-center">
+        {/* Logo/Spinner Container */}
+        <div className="relative mb-8">
+          {/* Outer Ring */}
+          <div className="w-24 h-24 rounded-full border-4 border-[var(--surface)] absolute inset-0" />
+          {/* Spinning Ring */}
+          <div className="w-24 h-24 rounded-full border-4 border-transparent border-t-[var(--primary)] animate-spin" />
+          {/* Inner Icon */}
+          <div className="absolute inset-0 flex items-center justify-center">
+            <div className="w-12 h-12 rounded-xl gradient-main flex items-center justify-center">
+              <svg className="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" />
+              </svg>
+            </div>
+          </div>
+        </div>
+
+        {/* Text */}
+        <h2 className="text-2xl font-bold text-white mb-2">Yukleniyor</h2>
+        <p className="text-[var(--text-muted)]">Lutfen bekleyin...</p>
+
+        {/* Loading Dots */}
+        <div className="flex items-center justify-center gap-1.5 mt-6">
+          <div className="w-2 h-2 rounded-full bg-[var(--primary)] animate-bounce" style={{ animationDelay: '0ms' }} />
+          <div className="w-2 h-2 rounded-full bg-[var(--primary)] animate-bounce" style={{ animationDelay: '150ms' }} />
+          <div className="w-2 h-2 rounded-full bg-[var(--primary)] animate-bounce" style={{ animationDelay: '300ms' }} />
+        </div>
+      </div>
+    </div>
+  );
+}
 
 export function DataProvider({ children }: { children: ReactNode }) {
   const [banners, setBanners] = useState<Banner[]>([]);
@@ -71,6 +120,7 @@ export function DataProvider({ children }: { children: ReactNode }) {
   const [liveStreams, setLiveStreams] = useState<LiveStream[]>([]);
   const [videos, setVideos] = useState<Video[]>([]);
   const [socialMedia, setSocialMedia] = useState<SocialMedia[]>([]);
+  const [siteSettings, setSiteSettings] = useState<SiteSettings | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [isLoaded, setIsLoaded] = useState(false);
 
@@ -85,7 +135,8 @@ export function DataProvider({ children }: { children: ReactNode }) {
         eventsRes,
         streamsRes,
         videosRes,
-        socialRes
+        socialRes,
+        settingsRes
       ] = await Promise.all([
         fetch("/api/banners"),
         fetch("/api/sponsors"),
@@ -93,6 +144,7 @@ export function DataProvider({ children }: { children: ReactNode }) {
         fetch("/api/livestreams"),
         fetch("/api/videos"),
         fetch("/api/social-media"),
+        fetch("/api/settings"),
       ]);
 
       if (bannersRes.ok) setBanners(await bannersRes.json());
@@ -101,10 +153,13 @@ export function DataProvider({ children }: { children: ReactNode }) {
       if (streamsRes.ok) setLiveStreams(await streamsRes.json());
       if (videosRes.ok) setVideos(await videosRes.json());
       if (socialRes.ok) setSocialMedia(await socialRes.json());
+      if (settingsRes.ok) setSiteSettings(await settingsRes.json());
 
       setIsLoaded(true);
     } catch (error) {
       console.error("Data fetch error:", error);
+      // Hata olsa bile loading'i kapat ki kullanıcı takılmasın
+      setIsLoaded(true);
     } finally {
       setIsLoading(false);
     }
@@ -119,6 +174,11 @@ export function DataProvider({ children }: { children: ReactNode }) {
     fetchAllData();
   }, []);
 
+  // İlk yüklenme tamamlanana kadar loading ekranı göster
+  if (!isLoaded) {
+    return <GlobalLoadingScreen />;
+  }
+
   return (
     <DataContext.Provider
       value={{
@@ -128,6 +188,7 @@ export function DataProvider({ children }: { children: ReactNode }) {
         liveStreams,
         videos,
         socialMedia,
+        siteSettings,
         isLoading,
         isLoaded,
         refetch,
