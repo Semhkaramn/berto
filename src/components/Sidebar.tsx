@@ -40,6 +40,17 @@ const socialColors: Record<string, string> = {
   twitch: "#9146FF",
 };
 
+const socialNames: Record<string, string> = {
+  telegram: "Telegram",
+  instagram: "Instagram",
+  twitter: "X (Twitter)",
+  youtube: "YouTube",
+  discord: "Discord",
+  tiktok: "TikTok",
+  facebook: "Facebook",
+  twitch: "Twitch",
+};
+
 export default function Sidebar() {
   const pathname = usePathname();
   const [socialMedia, setSocialMedia] = useState<SocialMedia[]>([]);
@@ -59,49 +70,109 @@ export default function Sidebar() {
   }, []);
 
   return (
-    <aside className="hidden lg:flex flex-col w-64 min-h-screen pt-20 pb-6 px-4 border-r border-[var(--border)] bg-[var(--surface)]">
-      <nav className="flex-1 space-y-2">
-        {menuItems.map((item) => {
-          const isActive = pathname === item.href;
-          return (
-            <Link
-              key={item.href}
-              href={item.href}
-              className={`flex items-center gap-3 px-4 py-3 rounded-lg transition-all ${
-                isActive
-                  ? "bg-[var(--primary)] text-black font-semibold"
-                  : "text-[var(--text-muted)] hover:bg-[var(--surface-hover)] hover:text-white"
-              }`}
-            >
-              <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d={item.icon} />
-              </svg>
-              <span>{item.label}</span>
-              {item.href === "/live" && (
-                <span className="ml-auto w-2 h-2 rounded-full bg-red-500 animate-pulse" />
-              )}
-            </Link>
-          );
-        })}
-      </nav>
+    <>
+      {/* Desktop Sidebar - Sol taraf, tam yükseklik */}
+      <aside className="hidden md:flex flex-col w-64 fixed left-0 top-0 h-screen pt-20 pb-6 px-4 border-r border-[var(--border)] bg-[var(--surface)] z-40">
+        <nav className="flex-1 space-y-2">
+          {menuItems.map((item) => {
+            const isActive = pathname === item.href;
+            return (
+              <Link
+                key={item.href}
+                href={item.href}
+                className={`flex items-center gap-3 px-4 py-3 rounded-lg transition-all ${
+                  isActive
+                    ? "bg-[var(--primary)] text-black font-semibold"
+                    : "text-[var(--text-muted)] hover:bg-[var(--surface-hover)] hover:text-white"
+                }`}
+              >
+                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d={item.icon} />
+                </svg>
+                <span>{item.label}</span>
+                {item.href === "/live" && (
+                  <span className="ml-auto w-2 h-2 rounded-full bg-red-500 animate-pulse" />
+                )}
+              </Link>
+            );
+          })}
+        </nav>
 
-      {/* Social Media Links */}
-      {socialMedia.length > 0 && (
-        <div className="pt-4 border-t border-[var(--border)]">
-          <p className="px-4 text-xs text-[var(--text-muted)] uppercase tracking-wider mb-3">Sosyal Medya</p>
-          <div className="flex flex-wrap gap-2 px-4">
-            {socialMedia.map((social) => (
+        {/* Social Media Links - Icon + İsim */}
+        {socialMedia.length > 0 && (
+          <div className="pt-4 border-t border-[var(--border)]">
+            <p className="px-4 text-xs text-[var(--text-muted)] uppercase tracking-wider mb-3">Sosyal Medya</p>
+            <div className="space-y-1">
+              {socialMedia.map((social) => (
+                <a
+                  key={social.id}
+                  href={social.linkUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="flex items-center gap-3 px-4 py-2 rounded-lg transition-all text-[var(--text-muted)] hover:bg-[var(--surface-hover)] hover:text-white"
+                >
+                  <div
+                    className="w-8 h-8 rounded-lg flex items-center justify-center flex-shrink-0"
+                    style={{ backgroundColor: `${socialColors[social.platform] || '#666'}20` }}
+                  >
+                    <svg
+                      className="w-4 h-4"
+                      fill={socialColors[social.platform] || '#fff'}
+                      viewBox="0 0 24 24"
+                    >
+                      <path d={socialIcons[social.platform] || ""} />
+                    </svg>
+                  </div>
+                  <span className="text-sm">{social.name || socialNames[social.platform] || social.platform}</span>
+                </a>
+              ))}
+            </div>
+          </div>
+        )}
+      </aside>
+
+      {/* Mobile Sidebar - Sol tarafta dar sidebar */}
+      <aside className="md:hidden fixed left-0 top-16 bottom-0 w-16 bg-[var(--surface)] border-r border-[var(--border)] z-40 flex flex-col py-4">
+        <nav className="flex-1 flex flex-col items-center gap-2">
+          {menuItems.map((item) => {
+            const isActive = pathname === item.href;
+            return (
+              <Link
+                key={item.href}
+                href={item.href}
+                className={`w-12 h-12 rounded-xl flex items-center justify-center transition-all relative ${
+                  isActive
+                    ? "bg-[var(--primary)] text-black"
+                    : "text-[var(--text-muted)] hover:bg-[var(--surface-hover)] hover:text-white"
+                }`}
+                title={item.label}
+              >
+                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d={item.icon} />
+                </svg>
+                {item.href === "/live" && (
+                  <span className="absolute top-1 right-1 w-2 h-2 rounded-full bg-red-500 animate-pulse" />
+                )}
+              </Link>
+            );
+          })}
+        </nav>
+
+        {/* Mobile Social Media Icons */}
+        {socialMedia.length > 0 && (
+          <div className="pt-2 border-t border-[var(--border)] flex flex-col items-center gap-2">
+            {socialMedia.slice(0, 4).map((social) => (
               <a
                 key={social.id}
                 href={social.linkUrl}
                 target="_blank"
                 rel="noopener noreferrer"
-                title={social.name}
-                className="w-9 h-9 rounded-lg flex items-center justify-center transition-all hover:scale-110"
+                title={social.name || socialNames[social.platform]}
+                className="w-10 h-10 rounded-lg flex items-center justify-center transition-all hover:scale-110"
                 style={{ backgroundColor: `${socialColors[social.platform] || '#666'}20` }}
               >
                 <svg
-                  className="w-5 h-5"
+                  className="w-4 h-4"
                   fill={socialColors[social.platform] || '#fff'}
                   viewBox="0 0 24 24"
                 >
@@ -110,10 +181,8 @@ export default function Sidebar() {
               </a>
             ))}
           </div>
-        </div>
-      )}
-
-
-    </aside>
+        )}
+      </aside>
+    </>
   );
 }
