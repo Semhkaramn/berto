@@ -95,10 +95,22 @@ function GlobalLoadingScreen({ onComplete }: { onComplete: () => void }) {
   const [videoError, setVideoError] = useState(false);
   const [isClosing, setIsClosing] = useState(false);
   const [animationComplete, setAnimationComplete] = useState(false);
+  const [isPortrait, setIsPortrait] = useState(true);
   const videoRef = useRef<HTMLVideoElement>(null);
 
+  // Ekran yönünü kontrol et
+  useEffect(() => {
+    const checkOrientation = () => {
+      setIsPortrait(window.innerHeight > window.innerWidth);
+    };
+
+    checkOrientation();
+    window.addEventListener('resize', checkOrientation);
+    return () => window.removeEventListener('resize', checkOrientation);
+  }, []);
+
   const handleVideoEnd = () => {
-    // Video bittiğinde animasyonu başlat
+    // Video bittiğinde fade out animasyonunu başlat
     setIsClosing(true);
   };
 
@@ -116,7 +128,7 @@ function GlobalLoadingScreen({ onComplete }: { onComplete: () => void }) {
       const timer = setTimeout(() => {
         setAnimationComplete(true);
         onComplete();
-      }, 800);
+      }, 1000); // Fade out süresi
       return () => clearTimeout(timer);
     }
   }, [isClosing, animationComplete, onComplete]);
@@ -129,64 +141,48 @@ function GlobalLoadingScreen({ onComplete }: { onComplete: () => void }) {
   // Video varsa göster
   if (!videoError) {
     return (
-      <div className="fixed inset-0 z-[9999] pointer-events-none">
-        {/* Sol perde */}
-        <div
-          className={`absolute top-0 left-0 w-1/2 h-full bg-black z-20 transition-transform duration-700 ease-in-out ${
-            isClosing ? '-translate-x-full' : 'translate-x-0'
-          }`}
-          style={{ willChange: 'transform' }}
-        />
-        {/* Sağ perde */}
-        <div
-          className={`absolute top-0 right-0 w-1/2 h-full bg-black z-20 transition-transform duration-700 ease-in-out ${
-            isClosing ? 'translate-x-full' : 'translate-x-0'
-          }`}
-          style={{ willChange: 'transform' }}
-        />
-
-        {/* Video - perdelerin arkasında */}
-        <div className={`absolute inset-0 flex items-center justify-center bg-black z-10 transition-opacity duration-300 ${
+      <div
+        className={`fixed inset-0 z-[99999] bg-black transition-opacity duration-1000 ease-out ${
           isClosing ? 'opacity-0' : 'opacity-100'
-        }`}>
-          <video
-            ref={videoRef}
-            autoPlay
-            muted
-            playsInline
-            className="w-full h-full object-contain"
-            onEnded={handleVideoEnd}
-            onError={handleVideoError}
-          >
-            <source src="/load.webm" type="video/webm" />
-          </video>
-        </div>
+        }`}
+        style={{
+          willChange: 'opacity',
+          pointerEvents: isClosing ? 'none' : 'auto'
+        }}
+      >
+        {/* Video - tam ekran */}
+        <video
+          ref={videoRef}
+          autoPlay
+          muted
+          playsInline
+          className="absolute inset-0 w-full h-full"
+          style={{
+            // Dikey ekranlarda tam görünsün, yatay ekranlarda kırpılsın
+            objectFit: isPortrait ? 'contain' : 'cover',
+          }}
+          onEnded={handleVideoEnd}
+          onError={handleVideoError}
+        >
+          <source src="/load.webm" type="video/webm" />
+        </video>
       </div>
     );
   }
 
   // Video yoksa veya hata varsa basit loading ekranı
   return (
-    <div className="fixed inset-0 z-[9999] pointer-events-none">
-      {/* Sol perde */}
-      <div
-        className={`absolute top-0 left-0 w-1/2 h-full bg-[#0a0a0a] z-20 transition-transform duration-700 ease-in-out ${
-          isClosing ? '-translate-x-full' : 'translate-x-0'
-        }`}
-        style={{ willChange: 'transform' }}
-      />
-      {/* Sağ perde */}
-      <div
-        className={`absolute top-0 right-0 w-1/2 h-full bg-[#0a0a0a] z-20 transition-transform duration-700 ease-in-out ${
-          isClosing ? 'translate-x-full' : 'translate-x-0'
-        }`}
-        style={{ willChange: 'transform' }}
-      />
-
-      {/* Loading content - perdelerin arkasında */}
-      <div className={`absolute inset-0 flex flex-col items-center justify-center bg-[#0a0a0a] z-10 transition-opacity duration-300 ${
+    <div
+      className={`fixed inset-0 z-[99999] bg-[#0a0a0a] transition-opacity duration-1000 ease-out ${
         isClosing ? 'opacity-0' : 'opacity-100'
-      }`}>
+      }`}
+      style={{
+        willChange: 'opacity',
+        pointerEvents: isClosing ? 'none' : 'auto'
+      }}
+    >
+      {/* Loading content */}
+      <div className="absolute inset-0 flex flex-col items-center justify-center">
         {/* Animated Background */}
         <div className="absolute inset-0 overflow-hidden">
           <div className="absolute top-1/4 left-1/4 w-96 h-96 bg-[var(--primary)]/10 rounded-full blur-3xl animate-pulse" />
