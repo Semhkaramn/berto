@@ -7,7 +7,7 @@ import { useData } from "@/lib/DataContext";
 import { normalizeUrl } from "@/lib/utils";
 
 export default function HomePage() {
-  const { banners, sponsors, events, liveStreams, isLoading } = useData();
+  const { banners, sponsors, events, liveStreams, telegramChannels, isLoading } = useData();
 
   const getBannerByPosition = (position: string) =>
     banners.find((b) => b.position === position);
@@ -122,6 +122,70 @@ export default function HomePage() {
                     </div>
                   </div>
                 )}
+              </div>
+            )}
+
+            {/* Telegram Kanalları Kartları */}
+            {telegramChannels.length > 0 && (
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-6">
+                {telegramChannels.slice(0, 2).map((channel) => (
+                  <a
+                    key={channel.id}
+                    href={`https://t.me/${channel.username}`}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="group bg-gradient-to-br from-[#0088cc]/20 to-[#0088cc]/5 border border-[#0088cc]/30 rounded-xl p-4 hover:border-[#0088cc]/60 hover:from-[#0088cc]/30 hover:to-[#0088cc]/10 transition-all duration-300"
+                  >
+                    <div className="flex items-center gap-4">
+                      {/* Kanal Fotoğrafı */}
+                      <div className="w-14 h-14 sm:w-16 sm:h-16 rounded-full bg-[#0088cc]/30 flex items-center justify-center overflow-hidden flex-shrink-0 group-hover:scale-105 transition-transform duration-300">
+                        {channel.photoUrl ? (
+                          <img
+                            src={channel.photoUrl}
+                            alt={channel.title || channel.username}
+                            className="w-full h-full object-cover"
+                          />
+                        ) : (
+                          <svg className="w-7 h-7 sm:w-8 sm:h-8 text-[#0088cc]" fill="currentColor" viewBox="0 0 24 24">
+                            <path d="M11.944 0A12 12 0 0 0 0 12a12 12 0 0 0 12 12 12 12 0 0 0 12-12A12 12 0 0 0 12 0a12 12 0 0 0-.056 0zm4.962 7.224c.1-.002.321.023.465.14a.506.506 0 0 1 .171.325c.016.093.036.306.02.472-.18 1.898-.962 6.502-1.36 8.627-.168.9-.499 1.201-.82 1.23-.696.065-1.225-.46-1.9-.902-1.056-.693-1.653-1.124-2.678-1.8-1.185-.78-.417-1.21.258-1.91.177-.184 3.247-2.977 3.307-3.23.007-.032.014-.15-.056-.212s-.174-.041-.249-.024c-.106.024-1.793 1.14-5.061 3.345-.48.33-.913.49-1.302.48-.428-.008-1.252-.241-1.865-.44-.752-.245-1.349-.374-1.297-.789.027-.216.325-.437.893-.663 3.498-1.524 5.83-2.529 6.998-3.014 3.332-1.386 4.025-1.627 4.476-1.635z"/>
+                          </svg>
+                        )}
+                      </div>
+
+                      {/* Kanal Bilgileri */}
+                      <div className="flex-1 min-w-0">
+                        <div className="flex items-center gap-2 mb-1">
+                          <h3 className="font-bold text-white truncate group-hover:text-[#0088cc] transition-colors">
+                            {channel.title || channel.username}
+                          </h3>
+                          <svg className="w-4 h-4 text-[#0088cc] flex-shrink-0" fill="currentColor" viewBox="0 0 24 24">
+                            <path d="M11.944 0A12 12 0 0 0 0 12a12 12 0 0 0 12 12 12 12 0 0 0 12-12A12 12 0 0 0 12 0a12 12 0 0 0-.056 0zm4.962 7.224c.1-.002.321.023.465.14a.506.506 0 0 1 .171.325c.016.093.036.306.02.472-.18 1.898-.962 6.502-1.36 8.627-.168.9-.499 1.201-.82 1.23-.696.065-1.225-.46-1.9-.902-1.056-.693-1.653-1.124-2.678-1.8-1.185-.78-.417-1.21.258-1.91.177-.184 3.247-2.977 3.307-3.23.007-.032.014-.15-.056-.212s-.174-.041-.249-.024c-.106.024-1.793 1.14-5.061 3.345-.48.33-.913.49-1.302.48-.428-.008-1.252-.241-1.865-.44-.752-.245-1.349-.374-1.297-.789.027-.216.325-.437.893-.663 3.498-1.524 5.83-2.529 6.998-3.014 3.332-1.386 4.025-1.627 4.476-1.635z"/>
+                          </svg>
+                        </div>
+                        <p className="text-sm text-[#0088cc]">@{channel.username}</p>
+                        {channel.memberCount && (
+                          <p className="text-xs text-[var(--text-muted)] mt-1">
+                            {channel.memberCount.toLocaleString()} uye
+                          </p>
+                        )}
+                      </div>
+
+                      {/* Ok İkonu */}
+                      <div className="w-8 h-8 rounded-full bg-[#0088cc]/20 flex items-center justify-center group-hover:bg-[#0088cc]/40 transition-colors flex-shrink-0">
+                        <svg className="w-4 h-4 text-[#0088cc]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                        </svg>
+                      </div>
+                    </div>
+
+                    {/* Açıklama */}
+                    {channel.description && (
+                      <p className="text-xs text-[var(--text-muted)] mt-3 line-clamp-2 pl-18 sm:pl-20">
+                        {channel.description}
+                      </p>
+                    )}
+                  </a>
+                ))}
               </div>
             )}
 
