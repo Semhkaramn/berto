@@ -116,18 +116,6 @@ export default function SettingsPage() {
                 placeholder="https://... (bos birakilirsa varsayilan logo kullanilir)"
               />
 
-              <div>
-                <label className="block text-sm font-medium text-white mb-2">Telegram URL</label>
-                <input
-                  type="text"
-                  value={settings.telegramUrl || ""}
-                  onChange={(e) => setSettings({ ...settings, telegramUrl: e.target.value || null })}
-                  className="input"
-                  placeholder="https://t.me/username"
-                />
-                <p className="text-xs text-[var(--text-muted)] mt-1">Telegram kanal veya grup linki</p>
-              </div>
-
               {/* YouTube Ayarları */}
               <div className="pt-4 border-t border-[var(--border)]">
                 <h3 className="text-lg font-semibold text-white mb-4 flex items-center gap-2">
@@ -158,7 +146,7 @@ export default function SettingsPage() {
                       </button>
                     </div>
                     <p className="text-xs text-[var(--text-muted)] mt-1">
-                      Ornek: @berto veya UCxxxxxxxxxxxxxxxx
+                      Ornek: @kullanıcıadı veya UCxxxxxxxxxxxxxxxx
                     </p>
                   </div>
 
@@ -226,21 +214,6 @@ export default function SettingsPage() {
                 {saving ? "Kaydediliyor..." : "Kaydet"}
               </button>
             </div>
-          </div>
-
-          {/* Danger Zone */}
-          <div className="mt-6 bg-[var(--surface)] rounded-xl border border-red-500/30 p-6">
-            <h3 className="text-lg font-semibold text-red-400 mb-4">Tehlikeli Bolge</h3>
-            <p className="text-sm text-[var(--text-muted)] mb-4">
-              Bu alandaki islemler geri alinamaz. Dikkatli olun.
-            </p>
-            <button
-              type="button"
-              onClick={() => alert("Bu ozellik henuz aktif degil")}
-              className="btn btn-danger"
-            >
-              Tum Verileri Sil
-            </button>
           </div>
         </div>
       </div>
