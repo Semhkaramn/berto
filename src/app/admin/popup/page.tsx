@@ -3,6 +3,7 @@
 import { useState, useEffect } from "react";
 import AdminLayout from "@/components/AdminLayout";
 import ImageUpload from "@/components/ImageUpload";
+import { normalizeUrl } from "@/lib/utils";
 
 interface PopupSponsor {
   id: string;
@@ -44,8 +45,12 @@ export default function PopupPage() {
   const handleSubmit = async () => {
     const method = editingItem ? "PUT" : "POST";
     const url = editingItem ? `/api/popup-sponsors/${editingItem.id}` : "/api/popup-sponsors";
+    const normalizedData = {
+      ...formData,
+      linkUrl: normalizeUrl(formData.linkUrl),
+    };
     try {
-      const res = await fetch(url, { method, headers: { "Content-Type": "application/json" }, body: JSON.stringify(formData) });
+      const res = await fetch(url, { method, headers: { "Content-Type": "application/json" }, body: JSON.stringify(normalizedData) });
       if (res.ok) { setShowModal(false); fetchPopups(); }
     } catch (error) { console.error("Submit error:", error); }
   };
