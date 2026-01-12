@@ -1,35 +1,10 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useData } from "@/lib/DataContext";
 import { normalizeUrl } from "@/lib/utils";
 
-interface Stats {
-  totalVisitors: number;
-  uniqueVisitors: number;
-  todayVisitors: number;
-}
-
 export default function Footer() {
-  const [stats, setStats] = useState<Stats>({
-    totalVisitors: 0,
-    uniqueVisitors: 0,
-    todayVisitors: 0,
-  });
-
-  useEffect(() => {
-    const fetchStats = async () => {
-      try {
-        const res = await fetch("/api/stats");
-        if (res.ok) {
-          const data = await res.json();
-          setStats(data);
-        }
-      } catch (error) {
-        console.error("Stats fetch error:", error);
-      }
-    };
-    fetchStats();
-  }, []);
+  const { stats } = useData();
 
   return (
     <footer className="border-t border-[var(--border)] bg-[var(--surface)] py-4 px-4 md:px-6">
