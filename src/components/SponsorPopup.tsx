@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { normalizeUrl } from "@/lib/utils";
 
 interface PopupSponsor {
   id: string;
@@ -61,7 +62,7 @@ export default function SponsorPopup({ enabled = true }: SponsorPopupProps) {
         </button>
 
         {/* Sponsor Image */}
-        <a href={popup.linkUrl} target="_blank" rel="noopener noreferrer" className="block relative">
+        <a href={normalizeUrl(popup.linkUrl)} target="_blank" rel="noopener noreferrer" className="block relative">
           <div className="w-full h-64 bg-gradient-to-br from-zinc-900 to-zinc-950 flex items-center justify-center p-6">
             <img
               src={popup.imageUrl}
@@ -74,7 +75,7 @@ export default function SponsorPopup({ enabled = true }: SponsorPopupProps) {
             <span className="badge badge-main mb-2">SPONSOR</span>
             <h3 className="text-xl font-bold text-white mb-1">{popup.title}</h3>
             {popup.description && (
-              <p className="text-sm text-gray-300 line-clamp-2">{popup.description}</p>
+              <p className="text-sm text-gray-300 whitespace-pre-line">{popup.description}</p>
             )}
           </div>
         </a>
@@ -82,7 +83,7 @@ export default function SponsorPopup({ enabled = true }: SponsorPopupProps) {
         {/* Action Button */}
         <div className="p-4 flex gap-3 bg-zinc-900">
           <a
-            href={popup.linkUrl}
+            href={normalizeUrl(popup.linkUrl)}
             target="_blank"
             rel="noopener noreferrer"
             className="btn btn-primary flex-1"
