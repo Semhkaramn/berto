@@ -93,9 +93,6 @@ export default function SponsorsPage() {
             <h1 className="text-4xl md:text-5xl font-bold mb-4">
               <span className="gradient-text">Sponsorlarimiz</span>
             </h1>
-            <p className="text-[var(--text-muted)] text-lg max-w-2xl mx-auto">
-              Bizi destekleyen degerli sponsorlarimiza tesekkur ederiz
-            </p>
           </div>
 
           {/* Search Bar */}
