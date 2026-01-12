@@ -103,10 +103,12 @@ model Banner {
 
 // Site Ayarları
 model SiteSettings {
-  id          String  @id @default(cuid())
-  siteName    String  @default("Sponsor Portal")
-  logoUrl     String?
-  telegramUrl String?
+  id               String  @id @default(cuid())
+  siteName         String  @default("Sponsor Portal")
+  logoUrl          String?
+  telegramUrl      String?
+  youtubeChannelId String?
+  youtubeApiKey    String?
 }
 
 // Ziyaretçi İstatistikleri
