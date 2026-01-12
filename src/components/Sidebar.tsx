@@ -18,6 +18,11 @@ interface SocialMedia {
   linkUrl: string;
 }
 
+interface SidebarProps {
+  isOpen?: boolean;
+  onClose?: () => void;
+}
+
 const socialIcons: Record<string, string> = {
   telegram: "M11.944 0A12 12 0 0 0 0 12a12 12 0 0 0 12 12 12 12 0 0 0 12-12A12 12 0 0 0 12 0a12 12 0 0 0-.056 0zm4.962 7.224c.1-.002.321.023.465.14a.506.506 0 0 1 .171.325c.016.093.036.306.02.472-.18 1.898-.962 6.502-1.36 8.627-.168.9-.499 1.201-.82 1.23-.696.065-1.225-.46-1.9-.902-1.056-.693-1.653-1.124-2.678-1.8-1.185-.78-.417-1.21.258-1.91.177-.184 3.247-2.977 3.307-3.23.007-.032.014-.15-.056-.212s-.174-.041-.249-.024c-.106.024-1.793 1.14-5.061 3.345-.48.33-.913.49-1.302.48-.428-.008-1.252-.241-1.865-.44-.752-.245-1.349-.374-1.297-.789.027-.216.325-.437.893-.663 3.498-1.524 5.83-2.529 6.998-3.014 3.332-1.386 4.025-1.627 4.476-1.635z",
   instagram: "M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z",
@@ -51,7 +56,7 @@ const socialNames: Record<string, string> = {
   twitch: "Twitch",
 };
 
-export default function Sidebar() {
+export default function Sidebar({ isOpen = false, onClose }: SidebarProps) {
   const pathname = usePathname();
   const [socialMedia, setSocialMedia] = useState<SocialMedia[]>([]);
 
@@ -68,6 +73,11 @@ export default function Sidebar() {
     };
     fetchSocialMedia();
   }, []);
+
+  // Link tıklandığında mobil menüyü kapat
+  const handleLinkClick = () => {
+    if (onClose) onClose();
+  };
 
   return (
     <>
@@ -131,55 +141,90 @@ export default function Sidebar() {
         )}
       </aside>
 
-      {/* Mobile Sidebar - Sol tarafta dar sidebar */}
-      <aside className="md:hidden fixed left-0 top-16 bottom-0 w-16 bg-[var(--surface)] border-r border-[var(--border)] z-40 flex flex-col py-4">
-        <nav className="flex-1 flex flex-col items-center gap-2">
+      {/* Mobile Overlay */}
+      {isOpen && (
+        <div
+          className="md:hidden fixed inset-0 bg-black/60 z-40 backdrop-blur-sm"
+          onClick={onClose}
+        />
+      )}
+
+      {/* Mobile Sidebar - Slide from left */}
+      <aside
+        className={`md:hidden fixed left-0 top-0 h-full w-72 bg-[var(--surface)] border-r border-[var(--border)] z-50 transform transition-transform duration-300 ease-in-out ${
+          isOpen ? 'translate-x-0' : '-translate-x-full'
+        }`}
+      >
+        {/* Header */}
+        <div className="h-16 flex items-center justify-between px-4 border-b border-[var(--border)]">
+          <span className="text-lg font-bold text-white">Menu</span>
+          <button
+            type="button"
+            onClick={onClose}
+            className="w-10 h-10 rounded-lg flex items-center justify-center text-[var(--text-muted)] hover:text-white hover:bg-[var(--surface-hover)] transition-colors"
+          >
+            <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+            </svg>
+          </button>
+        </div>
+
+        {/* Navigation */}
+        <nav className="p-4 space-y-2">
           {menuItems.map((item) => {
             const isActive = pathname === item.href;
             return (
               <Link
                 key={item.href}
                 href={item.href}
-                className={`w-12 h-12 rounded-xl flex items-center justify-center transition-all relative ${
+                onClick={handleLinkClick}
+                className={`flex items-center gap-3 px-4 py-3 rounded-lg transition-all ${
                   isActive
-                    ? "bg-[var(--primary)] text-black"
+                    ? "bg-[var(--primary)] text-black font-semibold"
                     : "text-[var(--text-muted)] hover:bg-[var(--surface-hover)] hover:text-white"
                 }`}
-                title={item.label}
               >
                 <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d={item.icon} />
                 </svg>
+                <span>{item.label}</span>
                 {item.href === "/live" && (
-                  <span className="absolute top-1 right-1 w-2 h-2 rounded-full bg-red-500 animate-pulse" />
+                  <span className="ml-auto w-2 h-2 rounded-full bg-red-500 animate-pulse" />
                 )}
               </Link>
             );
           })}
         </nav>
 
-        {/* Mobile Social Media Icons */}
+        {/* Social Media Links */}
         {socialMedia.length > 0 && (
-          <div className="pt-2 border-t border-[var(--border)] flex flex-col items-center gap-2">
-            {socialMedia.slice(0, 4).map((social) => (
-              <a
-                key={social.id}
-                href={social.linkUrl}
-                target="_blank"
-                rel="noopener noreferrer"
-                title={social.name || socialNames[social.platform]}
-                className="w-10 h-10 rounded-lg flex items-center justify-center transition-all hover:scale-110"
-                style={{ backgroundColor: `${socialColors[social.platform] || '#666'}20` }}
-              >
-                <svg
-                  className="w-4 h-4"
-                  fill={socialColors[social.platform] || '#fff'}
-                  viewBox="0 0 24 24"
+          <div className="px-4 pt-4 border-t border-[var(--border)]">
+            <p className="px-4 text-xs text-[var(--text-muted)] uppercase tracking-wider mb-3">Sosyal Medya</p>
+            <div className="space-y-1">
+              {socialMedia.map((social) => (
+                <a
+                  key={social.id}
+                  href={social.linkUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="flex items-center gap-3 px-4 py-2 rounded-lg transition-all text-[var(--text-muted)] hover:bg-[var(--surface-hover)] hover:text-white"
                 >
-                  <path d={socialIcons[social.platform] || ""} />
-                </svg>
-              </a>
-            ))}
+                  <div
+                    className="w-8 h-8 rounded-lg flex items-center justify-center flex-shrink-0"
+                    style={{ backgroundColor: `${socialColors[social.platform] || '#666'}20` }}
+                  >
+                    <svg
+                      className="w-4 h-4"
+                      fill={socialColors[social.platform] || '#fff'}
+                      viewBox="0 0 24 24"
+                    >
+                      <path d={socialIcons[social.platform] || ""} />
+                    </svg>
+                  </div>
+                  <span className="text-sm">{social.name || socialNames[social.platform] || social.platform}</span>
+                </a>
+              ))}
+            </div>
           </div>
         )}
       </aside>
