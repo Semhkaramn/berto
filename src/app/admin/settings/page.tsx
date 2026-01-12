@@ -2,83 +2,113 @@
 
 import { useState, useEffect } from "react";
 import AdminLayout from "@/components/AdminLayout";
-import ImageUpload from "@/components/ImageUpload";
 
-interface Settings {
-  siteName: string;
-  logoUrl: string | null;
-  youtubeChannelId: string | null;
-  youtubeApiKey: string | null;
-}
-
-interface YouTubeInfo {
-  channelTitle?: string;
-  channelThumbnail?: string;
-  isLive?: boolean;
-  liveTitle?: string;
-  message?: string;
-  error?: string;
+interface AdminUser {
+  id: string;
+  username: string;
 }
 
 export default function SettingsPage() {
-  const [settings, setSettings] = useState<Settings>({
-    siteName: "",
-    logoUrl: null,
-    youtubeChannelId: null,
-    youtubeApiKey: null
-  });
+  const [admin, setAdmin] = useState<AdminUser | null>(null);
+  const [username, setUsername] = useState("");
+  const [currentPassword, setCurrentPassword] = useState("");
+  const [newPassword, setNewPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
   const [saving, setSaving] = useState(false);
   const [message, setMessage] = useState("");
-  const [youtubeInfo, setYoutubeInfo] = useState<YouTubeInfo | null>(null);
-  const [checkingYoutube, setCheckingYoutube] = useState(false);
+  const [messageType, setMessageType] = useState<"success" | "error">("success");
 
-  useEffect(() => { fetchSettings(); }, []);
+  useEffect(() => {
+    fetchAdmin();
+  }, []);
 
-  const fetchSettings = async () => {
+  const fetchAdmin = async () => {
     try {
-      const res = await fetch("/api/settings");
-      if (res.ok) setSettings(await res.json());
-    } catch (error) { console.error("Fetch error:", error); }
-  };
-
-  const checkYoutubeChannel = async () => {
-    if (!settings.youtubeChannelId) return;
-    setCheckingYoutube(true);
-    try {
-      const res = await fetch("/api/youtube/channel", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          channelId: settings.youtubeChannelId,
-          apiKey: settings.youtubeApiKey
-        }),
-      });
-      const data = await res.json();
-      setYoutubeInfo(data);
+      const res = await fetch("/api/admin/profile");
+      if (res.ok) {
+        const data = await res.json();
+        setAdmin(data);
+        setUsername(data.username);
+      }
     } catch (error) {
-      console.error("YouTube check error:", error);
-      setYoutubeInfo({ error: "Kontrol sirasinda hata olustu" });
-    } finally {
-      setCheckingYoutube(false);
+      console.error("Fetch admin error:", error);
     }
   };
 
-  const handleSubmit = async () => {
+  const showMessage = (msg: string, type: "success" | "error") => {
+    setMessage(msg);
+    setMessageType(type);
+    setTimeout(() => setMessage(""), 3000);
+  };
+
+  const handleUsernameChange = async () => {
+    if (!username.trim()) {
+      showMessage("Kullanici adi bos olamaz!", "error");
+      return;
+    }
+
     setSaving(true);
-    setMessage("");
     try {
-      const res = await fetch("/api/settings", {
+      const res = await fetch("/api/admin/profile", {
         method: "PUT",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(settings),
+        body: JSON.stringify({ username: username.trim() }),
       });
+
       if (res.ok) {
-        setMessage("Ayarlar kaydedildi!");
-        setTimeout(() => setMessage(""), 3000);
+        showMessage("Kullanici adi guncellendi!", "success");
+        fetchAdmin();
+      } else {
+        const data = await res.json();
+        showMessage(data.error || "Hata olustu!", "error");
       }
     } catch (error) {
-      console.error("Save error:", error);
-      setMessage("Hata olustu!");
+      console.error("Update username error:", error);
+      showMessage("Hata olustu!", "error");
+    } finally {
+      setSaving(false);
+    }
+  };
+
+  const handlePasswordChange = async () => {
+    if (!currentPassword) {
+      showMessage("Mevcut sifreyi girin!", "error");
+      return;
+    }
+
+    if (!newPassword || newPassword.length < 6) {
+      showMessage("Yeni sifre en az 6 karakter olmali!", "error");
+      return;
+    }
+
+    if (newPassword !== confirmPassword) {
+      showMessage("Sifreler eslesmiyor!", "error");
+      return;
+    }
+
+    setSaving(true);
+    try {
+      const res = await fetch("/api/admin/profile", {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          currentPassword,
+          newPassword,
+        }),
+      });
+
+      if (res.ok) {
+        showMessage("Sifre guncellendi!", "success");
+        setCurrentPassword("");
+        setNewPassword("");
+        setConfirmPassword("");
+      } else {
+        const data = await res.json();
+        showMessage(data.error || "Hata olustu!", "error");
+      }
+    } catch (error) {
+      console.error("Update password error:", error);
+      showMessage("Hata olustu!", "error");
     } finally {
       setSaving(false);
     }
@@ -88,129 +118,111 @@ export default function SettingsPage() {
     <AdminLayout>
       <div className="p-4 md:p-6">
         <div className="mb-6">
-          <h1 className="text-2xl font-bold text-white">Site Ayarlari</h1>
-          <p className="text-[var(--text-muted)] text-sm">Genel site ayarlarini yonetin</p>
+          <h1 className="text-2xl font-bold text-white">Hesap Ayarlari</h1>
+          <p className="text-[var(--text-muted)] text-sm">Kullanici adi ve sifrenizi degistirin</p>
         </div>
 
-        <div className="max-w-xl">
+        <div className="max-w-xl space-y-6">
+          {/* Mesaj */}
+          {message && (
+            <div className={`p-3 rounded-lg text-sm ${messageType === "error" ? "bg-red-500/20 text-red-400" : "bg-green-500/20 text-green-400"}`}>
+              {message}
+            </div>
+          )}
+
+          {/* Kullanıcı Adı Değiştirme */}
           <div className="bg-[var(--surface)] rounded-xl border border-[var(--border)] p-6">
-            <div className="space-y-6">
+            <h2 className="text-lg font-semibold text-white mb-4 flex items-center gap-2">
+              <svg className="w-5 h-5 text-[var(--primary)]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+              </svg>
+              Kullanici Adi
+            </h2>
+            <div className="space-y-4">
               <div>
-                <label className="block text-sm font-medium text-white mb-2">Site Adi</label>
+                <label className="block text-sm font-medium text-white mb-2">Mevcut Kullanici Adi</label>
                 <input
                   type="text"
-                  value={settings.siteName}
-                  onChange={(e) => setSettings({ ...settings, siteName: e.target.value })}
+                  value={username}
+                  onChange={(e) => setUsername(e.target.value)}
                   className="input"
-                  placeholder="Site adini girin"
+                  placeholder="Kullanici adi"
                 />
-                <p className="text-xs text-[var(--text-muted)] mt-1">Sitenin ust kisminda gorunecek isim</p>
               </div>
-
-              <ImageUpload
-                label="Site Logosu"
-                value={settings.logoUrl || ""}
-                onChange={(url) => setSettings({ ...settings, logoUrl: url || null })}
-                placeholder="Logo URL'si girin"
-              />
-
-              {/* YouTube Ayarları */}
-              <div className="pt-4 border-t border-[var(--border)]">
-                <h3 className="text-lg font-semibold text-white mb-4 flex items-center gap-2">
-                  <svg className="w-5 h-5 text-red-500" fill="currentColor" viewBox="0 0 24 24">
-                    <path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/>
-                  </svg>
-                  YouTube Entegrasyonu
-                </h3>
-
-                <div className="space-y-4">
-                  <div>
-                    <label className="block text-sm font-medium text-white mb-2">YouTube Kanal ID veya Handle</label>
-                    <div className="flex gap-2">
-                      <input
-                        type="text"
-                        value={settings.youtubeChannelId || ""}
-                        onChange={(e) => setSettings({ ...settings, youtubeChannelId: e.target.value || null })}
-                        className="input flex-1"
-                        placeholder="@kanaladi veya UCxxxxx"
-                      />
-                      <button
-                        type="button"
-                        onClick={checkYoutubeChannel}
-                        disabled={checkingYoutube || !settings.youtubeChannelId}
-                        className="btn btn-secondary whitespace-nowrap"
-                      >
-                        {checkingYoutube ? "Kontrol..." : "Kontrol Et"}
-                      </button>
-                    </div>
-                    <p className="text-xs text-[var(--text-muted)] mt-1">
-                      Ornek: @kullanıcıadı veya UCxxxxxxxxxxxxxxxx
-                    </p>
-                  </div>
-
-                  <div>
-                    <label className="block text-sm font-medium text-white mb-2">YouTube API Key (Opsiyonel)</label>
-                    <input
-                      type="password"
-                      value={settings.youtubeApiKey || ""}
-                      onChange={(e) => setSettings({ ...settings, youtubeApiKey: e.target.value || null })}
-                      className="input"
-                      placeholder="AIzaSy..."
-                    />
-                    <p className="text-xs text-[var(--text-muted)] mt-1">
-                      Canli yayin ve video otomatik algılama icin gerekli
-                    </p>
-                  </div>
-
-                  {/* YouTube Kontrol Sonucu */}
-                  {youtubeInfo && (
-                    <div className={`p-4 rounded-lg border ${youtubeInfo.error ? 'border-red-500/30 bg-red-500/10' : 'border-green-500/30 bg-green-500/10'}`}>
-                      {youtubeInfo.error ? (
-                        <p className="text-red-400 text-sm">{youtubeInfo.error}</p>
-                      ) : (
-                        <div className="space-y-2">
-                          <div className="flex items-center gap-3">
-                            {youtubeInfo.channelThumbnail && (
-                              <img src={youtubeInfo.channelThumbnail} alt="" className="w-10 h-10 rounded-full" />
-                            )}
-                            <div>
-                              <p className="text-white font-medium">{youtubeInfo.channelTitle}</p>
-                              <p className="text-xs text-[var(--text-muted)]">
-                                {youtubeInfo.isLive ? (
-                                  <span className="text-red-400 flex items-center gap-1">
-                                    <span className="w-2 h-2 rounded-full bg-red-500 animate-pulse" />
-                                    CANLI: {youtubeInfo.liveTitle}
-                                  </span>
-                                ) : (
-                                  <span className="text-gray-400">Canli yayin yok</span>
-                                )}
-                              </p>
-                            </div>
-                          </div>
-                          {youtubeInfo.message && (
-                            <p className="text-xs text-yellow-400">{youtubeInfo.message}</p>
-                          )}
-                        </div>
-                      )}
-                    </div>
-                  )}
-                </div>
-              </div>
-
-              {message && (
-                <div className={`p-3 rounded-lg text-sm ${message.includes("Hata") ? "bg-red-500/20 text-red-400" : "bg-green-500/20 text-green-400"}`}>
-                  {message}
-                </div>
-              )}
-
               <button
                 type="button"
-                onClick={handleSubmit}
-                disabled={saving}
-                className="btn btn-primary w-full"
+                onClick={handleUsernameChange}
+                disabled={saving || !username.trim() || username === admin?.username}
+                className="btn btn-primary"
               >
-                {saving ? "Kaydediliyor..." : "Kaydet"}
+                {saving ? "Kaydediliyor..." : "Kullanici Adini Guncelle"}
               </button>
+            </div>
+          </div>
+
+          {/* Şifre Değiştirme */}
+          <div className="bg-[var(--surface)] rounded-xl border border-[var(--border)] p-6">
+            <h2 className="text-lg font-semibold text-white mb-4 flex items-center gap-2">
+              <svg className="w-5 h-5 text-[var(--primary)]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
+              </svg>
+              Sifre Degistir
+            </h2>
+            <div className="space-y-4">
+              <div>
+                <label className="block text-sm font-medium text-white mb-2">Mevcut Sifre</label>
+                <input
+                  type="password"
+                  value={currentPassword}
+                  onChange={(e) => setCurrentPassword(e.target.value)}
+                  className="input"
+                  placeholder="Mevcut sifrenizi girin"
+                />
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-white mb-2">Yeni Sifre</label>
+                <input
+                  type="password"
+                  value={newPassword}
+                  onChange={(e) => setNewPassword(e.target.value)}
+                  className="input"
+                  placeholder="Yeni sifrenizi girin"
+                />
+                <p className="text-xs text-[var(--text-muted)] mt-1">En az 6 karakter olmali</p>
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-white mb-2">Yeni Sifre Tekrar</label>
+                <input
+                  type="password"
+                  value={confirmPassword}
+                  onChange={(e) => setConfirmPassword(e.target.value)}
+                  className="input"
+                  placeholder="Yeni sifrenizi tekrar girin"
+                />
+              </div>
+              <button
+                type="button"
+                onClick={handlePasswordChange}
+                disabled={saving || !currentPassword || !newPassword || !confirmPassword}
+                className="btn btn-primary"
+              >
+                {saving ? "Kaydediliyor..." : "Sifreyi Guncelle"}
+              </button>
+            </div>
+          </div>
+
+          {/* Güvenlik Notu */}
+          <div className="bg-yellow-500/10 border border-yellow-500/20 rounded-xl p-4">
+            <div className="flex items-start gap-3">
+              <svg className="w-5 h-5 text-yellow-500 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+              </svg>
+              <div>
+                <p className="text-sm text-yellow-500 font-medium">Guvenlik Notu</p>
+                <p className="text-xs text-yellow-500/80 mt-1">
+                  Sifreler guvenli bir sekilde hash'lenerek saklanir. Guclu bir sifre kullanmanizi oneririz.
+                </p>
+              </div>
             </div>
           </div>
         </div>
