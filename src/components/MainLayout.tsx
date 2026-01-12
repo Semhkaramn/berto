@@ -4,7 +4,6 @@ import { useEffect, useState } from "react";
 import Header from "./Header";
 import Sidebar from "./Sidebar";
 import Footer from "./Footer";
-import SponsorPopup from "./SponsorPopup";
 
 interface Settings {
   siteName: string;
@@ -68,7 +67,6 @@ export default function MainLayout({ children }: MainLayoutProps) {
         </main>
       </div>
       <Footer telegramUrl={settings.telegramUrl || undefined} />
-      <SponsorPopup />
     </div>
   );
 }
