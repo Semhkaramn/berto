@@ -181,9 +181,9 @@ export default function ContentPage() {
       <div className="p-4 md:p-6">
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6">
           <div>
-            <h1 className="text-2xl font-bold text-white">Yayinlar</h1>
+            <h1 className="text-2xl font-bold text-white">Yayınlar</h1>
             <p className="text-[var(--text-muted)] text-sm">
-              {streams.length} canli yayin, {videos.length} video
+              {streams.length} canlı yayın, {videos.length} video
             </p>
           </div>
           <div className="flex gap-2">
@@ -192,7 +192,7 @@ export default function ContentPage() {
               onClick={() => openAddModal("livestream")}
               className="btn btn-primary"
             >
-              + Canli Yayin
+              + Canlı Yayın
             </button>
             <button
               type="button"
@@ -215,7 +215,7 @@ export default function ContentPage() {
                 : "bg-[var(--surface)] text-[var(--text-muted)] hover:text-white"
             }`}
           >
-            Canli Yayinlar ({streams.length})
+            Canlı Yayınlar ({streams.length})
           </button>
           <button
             type="button"
@@ -296,7 +296,7 @@ export default function ContentPage() {
                             onClick={() => openEditModal(stream)}
                             className="btn btn-secondary text-xs py-1 px-3"
                           >
-                            Duzenle
+                            Düzenle
                           </button>
                           <button
                             type="button"
@@ -312,7 +312,7 @@ export default function ContentPage() {
                   {streams.length === 0 && (
                     <tr>
                       <td colSpan={5} className="text-center py-8 text-[var(--text-muted)]">
-                        Henuz canli yayin yok
+                        Henuz canlı yayın yok
                       </td>
                     </tr>
                   )}
@@ -486,7 +486,7 @@ export default function ContentPage() {
                     <span
                       className={`w-2 h-2 rounded-full ${formData.isLive ? "bg-red-500 animate-pulse" : "bg-gray-500"}`}
                     />
-                    Canli Yayin Aktif
+                    Canlı Yayın Aktif
                   </label>
                 </div>
               )}
@@ -502,7 +502,7 @@ export default function ContentPage() {
                 Kaydet
               </button>
               <button type="button" onClick={() => setShowModal(false)} className="btn btn-secondary">
-                Iptal
+                İptal
               </button>
             </div>
           </div>
