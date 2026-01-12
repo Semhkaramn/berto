@@ -12,12 +12,12 @@ interface HeaderProps {
 export default function Header({ siteName, logoUrl, onMenuToggle, isMobileMenuOpen }: HeaderProps) {
   return (
     <header className="fixed top-0 left-0 right-0 z-50 glass border-b border-[var(--border)]">
-      <div className="flex items-center justify-between px-4 md:px-6 h-16">
-        {/* Mobile Menu Button */}
+      <div className="flex items-center justify-center px-4 md:px-6 h-16 relative">
+        {/* Mobile Menu Button - Sol tarafta mutlak konumlandırma */}
         <button
           type="button"
           onClick={onMenuToggle}
-          className="md:hidden w-10 h-10 rounded-lg flex items-center justify-center text-[var(--text-muted)] hover:text-white hover:bg-[var(--surface-hover)] transition-colors"
+          className="md:hidden w-10 h-10 rounded-lg flex items-center justify-center text-[var(--text-muted)] hover:text-white hover:bg-[var(--surface-hover)] transition-colors absolute left-4"
           aria-label="Menu"
         >
           {isMobileMenuOpen ? (
@@ -44,9 +44,6 @@ export default function Header({ siteName, logoUrl, onMenuToggle, isMobileMenuOp
           )}
           <span className="text-xl font-bold text-white">{siteName}</span>
         </Link>
-
-        {/* Spacer for balance on mobile */}
-        <div className="w-10 h-10 md:hidden" />
       </div>
     </header>
   );
