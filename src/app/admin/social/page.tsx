@@ -89,8 +89,8 @@ export default function SocialPage() {
   const [editingItem, setEditingItem] = useState<SocialMedia | null>(null);
   const [formData, setFormData] = useState({
     platform: "telegram",
-    name: "",
-    linkUrl: "",
+    displayName: "",
+    username: "",
     isActive: true,
     sortOrder: 0
   });
@@ -100,13 +100,13 @@ export default function SocialPage() {
 
   // Form değiştiğinde URL önizlemesini güncelle
   useEffect(() => {
-    if (formData.name) {
-      const generatedUrl = generateUrl(formData.platform, formData.name);
+    if (formData.username) {
+      const generatedUrl = generateUrl(formData.platform, formData.username);
       setPreviewUrl(generatedUrl);
     } else {
       setPreviewUrl("");
     }
-  }, [formData.platform, formData.name]);
+  }, [formData.platform, formData.username]);
 
   const fetchSocials = async () => {
     try {
@@ -117,18 +117,18 @@ export default function SocialPage() {
 
   const openAddModal = () => {
     setEditingItem(null);
-    setFormData({ platform: "telegram", name: "", linkUrl: "", isActive: true, sortOrder: 0 });
+    setFormData({ platform: "telegram", displayName: "", username: "", isActive: true, sortOrder: 0 });
     setPreviewUrl("");
     setShowModal(true);
   };
 
   const openEditModal = (item: SocialMedia) => {
     setEditingItem(item);
-    const extractedName = extractUsername(item.platform, item.linkUrl);
+    const extractedUsername = extractUsername(item.platform, item.linkUrl);
     setFormData({
       platform: item.platform,
-      name: item.name || extractedName,
-      linkUrl: item.linkUrl,
+      displayName: item.name,
+      username: extractedUsername,
       isActive: item.isActive,
       sortOrder: item.sortOrder
     });
@@ -138,10 +138,13 @@ export default function SocialPage() {
 
   const handleSubmit = async () => {
     // Otomatik URL oluştur
-    const finalUrl = generateUrl(formData.platform, formData.name);
+    const finalUrl = generateUrl(formData.platform, formData.username);
     const submitData = {
-      ...formData,
-      linkUrl: finalUrl
+      platform: formData.platform,
+      name: formData.displayName,
+      linkUrl: finalUrl,
+      isActive: formData.isActive,
+      sortOrder: formData.sortOrder
     };
 
     const method = editingItem ? "PUT" : "POST";
@@ -275,12 +278,28 @@ export default function SocialPage() {
 
               <div>
                 <label className="block text-sm font-medium text-[var(--text-muted)] mb-2">
-                  Kullanici Adi / Kanal
+                  Goruntulenecek Isim
                 </label>
                 <input
                   type="text"
-                  value={formData.name}
-                  onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+                  value={formData.displayName}
+                  onChange={(e) => setFormData({ ...formData, displayName: e.target.value })}
+                  className="input"
+                  placeholder="Ornek: Resmi Telegram Kanalimiz"
+                />
+                <p className="text-xs text-[var(--text-muted)] mt-1">
+                  Sidebar'da gorunecek isim
+                </p>
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-[var(--text-muted)] mb-2">
+                  Kullanici Adi
+                </label>
+                <input
+                  type="text"
+                  value={formData.username}
+                  onChange={(e) => setFormData({ ...formData, username: e.target.value })}
                   className="input"
                   placeholder={currentPlatform?.placeholder || "@kullaniciadi"}
                 />
@@ -289,7 +308,6 @@ export default function SocialPage() {
                 </p>
               </div>
 
-              {/* URL Önizleme */}
               {previewUrl && (
                 <div className="p-3 bg-[var(--background)] rounded-lg border border-[var(--border)]">
                   <p className="text-xs text-[var(--text-muted)] mb-1">Olusturulacak Link:</p>
