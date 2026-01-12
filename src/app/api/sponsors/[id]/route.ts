@@ -17,6 +17,7 @@ export async function PUT(
         linkUrl: body.linkUrl,
         type: body.type,
         isActive: body.isActive,
+        sortOrder: body.sortOrder ?? 0,
       },
     });
     return NextResponse.json(sponsor);
