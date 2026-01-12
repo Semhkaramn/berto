@@ -12,6 +12,17 @@ interface SocialMedia {
   sortOrder: number;
 }
 
+interface TelegramChannel {
+  id: string;
+  username: string;
+  title: string | null;
+  description: string | null;
+  photoUrl: string | null;
+  memberCount: number | null;
+  isActive: boolean;
+  sortOrder: number;
+}
+
 const platforms = [
   { id: "telegram", name: "Telegram", urlPrefix: "https://t.me/", placeholder: "@kullaniciadi veya kanal" },
   { id: "instagram", name: "Instagram", urlPrefix: "https://instagram.com/", placeholder: "@kullaniciadi" },
@@ -28,15 +39,12 @@ const generateUrl = (platform: string, username: string): string => {
   const platformInfo = platforms.find(p => p.id === platform);
   if (!platformInfo) return username;
 
-  // Eğer zaten tam URL ise olduğu gibi döndür
   if (username.startsWith("http://") || username.startsWith("https://")) {
     return username;
   }
 
-  // @ işaretini kaldır
   let cleanUsername = username.replace(/^@/, "");
 
-  // YouTube için özel işlem
   if (platform === "youtube") {
     if (cleanUsername.startsWith("channel/") || cleanUsername.startsWith("c/") || cleanUsername.startsWith("@")) {
       return platformInfo.urlPrefix + cleanUsername;
@@ -44,7 +52,6 @@ const generateUrl = (platform: string, username: string): string => {
     return platformInfo.urlPrefix + "@" + cleanUsername;
   }
 
-  // TikTok için @ zaten URL prefix'inde var
   if (platform === "tiktok") {
     return platformInfo.urlPrefix + cleanUsername;
   }
@@ -57,12 +64,10 @@ const extractUsername = (platform: string, url: string): string => {
   const platformInfo = platforms.find(p => p.id === platform);
   if (!platformInfo) return url;
 
-  // Eğer URL prefix ile başlıyorsa, prefix'i kaldır
   if (url.startsWith(platformInfo.urlPrefix)) {
     return url.replace(platformInfo.urlPrefix, "");
   }
 
-  // Genel URL temizleme
   const patterns = [
     /^https?:\/\/(www\.)?t\.me\//,
     /^https?:\/\/(www\.)?instagram\.com\//,
@@ -85,7 +90,9 @@ const extractUsername = (platform: string, url: string): string => {
 
 export default function SocialPage() {
   const [socials, setSocials] = useState<SocialMedia[]>([]);
+  const [telegramChannels, setTelegramChannels] = useState<TelegramChannel[]>([]);
   const [showModal, setShowModal] = useState(false);
+  const [showTelegramModal, setShowTelegramModal] = useState(false);
   const [editingItem, setEditingItem] = useState<SocialMedia | null>(null);
   const [formData, setFormData] = useState({
     platform: "telegram",
@@ -94,11 +101,18 @@ export default function SocialPage() {
     isActive: true,
     sortOrder: 0
   });
+  const [telegramFormData, setTelegramFormData] = useState({
+    username: "",
+    sortOrder: 0
+  });
+  const [telegramLoading, setTelegramLoading] = useState(false);
   const [previewUrl, setPreviewUrl] = useState("");
 
-  useEffect(() => { fetchSocials(); }, []);
+  useEffect(() => {
+    fetchSocials();
+    fetchTelegramChannels();
+  }, []);
 
-  // Form değiştiğinde URL önizlemesini güncelle
   useEffect(() => {
     if (formData.username) {
       const generatedUrl = generateUrl(formData.platform, formData.username);
@@ -112,6 +126,13 @@ export default function SocialPage() {
     try {
       const res = await fetch("/api/social-media");
       if (res.ok) setSocials(await res.json());
+    } catch (error) { console.error("Fetch error:", error); }
+  };
+
+  const fetchTelegramChannels = async () => {
+    try {
+      const res = await fetch("/api/telegram-channels");
+      if (res.ok) setTelegramChannels(await res.json());
     } catch (error) { console.error("Fetch error:", error); }
   };
 
@@ -137,7 +158,6 @@ export default function SocialPage() {
   };
 
   const handleSubmit = async () => {
-    // Otomatik URL oluştur
     const finalUrl = generateUrl(formData.platform, formData.username);
     const submitData = {
       platform: formData.platform,
@@ -161,6 +181,73 @@ export default function SocialPage() {
       const res = await fetch(`/api/social-media/${id}`, { method: "DELETE" });
       if (res.ok) fetchSocials();
     } catch (error) { console.error("Delete error:", error); }
+  };
+
+  // Telegram Kanalları işlemleri
+  const openTelegramModal = () => {
+    setTelegramFormData({ username: "", sortOrder: 0 });
+    setShowTelegramModal(true);
+  };
+
+  const handleTelegramSubmit = async () => {
+    if (!telegramFormData.username) return;
+
+    setTelegramLoading(true);
+    try {
+      const res = await fetch("/api/telegram-channels", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(telegramFormData)
+      });
+
+      if (res.ok) {
+        setShowTelegramModal(false);
+        fetchTelegramChannels();
+      } else {
+        const error = await res.json();
+        alert(error.error || "Bir hata oluştu");
+      }
+    } catch (error) {
+      console.error("Submit error:", error);
+    } finally {
+      setTelegramLoading(false);
+    }
+  };
+
+  const handleTelegramRefresh = async (id: string) => {
+    try {
+      await fetch(`/api/telegram-channels/${id}`, {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ refreshInfo: true })
+      });
+      fetchTelegramChannels();
+    } catch (error) {
+      console.error("Refresh error:", error);
+    }
+  };
+
+  const handleTelegramToggle = async (id: string, isActive: boolean) => {
+    try {
+      await fetch(`/api/telegram-channels/${id}`, {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ isActive: !isActive })
+      });
+      fetchTelegramChannels();
+    } catch (error) {
+      console.error("Toggle error:", error);
+    }
+  };
+
+  const handleTelegramDelete = async (id: string) => {
+    if (!confirm("Silmek istediginize emin misiniz?")) return;
+    try {
+      await fetch(`/api/telegram-channels/${id}`, { method: "DELETE" });
+      fetchTelegramChannels();
+    } catch (error) {
+      console.error("Delete error:", error);
+    }
   };
 
   const getPlatformIcon = (platform: string) => {
@@ -208,51 +295,156 @@ export default function SocialPage() {
 
   return (
     <AdminLayout>
-      <div className="p-4 md:p-6">
-        <div className="flex items-center justify-between mb-6">
-          <div>
-            <h1 className="text-2xl font-bold text-white">Sosyal Medya</h1>
-            <p className="text-[var(--text-muted)] text-sm">{socials.length} hesap</p>
+      <div className="p-4 md:p-6 space-y-8">
+        {/* Telegram Kanalları Bölümü */}
+        <div>
+          <div className="flex items-center justify-between mb-6">
+            <div>
+              <h1 className="text-2xl font-bold text-white flex items-center gap-3">
+                <svg className="w-7 h-7 text-[#0088cc]" fill="currentColor" viewBox="0 0 24 24">
+                  <path d="M11.944 0A12 12 0 0 0 0 12a12 12 0 0 0 12 12 12 12 0 0 0 12-12A12 12 0 0 0 12 0a12 12 0 0 0-.056 0zm4.962 7.224c.1-.002.321.023.465.14a.506.506 0 0 1 .171.325c.016.093.036.306.02.472-.18 1.898-.962 6.502-1.36 8.627-.168.9-.499 1.201-.82 1.23-.696.065-1.225-.46-1.9-.902-1.056-.693-1.653-1.124-2.678-1.8-1.185-.78-.417-1.21.258-1.91.177-.184 3.247-2.977 3.307-3.23.007-.032.014-.15-.056-.212s-.174-.041-.249-.024c-.106.024-1.793 1.14-5.061 3.345-.48.33-.913.49-1.302.48-.428-.008-1.252-.241-1.865-.44-.752-.245-1.349-.374-1.297-.789.027-.216.325-.437.893-.663 3.498-1.524 5.83-2.529 6.998-3.014 3.332-1.386 4.025-1.627 4.476-1.635z"/>
+                </svg>
+                Telegram Kanallari
+              </h1>
+              <p className="text-[var(--text-muted)] text-sm">Ana sayfada gosterilecek kanallar ({telegramChannels.length} kanal)</p>
+            </div>
+            <button type="button" onClick={openTelegramModal} className="btn btn-primary">+ Kanal Ekle</button>
           </div>
-          <button type="button" onClick={openAddModal} className="btn btn-primary">+ Yeni Hesap</button>
+
+          {telegramChannels.length === 0 ? (
+            <div className="bg-[var(--surface)] rounded-xl border border-[var(--border)] p-8 text-center">
+              <svg className="w-16 h-16 text-[var(--text-muted)] mx-auto mb-4" fill="currentColor" viewBox="0 0 24 24">
+                <path d="M11.944 0A12 12 0 0 0 0 12a12 12 0 0 0 12 12 12 12 0 0 0 12-12A12 12 0 0 0 12 0a12 12 0 0 0-.056 0zm4.962 7.224c.1-.002.321.023.465.14a.506.506 0 0 1 .171.325c.016.093.036.306.02.472-.18 1.898-.962 6.502-1.36 8.627-.168.9-.499 1.201-.82 1.23-.696.065-1.225-.46-1.9-.902-1.056-.693-1.653-1.124-2.678-1.8-1.185-.78-.417-1.21.258-1.91.177-.184 3.247-2.977 3.307-3.23.007-.032.014-.15-.056-.212s-.174-.041-.249-.024c-.106.024-1.793 1.14-5.061 3.345-.48.33-.913.49-1.302.48-.428-.008-1.252-.241-1.865-.44-.752-.245-1.349-.374-1.297-.789.027-.216.325-.437.893-.663 3.498-1.524 5.83-2.529 6.998-3.014 3.332-1.386 4.025-1.627 4.476-1.635z"/>
+              </svg>
+              <p className="text-[var(--text-muted)]">Henuz telegram kanali eklenmemis</p>
+              <p className="text-xs text-[var(--text-muted)] mt-1">Kanal ekleyince logo, isim ve uye sayisi otomatik cekilir</p>
+            </div>
+          ) : (
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              {telegramChannels.map((channel) => (
+                <div key={channel.id} className="bg-[var(--surface)] rounded-xl border border-[var(--border)] p-4 hover:border-[#0088cc]/50 transition-colors">
+                  <div className="flex items-start gap-4">
+                    {/* Kanal Fotoğrafı */}
+                    <div className="w-16 h-16 rounded-full bg-[#0088cc]/20 flex items-center justify-center overflow-hidden flex-shrink-0">
+                      {channel.photoUrl ? (
+                        <img src={channel.photoUrl} alt={channel.title || channel.username} className="w-full h-full object-cover" />
+                      ) : (
+                        <svg className="w-8 h-8 text-[#0088cc]" fill="currentColor" viewBox="0 0 24 24">
+                          <path d="M11.944 0A12 12 0 0 0 0 12a12 12 0 0 0 12 12 12 12 0 0 0 12-12A12 12 0 0 0 12 0a12 12 0 0 0-.056 0zm4.962 7.224c.1-.002.321.023.465.14a.506.506 0 0 1 .171.325c.016.093.036.306.02.472-.18 1.898-.962 6.502-1.36 8.627-.168.9-.499 1.201-.82 1.23-.696.065-1.225-.46-1.9-.902-1.056-.693-1.653-1.124-2.678-1.8-1.185-.78-.417-1.21.258-1.91.177-.184 3.247-2.977 3.307-3.23.007-.032.014-.15-.056-.212s-.174-.041-.249-.024c-.106.024-1.793 1.14-5.061 3.345-.48.33-.913.49-1.302.48-.428-.008-1.252-.241-1.865-.44-.752-.245-1.349-.374-1.297-.789.027-.216.325-.437.893-.663 3.498-1.524 5.83-2.529 6.998-3.014 3.332-1.386 4.025-1.627 4.476-1.635z"/>
+                        </svg>
+                      )}
+                    </div>
+
+                    {/* Kanal Bilgileri */}
+                    <div className="flex-1 min-w-0">
+                      <div className="flex items-center gap-2 mb-1">
+                        <h3 className="font-bold text-white truncate">{channel.title || channel.username}</h3>
+                        <span className={`text-xs px-2 py-0.5 rounded-full ${channel.isActive ? 'bg-green-500/20 text-green-400' : 'bg-red-500/20 text-red-400'}`}>
+                          {channel.isActive ? 'Aktif' : 'Pasif'}
+                        </span>
+                      </div>
+                      <p className="text-sm text-[#0088cc]">@{channel.username}</p>
+                      {channel.memberCount && (
+                        <p className="text-xs text-[var(--text-muted)] mt-1">{channel.memberCount.toLocaleString()} uye</p>
+                      )}
+                      {channel.description && (
+                        <p className="text-xs text-[var(--text-muted)] mt-2 line-clamp-2">{channel.description}</p>
+                      )}
+                    </div>
+                  </div>
+
+                  {/* Aksiyonlar */}
+                  <div className="flex items-center gap-2 mt-4 pt-3 border-t border-[var(--border)]">
+                    <button
+                      type="button"
+                      onClick={() => handleTelegramRefresh(channel.id)}
+                      className="btn btn-secondary text-xs py-1.5 px-3 flex items-center gap-1"
+                    >
+                      <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+                      </svg>
+                      Yenile
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => handleTelegramToggle(channel.id, channel.isActive)}
+                      className={`btn text-xs py-1.5 px-3 ${channel.isActive ? 'btn-secondary' : 'btn-primary'}`}
+                    >
+                      {channel.isActive ? 'Pasif Yap' : 'Aktif Yap'}
+                    </button>
+                    <a
+                      href={`https://t.me/${channel.username}`}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="btn btn-secondary text-xs py-1.5 px-3"
+                    >
+                      Gor
+                    </a>
+                    <button
+                      type="button"
+                      onClick={() => handleTelegramDelete(channel.id)}
+                      className="btn btn-danger text-xs py-1.5 px-3 ml-auto"
+                    >
+                      Sil
+                    </button>
+                  </div>
+                </div>
+              ))}
+            </div>
+          )}
         </div>
 
-        <div className="bg-[var(--surface)] rounded-xl border border-[var(--border)] overflow-hidden">
-          <div className="overflow-x-auto">
-            <table className="table w-full">
-              <thead><tr><th>Platform</th><th>Isim</th><th>Link</th><th>Sira</th><th>Durum</th><th>Islemler</th></tr></thead>
-              <tbody>
-                {socials.map((social) => (
-                  <tr key={social.id}>
-                    <td>
-                      <div className="flex items-center gap-2">
-                        <span className="text-[var(--primary)]">{getPlatformIcon(social.platform)}</span>
-                        <span className="font-medium text-white capitalize">{social.platform}</span>
-                      </div>
-                    </td>
-                    <td><span className="text-white">{social.name}</span></td>
-                    <td>
-                      <a href={social.linkUrl} target="_blank" rel="noopener noreferrer" className="text-[var(--primary)] hover:underline text-sm truncate max-w-xs block">
-                        {social.linkUrl}
-                      </a>
-                    </td>
-                    <td><span className="text-white">{social.sortOrder}</span></td>
-                    <td><span className={`badge ${social.isActive ? "bg-green-500/20 text-green-400" : "bg-red-500/20 text-red-400"}`}>{social.isActive ? "Aktif" : "Pasif"}</span></td>
-                    <td>
-                      <div className="flex gap-2">
-                        <button type="button" onClick={() => openEditModal(social)} className="btn btn-secondary text-xs py-1 px-3">Duzenle</button>
-                        <button type="button" onClick={() => handleDelete(social.id)} className="btn btn-danger text-xs py-1 px-3">Sil</button>
-                      </div>
-                    </td>
-                  </tr>
-                ))}
-                {socials.length === 0 && <tr><td colSpan={6} className="text-center py-8 text-[var(--text-muted)]">Henuz sosyal medya hesabi yok</td></tr>}
-              </tbody>
-            </table>
+        {/* Ayırıcı */}
+        <div className="border-t border-[var(--border)]" />
+
+        {/* Sosyal Medya Hesapları */}
+        <div>
+          <div className="flex items-center justify-between mb-6">
+            <div>
+              <h1 className="text-2xl font-bold text-white">Sosyal Medya Hesaplari</h1>
+              <p className="text-[var(--text-muted)] text-sm">{socials.length} hesap</p>
+            </div>
+            <button type="button" onClick={openAddModal} className="btn btn-primary">+ Yeni Hesap</button>
+          </div>
+
+          <div className="bg-[var(--surface)] rounded-xl border border-[var(--border)] overflow-hidden">
+            <div className="overflow-x-auto">
+              <table className="table w-full">
+                <thead><tr><th>Platform</th><th>Isim</th><th>Link</th><th>Sira</th><th>Durum</th><th>Islemler</th></tr></thead>
+                <tbody>
+                  {socials.map((social) => (
+                    <tr key={social.id}>
+                      <td>
+                        <div className="flex items-center gap-2">
+                          <span className="text-[var(--primary)]">{getPlatformIcon(social.platform)}</span>
+                          <span className="font-medium text-white capitalize">{social.platform}</span>
+                        </div>
+                      </td>
+                      <td><span className="text-white">{social.name}</span></td>
+                      <td>
+                        <a href={social.linkUrl} target="_blank" rel="noopener noreferrer" className="text-[var(--primary)] hover:underline text-sm truncate max-w-xs block">
+                          {social.linkUrl}
+                        </a>
+                      </td>
+                      <td><span className="text-white">{social.sortOrder}</span></td>
+                      <td><span className={`badge ${social.isActive ? "bg-green-500/20 text-green-400" : "bg-red-500/20 text-red-400"}`}>{social.isActive ? "Aktif" : "Pasif"}</span></td>
+                      <td>
+                        <div className="flex gap-2">
+                          <button type="button" onClick={() => openEditModal(social)} className="btn btn-secondary text-xs py-1 px-3">Duzenle</button>
+                          <button type="button" onClick={() => handleDelete(social.id)} className="btn btn-danger text-xs py-1 px-3">Sil</button>
+                        </div>
+                      </td>
+                    </tr>
+                  ))}
+                  {socials.length === 0 && <tr><td colSpan={6} className="text-center py-8 text-[var(--text-muted)]">Henuz sosyal medya hesabi yok</td></tr>}
+                </tbody>
+              </table>
+            </div>
           </div>
         </div>
       </div>
 
+      {/* Sosyal Medya Modal */}
       {showModal && (
         <div className="modal-overlay" onClick={() => setShowModal(false)}>
           <div className="modal-content p-6" onClick={(e) => e.stopPropagation()}>
@@ -346,6 +538,89 @@ export default function SocialPage() {
             <div className="flex gap-3 mt-6">
               <button type="button" onClick={handleSubmit} className="btn btn-primary flex-1">Kaydet</button>
               <button type="button" onClick={() => setShowModal(false)} className="btn btn-secondary">Iptal</button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Telegram Kanal Ekleme Modal */}
+      {showTelegramModal && (
+        <div className="modal-overlay" onClick={() => setShowTelegramModal(false)}>
+          <div className="modal-content p-6" onClick={(e) => e.stopPropagation()}>
+            <div className="flex items-center justify-between mb-6">
+              <h3 className="text-lg font-bold text-white flex items-center gap-2">
+                <svg className="w-6 h-6 text-[#0088cc]" fill="currentColor" viewBox="0 0 24 24">
+                  <path d="M11.944 0A12 12 0 0 0 0 12a12 12 0 0 0 12 12 12 12 0 0 0 12-12A12 12 0 0 0 12 0a12 12 0 0 0-.056 0zm4.962 7.224c.1-.002.321.023.465.14a.506.506 0 0 1 .171.325c.016.093.036.306.02.472-.18 1.898-.962 6.502-1.36 8.627-.168.9-.499 1.201-.82 1.23-.696.065-1.225-.46-1.9-.902-1.056-.693-1.653-1.124-2.678-1.8-1.185-.78-.417-1.21.258-1.91.177-.184 3.247-2.977 3.307-3.23.007-.032.014-.15-.056-.212s-.174-.041-.249-.024c-.106.024-1.793 1.14-5.061 3.345-.48.33-.913.49-1.302.48-.428-.008-1.252-.241-1.865-.44-.752-.245-1.349-.374-1.297-.789.027-.216.325-.437.893-.663 3.498-1.524 5.83-2.529 6.998-3.014 3.332-1.386 4.025-1.627 4.476-1.635z"/>
+                </svg>
+                Telegram Kanali Ekle
+              </h3>
+              <button type="button" onClick={() => setShowTelegramModal(false)} className="text-[var(--text-muted)] hover:text-white">
+                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" /></svg>
+              </button>
+            </div>
+
+            <div className="space-y-4">
+              <div>
+                <label className="block text-sm font-medium text-[var(--text-muted)] mb-2">
+                  Kanal Kullanici Adi
+                </label>
+                <div className="relative">
+                  <span className="absolute left-3 top-1/2 -translate-y-1/2 text-[var(--text-muted)]">@</span>
+                  <input
+                    type="text"
+                    value={telegramFormData.username}
+                    onChange={(e) => setTelegramFormData({ ...telegramFormData, username: e.target.value.replace(/^@/, '') })}
+                    className="input pl-8"
+                    placeholder="kanaladi"
+                  />
+                </div>
+                <p className="text-xs text-[var(--text-muted)] mt-1">
+                  Kanal ekleyince logo, isim ve uye sayisi otomatik cekilir
+                </p>
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-[var(--text-muted)] mb-2">Siralama</label>
+                <input
+                  type="number"
+                  value={telegramFormData.sortOrder}
+                  onChange={(e) => setTelegramFormData({ ...telegramFormData, sortOrder: parseInt(e.target.value) || 0 })}
+                  className="input"
+                />
+              </div>
+
+              {telegramFormData.username && (
+                <div className="p-3 bg-[var(--background)] rounded-lg border border-[var(--border)]">
+                  <p className="text-xs text-[var(--text-muted)] mb-1">Kanal Linki:</p>
+                  <a
+                    href={`https://t.me/${telegramFormData.username}`}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="text-[#0088cc] text-sm hover:underline"
+                  >
+                    t.me/{telegramFormData.username}
+                  </a>
+                </div>
+              )}
+            </div>
+
+            <div className="flex gap-3 mt-6">
+              <button
+                type="button"
+                onClick={handleTelegramSubmit}
+                className="btn btn-primary flex-1 flex items-center justify-center gap-2"
+                disabled={telegramLoading || !telegramFormData.username}
+              >
+                {telegramLoading ? (
+                  <>
+                    <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+                    Ekleniyor...
+                  </>
+                ) : (
+                  'Ekle'
+                )}
+              </button>
+              <button type="button" onClick={() => setShowTelegramModal(false)} className="btn btn-secondary">Iptal</button>
             </div>
           </div>
         </div>
