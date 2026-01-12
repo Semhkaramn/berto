@@ -17,6 +17,9 @@ export default function VideosPage() {
   const [showModal, setShowModal] = useState(false);
   const [editingItem, setEditingItem] = useState<Video | null>(null);
   const [formData, setFormData] = useState({ title: "", description: "", embedUrl: "", thumbnailUrl: "" });
+  const [youtubeUrl, setYoutubeUrl] = useState("");
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState("");
 
   useEffect(() => { fetchVideos(); }, []);
 
@@ -30,10 +33,52 @@ export default function VideosPage() {
   const openAddModal = () => {
     setEditingItem(null);
     setFormData({ title: "", description: "", embedUrl: "", thumbnailUrl: "" });
+    setYoutubeUrl("");
+    setError("");
     setShowModal(true);
   };
 
+  const fetchYoutubeInfo = async () => {
+    if (!youtubeUrl.trim()) {
+      setError("YouTube URL girin");
+      return;
+    }
+
+    setLoading(true);
+    setError("");
+
+    try {
+      const res = await fetch("/api/youtube/info", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ url: youtubeUrl }),
+      });
+
+      const data = await res.json();
+
+      if (res.ok) {
+        setFormData({
+          title: data.title,
+          description: `${data.author} tarafindan`,
+          embedUrl: data.embedUrl,
+          thumbnailUrl: data.thumbnailUrl,
+        });
+      } else {
+        setError(data.error || "Video bilgileri alinamadi");
+      }
+    } catch (err) {
+      setError("Bir hata olustu");
+    } finally {
+      setLoading(false);
+    }
+  };
+
   const handleSubmit = async () => {
+    if (!formData.embedUrl) {
+      setError("Lutfen once YouTube URL girin ve bilgileri cekin");
+      return;
+    }
+
     try {
       const res = await fetch("/api/videos", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(formData) });
       if (res.ok) { setShowModal(false); fetchVideos(); }
@@ -93,13 +138,57 @@ export default function VideosPage() {
                 <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" /></svg>
               </button>
             </div>
+
             <div className="space-y-4">
-              <div><label className="block text-sm font-medium text-[var(--text-muted)] mb-2">Baslik</label><input type="text" value={formData.title} onChange={(e) => setFormData({ ...formData, title: e.target.value })} className="input" /></div>
-              <div><label className="block text-sm font-medium text-[var(--text-muted)] mb-2">Aciklama</label><textarea value={formData.description} onChange={(e) => setFormData({ ...formData, description: e.target.value })} className="input" rows={3} /></div>
-              <div><label className="block text-sm font-medium text-[var(--text-muted)] mb-2">Embed URL</label><input type="text" value={formData.embedUrl} onChange={(e) => setFormData({ ...formData, embedUrl: e.target.value })} className="input" /></div>
-              <div><label className="block text-sm font-medium text-[var(--text-muted)] mb-2">Thumbnail URL</label><input type="text" value={formData.thumbnailUrl} onChange={(e) => setFormData({ ...formData, thumbnailUrl: e.target.value })} className="input" /></div>
+              {/* YouTube URL Input */}
+              <div>
+                <label className="block text-sm font-medium text-[var(--text-muted)] mb-2">YouTube Video URL</label>
+                <div className="flex gap-2">
+                  <input
+                    type="text"
+                    value={youtubeUrl}
+                    onChange={(e) => setYoutubeUrl(e.target.value)}
+                    className="input flex-1"
+                    placeholder="https://www.youtube.com/watch?v=..."
+                  />
+                  <button
+                    type="button"
+                    onClick={fetchYoutubeInfo}
+                    disabled={loading}
+                    className="btn btn-primary whitespace-nowrap"
+                  >
+                    {loading ? (
+                      <svg className="animate-spin w-5 h-5" fill="none" viewBox="0 0 24 24">
+                        <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
+                        <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z" />
+                      </svg>
+                    ) : "Bilgileri Cek"}
+                  </button>
+                </div>
+                {error && <p className="text-sm text-red-400 mt-1">{error}</p>}
+              </div>
+
+              {/* Preview - Bilgiler çekildiğinde göster */}
+              {formData.embedUrl && (
+                <div className="bg-[var(--background)] rounded-lg p-4 border border-[var(--border)]">
+                  <div className="flex gap-4">
+                    {formData.thumbnailUrl && (
+                      <img src={formData.thumbnailUrl} alt="Thumbnail" className="w-32 h-20 object-cover rounded-lg flex-shrink-0" />
+                    )}
+                    <div className="flex-1 min-w-0">
+                      <h4 className="font-medium text-white truncate">{formData.title}</h4>
+                      <p className="text-sm text-[var(--text-muted)]">{formData.description}</p>
+                      <p className="text-xs text-green-400 mt-2">Video bilgileri alindi</p>
+                    </div>
+                  </div>
+                </div>
+              )}
             </div>
-            <div className="flex gap-3 mt-6"><button type="button" onClick={handleSubmit} className="btn btn-primary flex-1">Kaydet</button><button type="button" onClick={() => setShowModal(false)} className="btn btn-secondary">Iptal</button></div>
+
+            <div className="flex gap-3 mt-6">
+              <button type="button" onClick={handleSubmit} disabled={!formData.embedUrl} className="btn btn-primary flex-1 disabled:opacity-50">Kaydet</button>
+              <button type="button" onClick={() => setShowModal(false)} className="btn btn-secondary">Iptal</button>
+            </div>
           </div>
         </div>
       )}
