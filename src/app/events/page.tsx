@@ -29,6 +29,12 @@ export default function EventsPage() {
     fetchEvents();
   }, []);
 
+  const handleEventClick = (linkUrl: string) => {
+    if (linkUrl) {
+      window.open(linkUrl, "_blank", "noopener,noreferrer");
+    }
+  };
+
   return (
     <MainLayout>
       <div className="p-4 md:p-6 lg:p-8">
@@ -41,22 +47,22 @@ export default function EventsPage() {
           {events.length > 0 ? (
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
               {events.map((event, index) => (
-                <a
+                <div
                   key={event.id}
-                  href={event.linkUrl}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="card group animate-fadeIn"
+                  onClick={() => handleEventClick(event.linkUrl)}
+                  className="card group animate-fadeIn cursor-pointer"
                   style={{ animationDelay: `${index * 100}ms` }}
                 >
-                  <div className="relative overflow-hidden">
-                    <img
-                      src={event.imageUrl}
-                      alt={event.title}
-                      className="w-full h-52 object-cover group-hover:scale-105 transition-transform duration-300"
-                    />
-                    <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
-                    <div className="absolute bottom-4 right-4 opacity-0 group-hover:opacity-100 transition-opacity">
+                  <div className="relative overflow-hidden bg-gradient-to-br from-[var(--surface-hover)] to-[var(--surface)]">
+                    <div className="h-52 flex items-center justify-center p-4">
+                      <img
+                        src={event.imageUrl}
+                        alt={event.title}
+                        className="max-w-full max-h-full object-contain group-hover:scale-105 transition-transform duration-300"
+                      />
+                    </div>
+                    <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none" />
+                    <div className="absolute bottom-4 right-4 opacity-0 group-hover:opacity-100 transition-all duration-300 transform translate-y-2 group-hover:translate-y-0">
                       <div className="w-10 h-10 rounded-full bg-[var(--primary)] flex items-center justify-center">
                         <svg className="w-5 h-5 text-black" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M14 5l7 7m0 0l-7 7m7-7H3" />
@@ -82,7 +88,7 @@ export default function EventsPage() {
                       </p>
                     )}
                   </div>
-                </a>
+                </div>
               ))}
             </div>
           ) : (
