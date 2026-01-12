@@ -50,6 +50,18 @@ export default function EventsPage() {
                   style={{ animationDelay: `${index * 100}ms` }}
                 >
                   <div className="relative overflow-hidden bg-gradient-to-br from-[var(--surface-hover)] to-[var(--surface)]">
+                    {/* Status Badge - Sağ Üst Köşe */}
+                    <div className="absolute top-3 right-3 z-10">
+                      {event.status === "completed" ? (
+                        <span className="px-3 py-1 text-xs font-semibold rounded-full bg-gray-500/80 text-white backdrop-blur-sm">
+                          Bitti
+                        </span>
+                      ) : (
+                        <span className="px-3 py-1 text-xs font-semibold rounded-full bg-green-500/80 text-white backdrop-blur-sm">
+                          Aktif
+                        </span>
+                      )}
+                    </div>
                     <div className="h-52 flex items-center justify-center p-4">
                       <img
                         src={event.imageUrl}
