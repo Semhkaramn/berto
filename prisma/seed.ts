@@ -4,7 +4,8 @@ const prisma = new PrismaClient();
 
 async function main() {
   console.log("Seeding database...");
-
+  console.log("Database seeding completed!");
+}
 
 main()
   .catch((e) => {
