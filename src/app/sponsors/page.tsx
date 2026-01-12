@@ -64,9 +64,23 @@ export default function SponsorsPage() {
   const vipSponsors = filteredSponsors.filter((s) => s.type === "vip");
   const normalSponsors = filteredSponsors.filter((s) => s.type === "normal");
 
-  const handleSponsorClick = (linkUrl: string) => {
-    if (linkUrl) {
-      window.open(normalizeUrl(linkUrl), "_blank", "noopener,noreferrer");
+  // Tıklama takibi fonksiyonu
+  const trackClick = async (type: string, targetId: string) => {
+    try {
+      await fetch("/api/track-click", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ type, targetId }),
+      });
+    } catch (error) {
+      console.error("Track click error:", error);
+    }
+  };
+
+  const handleSponsorClick = (sponsor: { id: string; linkUrl: string }) => {
+    if (sponsor.linkUrl) {
+      trackClick("sponsor", sponsor.id);
+      window.open(normalizeUrl(sponsor.linkUrl), "_blank", "noopener,noreferrer");
     }
   };
 
@@ -144,7 +158,7 @@ export default function SponsorsPage() {
                 {mainSponsors.map((sponsor, index) => (
                   <div
                     key={sponsor.id}
-                    onClick={() => handleSponsorClick(sponsor.linkUrl)}
+                    onClick={() => handleSponsorClick(sponsor)}
                     className="group relative sponsor-card-main rounded-2xl cursor-pointer glow-main animate-fadeIn"
                     style={{ animationDelay: `${index * 150}ms` }}
                   >
@@ -216,7 +230,7 @@ export default function SponsorsPage() {
                 {vipSponsors.map((sponsor, index) => (
                   <div
                     key={sponsor.id}
-                    onClick={() => handleSponsorClick(sponsor.linkUrl)}
+                    onClick={() => handleSponsorClick(sponsor)}
                     className="group relative sponsor-card-vip rounded-xl cursor-pointer glow-vip animate-fadeIn spring-hover"
                     style={{ animationDelay: `${index * 100}ms` }}
                   >
@@ -274,7 +288,7 @@ export default function SponsorsPage() {
                 {normalSponsors.map((sponsor, index) => (
                   <div
                     key={sponsor.id}
-                    onClick={() => handleSponsorClick(sponsor.linkUrl)}
+                    onClick={() => handleSponsorClick(sponsor)}
                     className="group sponsor-card-normal rounded-xl overflow-hidden cursor-pointer animate-fadeIn"
                     style={{ animationDelay: `${index * 50}ms` }}
                   >
