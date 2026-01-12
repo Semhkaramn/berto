@@ -41,6 +41,25 @@ export default function SponsorPopup({ enabled = true }: SponsorPopupProps) {
     fetchPopup();
   }, [enabled]);
 
+  // Tıklama takibi fonksiyonu
+  const trackClick = async () => {
+    if (!popup) return;
+    try {
+      await fetch("/api/track-click", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ type: "popup", targetId: popup.id }),
+      });
+    } catch (error) {
+      console.error("Track click error:", error);
+    }
+  };
+
+  const handleClick = () => {
+    trackClick();
+    window.open(normalizeUrl(popup!.linkUrl), "_blank", "noopener,noreferrer");
+  };
+
   if (!enabled || !isOpen || !popup) return null;
 
   return (
@@ -84,17 +103,16 @@ export default function SponsorPopup({ enabled = true }: SponsorPopupProps) {
 
         {/* Giriş Butonu */}
         <div className="p-4 bg-zinc-900">
-          <a
-            href={normalizeUrl(popup.linkUrl)}
-            target="_blank"
-            rel="noopener noreferrer"
+          <button
+            type="button"
+            onClick={handleClick}
             className="btn btn-primary w-full flex items-center justify-center gap-2"
           >
             Giris Yap
             <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
             </svg>
-          </a>
+          </button>
         </div>
       </div>
     </div>
