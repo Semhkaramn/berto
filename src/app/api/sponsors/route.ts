@@ -7,6 +7,7 @@ export async function GET() {
       where: { isActive: true },
       orderBy: [
         { type: "asc" },
+        { sortOrder: "asc" },
         { createdAt: "desc" },
       ],
     });
@@ -28,6 +29,7 @@ export async function POST(request: NextRequest) {
         linkUrl: body.linkUrl,
         type: body.type || "normal",
         isActive: body.isActive ?? true,
+        sortOrder: body.sortOrder ?? 0,
       },
     });
     return NextResponse.json(sponsor);
