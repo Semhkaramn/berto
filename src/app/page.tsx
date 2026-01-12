@@ -201,47 +201,7 @@ export default function HomePage() {
               </Link>
             </div>
 
-            {/* Latest Sponsors */}
-            {sponsors.length > 0 && (
-              <section className="mb-8">
-                <div className="flex items-center justify-between mb-4">
-                  <h2 className="text-xl font-bold text-white">Son Eklenen Sponsorlar</h2>
-                  <Link href="/sponsors" className="text-sm text-[var(--primary)] hover:text-[var(--primary-hover)] font-medium">
-                    Tumunu Gor
-                  </Link>
-                </div>
-                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-                  {sponsors.slice(0, 3).map((sponsor) => (
-                    <a
-                      key={sponsor.id}
-                      href={sponsor.linkUrl}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="card"
-                    >
-                      <img
-                        src={sponsor.imageUrl}
-                        alt={sponsor.name}
-                        className="w-full h-36 object-cover"
-                      />
-                      <div className="p-4">
-                        <div className="flex items-center gap-2 mb-2">
-                          <span className={`badge badge-${sponsor.type}`}>
-                            {sponsor.type.toUpperCase()}
-                          </span>
-                        </div>
-                        <h3 className="font-semibold text-white">{sponsor.name}</h3>
-                        {sponsor.description && (
-                          <p className="text-sm text-[var(--text-muted)] mt-1 line-clamp-2">
-                            {sponsor.description}
-                          </p>
-                        )}
-                      </div>
-                    </a>
-                  ))}
-                </div>
-              </section>
-            )}
+
 
             {/* Latest Events */}
             {events.length > 0 && (
