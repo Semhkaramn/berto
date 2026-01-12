@@ -6,16 +6,17 @@ export async function GET() {
     let settings = await prisma.siteSettings.findFirst();
     if (!settings) {
       settings = await prisma.siteSettings.create({
-        data: {
-          siteName: "Sponsor Portal",
-        },
+        data: {},
       });
     }
     return NextResponse.json(settings);
   } catch (error) {
     console.error("Settings error:", error);
     return NextResponse.json({
-      siteName: "Sponsor Portal",
+      siteName: "",
+      logoUrl: null,
+      youtubeChannelId: null,
+      youtubeApiKey: null,
     });
   }
 }
