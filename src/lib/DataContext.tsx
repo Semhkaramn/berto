@@ -55,6 +55,23 @@ interface SiteSettings {
   logoUrl: string | null;
 }
 
+interface Stats {
+  totalVisitors: number;
+  uniqueVisitors: number;
+  todayVisitors: number;
+}
+
+interface TelegramChannel {
+  id: string;
+  username: string;
+  title: string | null;
+  description: string | null;
+  photoUrl: string | null;
+  memberCount: number | null;
+  isActive: boolean;
+  sortOrder: number;
+}
+
 interface DataContextType {
   banners: Banner[];
   sponsors: Sponsor[];
@@ -63,6 +80,8 @@ interface DataContextType {
   videos: Video[];
   socialMedia: SocialMedia[];
   siteSettings: SiteSettings | null;
+  stats: Stats;
+  telegramChannels: TelegramChannel[];
   isLoading: boolean;
   isLoaded: boolean;
   refetch: () => Promise<void>;
@@ -121,6 +140,12 @@ export function DataProvider({ children }: { children: ReactNode }) {
   const [videos, setVideos] = useState<Video[]>([]);
   const [socialMedia, setSocialMedia] = useState<SocialMedia[]>([]);
   const [siteSettings, setSiteSettings] = useState<SiteSettings | null>(null);
+  const [stats, setStats] = useState<Stats>({
+    totalVisitors: 0,
+    uniqueVisitors: 0,
+    todayVisitors: 0,
+  });
+  const [telegramChannels, setTelegramChannels] = useState<TelegramChannel[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [isLoaded, setIsLoaded] = useState(false);
 
@@ -136,7 +161,9 @@ export function DataProvider({ children }: { children: ReactNode }) {
         streamsRes,
         videosRes,
         socialRes,
-        settingsRes
+        settingsRes,
+        statsRes,
+        telegramRes
       ] = await Promise.all([
         fetch("/api/banners"),
         fetch("/api/sponsors"),
@@ -145,6 +172,8 @@ export function DataProvider({ children }: { children: ReactNode }) {
         fetch("/api/videos"),
         fetch("/api/social-media"),
         fetch("/api/settings"),
+        fetch("/api/stats"),
+        fetch("/api/telegram-channels"),
       ]);
 
       if (bannersRes.ok) setBanners(await bannersRes.json());
@@ -154,6 +183,8 @@ export function DataProvider({ children }: { children: ReactNode }) {
       if (videosRes.ok) setVideos(await videosRes.json());
       if (socialRes.ok) setSocialMedia(await socialRes.json());
       if (settingsRes.ok) setSiteSettings(await settingsRes.json());
+      if (statsRes.ok) setStats(await statsRes.json());
+      if (telegramRes.ok) setTelegramChannels(await telegramRes.json());
 
       setIsLoaded(true);
     } catch (error) {
@@ -189,6 +220,8 @@ export function DataProvider({ children }: { children: ReactNode }) {
         videos,
         socialMedia,
         siteSettings,
+        stats,
+        telegramChannels,
         isLoading,
         isLoaded,
         refetch,
