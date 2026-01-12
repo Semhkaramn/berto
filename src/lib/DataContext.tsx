@@ -24,6 +24,7 @@ interface Event {
   description: string | null;
   imageUrl: string;
   linkUrl: string;
+  status: string;
 }
 
 interface LiveStream {
