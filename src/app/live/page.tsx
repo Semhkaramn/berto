@@ -2,23 +2,7 @@
 
 import { useEffect, useState } from "react";
 import MainLayout from "@/components/MainLayout";
-
-interface LiveStream {
-  id: string;
-  title: string;
-  description: string | null;
-  embedUrl: string;
-  thumbnailUrl: string | null;
-  isLive: boolean;
-}
-
-interface Video {
-  id: string;
-  title: string;
-  description: string | null;
-  embedUrl: string;
-  thumbnailUrl: string | null;
-}
+import { useData } from "@/lib/DataContext";
 
 interface YouTubeLive {
   isLive: boolean;
@@ -37,16 +21,23 @@ interface YouTubeVideo {
   embedUrl: string;
 }
 
+interface SelectedVideo {
+  id: string;
+  title: string;
+  description: string | null;
+  embedUrl: string;
+  thumbnailUrl: string | null;
+}
+
 export default function LivePage() {
-  const [streams, setStreams] = useState<LiveStream[]>([]);
-  const [videos, setVideos] = useState<Video[]>([]);
+  const { liveStreams, videos, isLoading } = useData();
   const [youtubeVideos, setYoutubeVideos] = useState<YouTubeVideo[]>([]);
   const [youtubeLive, setYoutubeLive] = useState<YouTubeLive | null>(null);
-  const [selectedVideo, setSelectedVideo] = useState<Video | null>(null);
-  const [loading, setLoading] = useState(true);
+  const [selectedVideo, setSelectedVideo] = useState<SelectedVideo | null>(null);
+  const [youtubeLoading, setYoutubeLoading] = useState(true);
 
   useEffect(() => {
-    const fetchData = async () => {
+    const fetchYoutubeData = async () => {
       try {
         // Önce settings'i al
         const settingsRes = await fetch("/api/settings");
@@ -54,15 +45,6 @@ export default function LivePage() {
         if (settingsRes.ok) {
           settings = await settingsRes.json();
         }
-
-        // Normal streams ve videos
-        const [streamsRes, videosRes] = await Promise.all([
-          fetch("/api/livestreams"),
-          fetch("/api/videos"),
-        ]);
-
-        if (streamsRes.ok) setStreams(await streamsRes.json());
-        if (videosRes.ok) setVideos(await videosRes.json());
 
         // YouTube entegrasyonu varsa canlı yayın ve videoları çek
         if (settings?.youtubeChannelId && settings?.youtubeApiKey) {
@@ -96,19 +78,21 @@ export default function LivePage() {
           }
         }
       } catch (error) {
-        console.error("Fetch error:", error);
+        console.error("YouTube fetch error:", error);
       } finally {
-        setLoading(false);
+        setYoutubeLoading(false);
       }
     };
-    fetchData();
+    fetchYoutubeData();
   }, []);
 
-  const activeLiveStream = streams.find((s) => s.isLive);
-  const pastStreams = streams.filter((s) => !s.isLive);
+  const activeLiveStream = liveStreams.find((s) => s.isLive);
+  const pastStreams = liveStreams.filter((s) => !s.isLive);
 
   // YouTube canlı yayın aktif mi?
   const hasYoutubeLive = youtubeLive?.isLive && youtubeLive?.embedUrl;
+
+  const loading = isLoading || youtubeLoading;
 
   return (
     <MainLayout>
@@ -127,7 +111,7 @@ export default function LivePage() {
           )}
 
           {/* YouTube Live Stream */}
-          {hasYoutubeLive && (
+          {!loading && hasYoutubeLive && (
             <section className="mb-10">
               <div className="flex items-center gap-3 mb-4">
                 <span className="badge badge-live flex items-center gap-2">
@@ -159,7 +143,7 @@ export default function LivePage() {
           )}
 
           {/* Active Manual Live Stream */}
-          {activeLiveStream && !hasYoutubeLive && (
+          {!loading && activeLiveStream && !hasYoutubeLive && (
             <section className="mb-10">
               <div className="flex items-center gap-3 mb-4">
                 <span className="badge badge-live flex items-center gap-2">
@@ -186,7 +170,7 @@ export default function LivePage() {
           )}
 
           {/* No Live Stream */}
-          {!activeLiveStream && !hasYoutubeLive && !loading && (
+          {!loading && !activeLiveStream && !hasYoutubeLive && (
             <section className="mb-10">
               <div className="text-center py-16 bg-[var(--surface)] rounded-xl border border-[var(--border)]">
                 <div className="w-20 h-20 mx-auto rounded-full bg-red-500/20 flex items-center justify-center mb-4">
@@ -201,7 +185,7 @@ export default function LivePage() {
           )}
 
           {/* YouTube Videos */}
-          {youtubeVideos.length > 0 && (
+          {!loading && youtubeVideos.length > 0 && (
             <section className="mb-10">
               <h2 className="text-xl font-bold text-white mb-4 flex items-center gap-2">
                 <svg className="w-5 h-5 text-red-500" fill="currentColor" viewBox="0 0 24 24">
@@ -246,7 +230,7 @@ export default function LivePage() {
           )}
 
           {/* Past Streams */}
-          {pastStreams.length > 0 && (
+          {!loading && pastStreams.length > 0 && (
             <section className="mb-10">
               <h2 className="text-xl font-bold text-white mb-4">Son Yayinlar</h2>
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
@@ -254,7 +238,13 @@ export default function LivePage() {
                   <div
                     key={stream.id}
                     className="card cursor-pointer"
-                    onClick={() => setSelectedVideo({ ...stream, thumbnailUrl: stream.thumbnailUrl })}
+                    onClick={() => setSelectedVideo({
+                      id: stream.id,
+                      title: stream.title,
+                      description: stream.description,
+                      embedUrl: stream.embedUrl,
+                      thumbnailUrl: stream.thumbnailUrl,
+                    })}
                   >
                     <div className="relative">
                       {stream.thumbnailUrl ? (
@@ -292,7 +282,7 @@ export default function LivePage() {
           )}
 
           {/* Manual Videos */}
-          {videos.length > 0 && (
+          {!loading && videos.length > 0 && (
             <section>
               <h2 className="text-xl font-bold text-white mb-4">Videolar</h2>
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
@@ -300,7 +290,13 @@ export default function LivePage() {
                   <div
                     key={video.id}
                     className="card cursor-pointer"
-                    onClick={() => setSelectedVideo(video)}
+                    onClick={() => setSelectedVideo({
+                      id: video.id,
+                      title: video.title,
+                      description: video.description,
+                      embedUrl: video.embedUrl,
+                      thumbnailUrl: video.thumbnailUrl,
+                    })}
                   >
                     <div className="relative">
                       {video.thumbnailUrl ? (
