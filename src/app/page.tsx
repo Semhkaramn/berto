@@ -193,15 +193,13 @@ export default function HomePage() {
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-5 mb-6 sm:mb-8">
               {/* Sponsors Card */}
               <Link href="/sponsors" className="card group cursor-pointer overflow-hidden">
-                <div className="h-32 sm:h-36 md:h-40 relative overflow-hidden">
-                  {/* Background Image */}
+                <div className="relative overflow-hidden">
+                  {/* Background Image - resim orantısına göre */}
                   <img
                     src="/sponsorlar.jpg"
                     alt="Sponsorlar"
-                    className="absolute inset-0 w-full h-full object-fill group-hover:scale-105 transition-transform duration-300"
+                    className="w-full h-auto block group-hover:scale-105 transition-transform duration-300"
                   />
-                  {/* Fallback gradient */}
-                  <div className="absolute inset-0 gradient-main opacity-0" />
                   {/* Overlay */}
                   <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/20 to-transparent" />
                 </div>
@@ -224,15 +222,13 @@ export default function HomePage() {
 
               {/* Events Card */}
               <Link href="/events" className="card group cursor-pointer overflow-hidden">
-                <div className="h-32 sm:h-36 md:h-40 relative overflow-hidden">
-                  {/* Background Image */}
+                <div className="relative overflow-hidden">
+                  {/* Background Image - resim orantısına göre */}
                   <img
                     src="/etkinlikler.jpg"
                     alt="Etkinlikler"
-                    className="absolute inset-0 w-full h-full object-fill group-hover:scale-105 transition-transform duration-300"
+                    className="w-full h-auto block group-hover:scale-105 transition-transform duration-300"
                   />
-                  {/* Fallback gradient */}
-                  <div className="absolute inset-0 gradient-vip opacity-0" />
                   {/* Overlay */}
                   <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/20 to-transparent" />
                 </div>
@@ -255,15 +251,13 @@ export default function HomePage() {
 
               {/* Live Stream Card */}
               <Link href="/live" className="card group cursor-pointer overflow-hidden sm:col-span-2 lg:col-span-1">
-                <div className="h-32 sm:h-36 md:h-40 relative overflow-hidden">
-                  {/* Background Image */}
+                <div className="relative overflow-hidden">
+                  {/* Background Image - resim orantısına göre */}
                   <img
                     src="/yayinlar.jpg"
                     alt="Yayinlar"
-                    className="absolute inset-0 w-full h-full object-fill group-hover:scale-105 transition-transform duration-300"
+                    className="w-full h-auto block group-hover:scale-105 transition-transform duration-300"
                   />
-                  {/* Fallback gradient */}
-                  <div className="absolute inset-0 bg-gradient-to-br from-red-600 to-rose-700 opacity-0" />
                   {/* Overlay */}
                   <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/20 to-transparent" />
                   {activeLiveStream && (
