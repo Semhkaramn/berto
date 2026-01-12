@@ -79,6 +79,18 @@ export default function HomePage() {
 
   const activeLiveStream = liveStreams.find((s) => s.isLive);
 
+  const handleEventClick = (linkUrl: string) => {
+    if (linkUrl) {
+      window.open(linkUrl, "_blank", "noopener,noreferrer");
+    }
+  };
+
+  const handleBannerClick = (linkUrl: string | null) => {
+    if (linkUrl) {
+      window.open(linkUrl, "_blank", "noopener,noreferrer");
+    }
+  };
+
   return (
     <MainLayout>
       <div className="p-4 md:p-6 lg:p-8">
@@ -88,18 +100,18 @@ export default function HomePage() {
           {leftBanner && (
             <div className="hidden lg:block w-36 xl:w-44 flex-shrink-0">
               <div className="side-banner">
-                <a
-                  href={leftBanner.linkUrl || "#"}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="side-banner-item block hover:opacity-90 transition-opacity"
+                <div
+                  onClick={() => handleBannerClick(leftBanner.linkUrl)}
+                  className="side-banner-item block hover:opacity-90 transition-opacity cursor-pointer bg-[var(--surface)]"
                 >
-                  <img
-                    src={leftBanner.imageUrl}
-                    alt="Banner"
-                    className="w-full h-auto object-cover"
-                  />
-                </a>
+                  <div className="p-2 flex items-center justify-center min-h-[200px]">
+                    <img
+                      src={leftBanner.imageUrl}
+                      alt="Banner"
+                      className="max-w-full max-h-[300px] object-contain"
+                    />
+                  </div>
+                </div>
               </div>
             </div>
           )}
@@ -110,34 +122,34 @@ export default function HomePage() {
             {hasTopBanners && (
               <div className="top-banner-container">
                 {topBanner1 && (
-                  <a
-                    href={topBanner1.linkUrl || "#"}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="top-banner block hover:opacity-90 transition-opacity"
+                  <div
+                    onClick={() => handleBannerClick(topBanner1.linkUrl)}
+                    className="top-banner block hover:opacity-90 transition-opacity cursor-pointer bg-[var(--surface)]"
                   >
-                    <img src={topBanner1.imageUrl} alt="Banner" className="w-full h-20 md:h-24 object-cover" />
-                  </a>
+                    <div className="h-20 md:h-24 flex items-center justify-center p-2">
+                      <img src={topBanner1.imageUrl} alt="Banner" className="max-w-full max-h-full object-contain" />
+                    </div>
+                  </div>
                 )}
                 {topBanner2 && (
-                  <a
-                    href={topBanner2.linkUrl || "#"}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="top-banner block hover:opacity-90 transition-opacity"
+                  <div
+                    onClick={() => handleBannerClick(topBanner2.linkUrl)}
+                    className="top-banner block hover:opacity-90 transition-opacity cursor-pointer bg-[var(--surface)]"
                   >
-                    <img src={topBanner2.imageUrl} alt="Banner" className="w-full h-20 md:h-24 object-cover" />
-                  </a>
+                    <div className="h-20 md:h-24 flex items-center justify-center p-2">
+                      <img src={topBanner2.imageUrl} alt="Banner" className="max-w-full max-h-full object-contain" />
+                    </div>
+                  </div>
                 )}
                 {topBanner3 && (
-                  <a
-                    href={topBanner3.linkUrl || "#"}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="top-banner block hover:opacity-90 transition-opacity"
+                  <div
+                    onClick={() => handleBannerClick(topBanner3.linkUrl)}
+                    className="top-banner block hover:opacity-90 transition-opacity cursor-pointer bg-[var(--surface)]"
                   >
-                    <img src={topBanner3.imageUrl} alt="Banner" className="w-full h-20 md:h-24 object-cover" />
-                  </a>
+                    <div className="h-20 md:h-24 flex items-center justify-center p-2">
+                      <img src={topBanner3.imageUrl} alt="Banner" className="max-w-full max-h-full object-contain" />
+                    </div>
+                  </div>
                 )}
               </div>
             )}
@@ -201,8 +213,6 @@ export default function HomePage() {
               </Link>
             </div>
 
-
-
             {/* Latest Events */}
             {events.length > 0 && (
               <section>
@@ -214,27 +224,27 @@ export default function HomePage() {
                 </div>
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                   {events.slice(0, 2).map((event) => (
-                    <a
+                    <div
                       key={event.id}
-                      href={event.linkUrl}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="card flex flex-col sm:flex-row"
+                      onClick={() => handleEventClick(event.linkUrl)}
+                      className="card flex flex-col sm:flex-row cursor-pointer group"
                     >
-                      <img
-                        src={event.imageUrl}
-                        alt={event.title}
-                        className="w-full sm:w-44 h-28 object-cover"
-                      />
+                      <div className="w-full sm:w-44 h-28 bg-gradient-to-br from-[var(--surface-hover)] to-[var(--surface)] flex items-center justify-center p-2 flex-shrink-0">
+                        <img
+                          src={event.imageUrl}
+                          alt={event.title}
+                          className="max-w-full max-h-full object-contain group-hover:scale-105 transition-transform duration-300"
+                        />
+                      </div>
                       <div className="p-4 flex-1">
-                        <h3 className="font-semibold text-white mb-2">{event.title}</h3>
+                        <h3 className="font-semibold text-white mb-2 group-hover:text-[var(--primary)] transition-colors">{event.title}</h3>
                         {event.description && (
                           <p className="text-sm text-[var(--text-muted)] line-clamp-2">
                             {event.description}
                           </p>
                         )}
                       </div>
-                    </a>
+                    </div>
                   ))}
                 </div>
               </section>
@@ -245,18 +255,18 @@ export default function HomePage() {
           {rightBanner && (
             <div className="hidden lg:block w-36 xl:w-44 flex-shrink-0">
               <div className="side-banner">
-                <a
-                  href={rightBanner.linkUrl || "#"}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="side-banner-item block hover:opacity-90 transition-opacity"
+                <div
+                  onClick={() => handleBannerClick(rightBanner.linkUrl)}
+                  className="side-banner-item block hover:opacity-90 transition-opacity cursor-pointer bg-[var(--surface)]"
                 >
-                  <img
-                    src={rightBanner.imageUrl}
-                    alt="Banner"
-                    className="w-full h-auto object-cover"
-                  />
-                </a>
+                  <div className="p-2 flex items-center justify-center min-h-[200px]">
+                    <img
+                      src={rightBanner.imageUrl}
+                      alt="Banner"
+                      className="max-w-full max-h-[300px] object-contain"
+                    />
+                  </div>
+                </div>
               </div>
             </div>
           )}
