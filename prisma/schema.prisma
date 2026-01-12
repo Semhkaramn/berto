@@ -104,7 +104,7 @@ model Banner {
 // Site Ayarları
 model SiteSettings {
   id               String  @id @default(cuid())
-  siteName         String  @default("Sponsor Portal")
+  siteName         String  @default("")
   logoUrl          String?
   youtubeChannelId String?
   youtubeApiKey    String?
