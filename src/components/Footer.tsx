@@ -9,11 +9,7 @@ interface Stats {
   todayVisitors: number;
 }
 
-interface FooterProps {
-  telegramUrl?: string;
-}
-
-export default function Footer({ telegramUrl }: FooterProps) {
+export default function Footer() {
   const [stats, setStats] = useState<Stats>({
     totalVisitors: 0,
     uniqueVisitors: 0,
@@ -58,7 +54,7 @@ export default function Footer({ telegramUrl }: FooterProps) {
             Berto Tum haklar saklidir.
           </p>
           <a
-            href={normalizeUrl(telegramUrl || "https://t.me/thisisarche")}
+            href={normalizeUrl("https://t.me/thisisarche")}
             target="_blank"
             rel="noopener noreferrer"
             className="flex items-center gap-1.5 text-xs text-[var(--primary)] hover:text-[var(--primary-hover)] transition-colors"
