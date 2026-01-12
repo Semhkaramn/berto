@@ -192,18 +192,18 @@ export default function HomePage() {
             {/* Quick Access Cards - Responsive grid */}
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-5 mb-6 sm:mb-8">
               {/* Sponsors Card */}
-              <Link href="/sponsors" className="card group cursor-pointer overflow-hidden">
-                <div className="relative overflow-hidden">
-                  {/* Background Image - resim orantısına göre */}
+              <Link href="/sponsors" className="card group cursor-pointer overflow-hidden flex flex-col">
+                <div className="relative overflow-hidden h-40 sm:h-48">
+                  {/* Background Image - sabit yükseklik, cover */}
                   <img
                     src="/sponsorlar.jpg"
                     alt="Sponsorlar"
-                    className="w-full h-auto block group-hover:scale-105 transition-transform duration-300"
+                    className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
                   />
                   {/* Overlay */}
-                  <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/20 to-transparent" />
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/30 to-transparent" />
                 </div>
-                <div className="p-3 sm:p-4 bg-gradient-to-b from-[var(--surface)] to-[var(--background)]">
+                <div className="p-3 sm:p-4 bg-gradient-to-b from-[var(--surface)] to-[var(--background)] flex-1">
                   <div className="flex items-center justify-between">
                     <div className="min-w-0 flex-1">
                       <h3 className="text-base sm:text-lg font-bold text-white mb-0.5 group-hover:text-[var(--primary)] transition-colors truncate">Sponsorlar</h3>
@@ -221,18 +221,18 @@ export default function HomePage() {
               </Link>
 
               {/* Events Card */}
-              <Link href="/events" className="card group cursor-pointer overflow-hidden">
-                <div className="relative overflow-hidden">
-                  {/* Background Image - resim orantısına göre */}
+              <Link href="/events" className="card group cursor-pointer overflow-hidden flex flex-col">
+                <div className="relative overflow-hidden h-40 sm:h-48">
+                  {/* Background Image - sabit yükseklik, cover */}
                   <img
                     src="/etkinlikler.jpg"
                     alt="Etkinlikler"
-                    className="w-full h-auto block group-hover:scale-105 transition-transform duration-300"
+                    className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
                   />
                   {/* Overlay */}
-                  <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/20 to-transparent" />
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/30 to-transparent" />
                 </div>
-                <div className="p-3 sm:p-4 bg-gradient-to-b from-[var(--surface)] to-[var(--background)]">
+                <div className="p-3 sm:p-4 bg-gradient-to-b from-[var(--surface)] to-[var(--background)] flex-1">
                   <div className="flex items-center justify-between">
                     <div className="min-w-0 flex-1">
                       <h3 className="text-base sm:text-lg font-bold text-white mb-0.5 group-hover:text-purple-400 transition-colors truncate">Etkinlikler</h3>
@@ -250,16 +250,16 @@ export default function HomePage() {
               </Link>
 
               {/* Live Stream Card */}
-              <Link href="/live" className="card group cursor-pointer overflow-hidden sm:col-span-2 lg:col-span-1">
-                <div className="relative overflow-hidden">
-                  {/* Background Image - resim orantısına göre */}
+              <Link href="/live" className="card group cursor-pointer overflow-hidden flex flex-col sm:col-span-2 lg:col-span-1">
+                <div className="relative overflow-hidden h-40 sm:h-48">
+                  {/* Background Image - sabit yükseklik, cover */}
                   <img
                     src="/yayinlar.jpg"
                     alt="Yayinlar"
-                    className="w-full h-auto block group-hover:scale-105 transition-transform duration-300"
+                    className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
                   />
                   {/* Overlay */}
-                  <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/20 to-transparent" />
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/30 to-transparent" />
                   {activeLiveStream && (
                     <div className="absolute top-2 sm:top-3 right-2 sm:right-3 z-20">
                       <span className="badge badge-live flex items-center gap-1 sm:gap-2 text-xs sm:text-sm">
@@ -269,7 +269,7 @@ export default function HomePage() {
                     </div>
                   )}
                 </div>
-                <div className="p-3 sm:p-4 bg-gradient-to-b from-[var(--surface)] to-[var(--background)]">
+                <div className="p-3 sm:p-4 bg-gradient-to-b from-[var(--surface)] to-[var(--background)] flex-1">
                   <div className="flex items-center justify-between">
                     <div className="min-w-0 flex-1">
                       <h3 className="text-base sm:text-lg font-bold text-white mb-0.5 group-hover:text-red-400 transition-colors truncate">Yayinlar</h3>
