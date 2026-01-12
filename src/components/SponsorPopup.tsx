@@ -37,9 +37,8 @@ export default function SponsorPopup({ enabled = true }: SponsorPopupProps) {
       }
     };
 
-    // Show popup after 1 second
-    const timer = setTimeout(fetchPopup, 1000);
-    return () => clearTimeout(timer);
+    // Popup hemen açılsın (bekleme yok)
+    fetchPopup();
   }, [enabled]);
 
   if (!enabled || !isOpen || !popup) return null;
@@ -47,59 +46,55 @@ export default function SponsorPopup({ enabled = true }: SponsorPopupProps) {
   return (
     <div className="modal-overlay" onClick={() => setIsOpen(false)}>
       <div
-        className="modal-content p-0 max-w-md overflow-hidden"
+        className="modal-content p-0 max-w-md overflow-hidden relative"
         onClick={(e) => e.stopPropagation()}
       >
-        {/* Close Button */}
+        {/* X Close Button - Sağ üst köşede */}
         <button
           type="button"
           onClick={() => setIsOpen(false)}
-          className="absolute top-3 right-3 z-10 w-8 h-8 rounded-full bg-black/60 backdrop-blur-sm text-white flex items-center justify-center hover:bg-black/80 transition-colors"
+          className="absolute top-3 right-3 z-20 w-8 h-8 rounded-full bg-black/60 backdrop-blur-sm text-white flex items-center justify-center hover:bg-black/80 transition-colors"
         >
           <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
           </svg>
         </button>
 
-        {/* Sponsor Image */}
-        <a href={normalizeUrl(popup.linkUrl)} target="_blank" rel="noopener noreferrer" className="block relative">
-          <div className="w-full h-64 bg-gradient-to-br from-zinc-900 to-zinc-950 flex items-center justify-center p-6">
-            <img
-              src={popup.imageUrl}
-              alt={popup.title}
-              className="max-w-full max-h-full w-auto h-auto object-contain drop-shadow-2xl"
-            />
-          </div>
-          <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent" />
-          <div className="absolute bottom-0 left-0 right-0 p-6">
-            <span className="badge badge-main mb-2">SPONSOR</span>
-            <h3 className="text-xl font-bold text-white mb-1">{popup.title}</h3>
-            {popup.description && (
-              <p className="text-sm text-gray-300 whitespace-pre-line">{popup.description}</p>
-            )}
-          </div>
-        </a>
+        {/* Başlık - En üstte */}
+        <div className="p-4 border-b border-[var(--border)] bg-[var(--surface)]">
+          <span className="badge badge-main mb-2">SPONSOR</span>
+          <h3 className="text-xl font-bold text-white">{popup.title}</h3>
+        </div>
 
-        {/* Action Button */}
-        <div className="p-4 flex gap-3 bg-zinc-900">
+        {/* Resim - Ortada */}
+        <div className="w-full bg-gradient-to-br from-zinc-900 to-zinc-950 flex items-center justify-center p-6">
+          <img
+            src={popup.imageUrl}
+            alt={popup.title}
+            className="max-w-full max-h-64 w-auto h-auto object-contain drop-shadow-2xl"
+          />
+        </div>
+
+        {/* Açıklama - Resmin altında */}
+        {popup.description && (
+          <div className="px-4 py-3 bg-[var(--surface)] border-t border-[var(--border)]">
+            <p className="text-sm text-gray-300 whitespace-pre-line">{popup.description}</p>
+          </div>
+        )}
+
+        {/* Giriş Butonu */}
+        <div className="p-4 bg-zinc-900">
           <a
             href={normalizeUrl(popup.linkUrl)}
             target="_blank"
             rel="noopener noreferrer"
-            className="btn btn-primary flex-1"
+            className="btn btn-primary w-full flex items-center justify-center gap-2"
           >
-            Ziyaret Et
+            Giris Yap
             <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
             </svg>
           </a>
-          <button
-            type="button"
-            onClick={() => setIsOpen(false)}
-            className="btn btn-secondary"
-          >
-            Kapat
-          </button>
         </div>
       </div>
     </div>
