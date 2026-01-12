@@ -40,8 +40,12 @@ export async function POST(request: NextRequest) {
         });
       } else {
         console.error("Cloudinary error:", cloudinaryData);
+        // Cloudinary'den gelen gerçek hata mesajını göster
+        const errorMessage = cloudinaryData.error?.message ||
+                            cloudinaryData.message ||
+                            "Cloudinary yukleme hatasi";
         return NextResponse.json(
-          { error: "Cloudinary yukleme hatasi. Lutfen tekrar deneyin." },
+          { error: `Cloudinary: ${errorMessage}` },
           { status: 500 }
         );
       }
