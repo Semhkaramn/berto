@@ -6,9 +6,10 @@ interface ImageUploadProps {
   value: string;
   onChange: (url: string) => void;
   label?: string;
+  placeholder?: string;
 }
 
-export default function ImageUpload({ value, onChange, label = "Gorsel" }: ImageUploadProps) {
+export default function ImageUpload({ value, onChange, label = "Gorsel", placeholder }: ImageUploadProps) {
   const [uploading, setUploading] = useState(false);
   const [error, setError] = useState("");
   const [dragOver, setDragOver] = useState(false);
@@ -128,6 +129,11 @@ export default function ImageUpload({ value, onChange, label = "Gorsel" }: Image
             <p className="text-xs text-[var(--text-muted)] mt-1">
               PNG, JPG, GIF (max 5MB)
             </p>
+            {placeholder && (
+              <p className="text-xs text-[var(--text-muted)] mt-1 opacity-70">
+                {placeholder}
+              </p>
+            )}
           </div>
         )}
       </div>
