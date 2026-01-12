@@ -1,8 +1,9 @@
 "use client";
 
-import { useMemo } from "react";
+import { useMemo, useState } from "react";
 import MainLayout from "@/components/MainLayout";
 import { useData } from "@/lib/DataContext";
+import { normalizeUrl } from "@/lib/utils";
 
 // Particle component for background effects
 const Particles = ({ count = 6, color = "primary" }: { count?: number; color?: string }) => {
@@ -50,14 +51,22 @@ const StarIcon = ({ className = "" }: { className?: string }) => (
 
 export default function SponsorsPage() {
   const { sponsors, isLoading } = useData();
+  const [searchQuery, setSearchQuery] = useState("");
 
-  const mainSponsors = sponsors.filter((s) => s.type === "main");
-  const vipSponsors = sponsors.filter((s) => s.type === "vip");
-  const normalSponsors = sponsors.filter((s) => s.type === "normal");
+  // Filter sponsors by name
+  const filteredSponsors = useMemo(() => {
+    if (!searchQuery.trim()) return sponsors;
+    const query = searchQuery.toLowerCase().trim();
+    return sponsors.filter((s) => s.name.toLowerCase().includes(query));
+  }, [sponsors, searchQuery]);
+
+  const mainSponsors = filteredSponsors.filter((s) => s.type === "main");
+  const vipSponsors = filteredSponsors.filter((s) => s.type === "vip");
+  const normalSponsors = filteredSponsors.filter((s) => s.type === "normal");
 
   const handleSponsorClick = (linkUrl: string) => {
     if (linkUrl) {
-      window.open(linkUrl, "_blank", "noopener,noreferrer");
+      window.open(normalizeUrl(linkUrl), "_blank", "noopener,noreferrer");
     }
   };
 
@@ -66,13 +75,49 @@ export default function SponsorsPage() {
       <div className="p-4 md:p-6 lg:p-8">
         <div className="max-w-7xl mx-auto">
           {/* Hero Header */}
-          <div className="text-center mb-12">
+          <div className="text-center mb-8">
             <h1 className="text-4xl md:text-5xl font-bold mb-4">
               <span className="gradient-text">Sponsorlarimiz</span>
             </h1>
             <p className="text-[var(--text-muted)] text-lg max-w-2xl mx-auto">
               Bizi destekleyen degerli sponsorlarimiza tesekkur ederiz
             </p>
+          </div>
+
+          {/* Search Bar */}
+          <div className="max-w-md mx-auto mb-12">
+            <div className="relative">
+              <svg
+                className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-[var(--text-muted)]"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+              </svg>
+              <input
+                type="text"
+                placeholder="Sponsor ara..."
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                className="w-full pl-12 pr-4 py-3 bg-[var(--surface)] border border-[var(--border)] rounded-xl text-white placeholder-[var(--text-muted)] focus:outline-none focus:border-[var(--primary)] focus:ring-2 focus:ring-[var(--primary)]/20 transition-all"
+              />
+              {searchQuery && (
+                <button
+                  onClick={() => setSearchQuery("")}
+                  className="absolute right-4 top-1/2 -translate-y-1/2 text-[var(--text-muted)] hover:text-white transition-colors"
+                >
+                  <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                  </svg>
+                </button>
+              )}
+            </div>
+            {searchQuery && (
+              <p className="text-center text-sm text-[var(--text-muted)] mt-2">
+                {filteredSponsors.length} sonuc bulundu
+              </p>
+            )}
           </div>
 
           {isLoading && (
@@ -112,7 +157,7 @@ export default function SponsorsPage() {
                     {/* Shine Effect */}
                     <div className="shine-effect" />
 
-                    <div className="relative p-8 flex flex-col min-h-[380px] z-10">
+                    <div className="relative p-8 flex flex-col z-10">
                       {/* Logo Container */}
                       <div className="flex-1 flex items-center justify-center p-6">
                         <div className="relative animate-float">
@@ -144,7 +189,7 @@ export default function SponsorsPage() {
                           </div>
                         </div>
                         {sponsor.description && (
-                          <p className="text-white/80 text-sm line-clamp-2">{sponsor.description}</p>
+                          <p className="text-white/80 text-sm whitespace-pre-line">{sponsor.description}</p>
                         )}
                       </div>
                     </div>
@@ -184,7 +229,7 @@ export default function SponsorsPage() {
                     {/* Shine Effect */}
                     <div className="shine-effect" />
 
-                    <div className="relative p-6 flex flex-col min-h-[280px] z-10">
+                    <div className="relative p-6 flex flex-col z-10">
                       {/* Logo */}
                       <div className="flex-1 flex items-center justify-center p-4">
                         <img
@@ -203,7 +248,7 @@ export default function SponsorsPage() {
                           <span className="text-white font-semibold text-lg">{sponsor.name}</span>
                         </div>
                         {sponsor.description && (
-                          <p className="text-white/70 text-sm line-clamp-2">{sponsor.description}</p>
+                          <p className="text-white/70 text-sm whitespace-pre-line">{sponsor.description}</p>
                         )}
                       </div>
                     </div>
@@ -248,7 +293,7 @@ export default function SponsorsPage() {
                     <div className="p-3 border-t border-[var(--border)]">
                       <h3 className="font-medium text-white text-sm truncate group-hover:text-blue-400 transition-colors">{sponsor.name}</h3>
                       {sponsor.description && (
-                        <p className="text-xs text-[var(--text-muted)] mt-1 line-clamp-1">{sponsor.description}</p>
+                        <p className="text-xs text-[var(--text-muted)] mt-1 whitespace-pre-line">{sponsor.description}</p>
                       )}
                     </div>
                   </div>
@@ -258,7 +303,7 @@ export default function SponsorsPage() {
           )}
 
           {/* Empty State */}
-          {!isLoading && sponsors.length === 0 && (
+          {!isLoading && filteredSponsors.length === 0 && (
             <div className="text-center py-20">
               <div className="w-24 h-24 mx-auto rounded-full bg-[var(--surface)] flex items-center justify-center mb-6">
                 <svg className="w-12 h-12 text-[var(--text-muted)]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
