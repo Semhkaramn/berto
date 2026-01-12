@@ -44,9 +44,6 @@ export default function LivePage() {
       <div className="p-4 md:p-6 lg:p-8">
         <div className="max-w-6xl mx-auto">
           <h1 className="text-3xl font-bold text-white mb-2">Yayinlar ve Videolar</h1>
-          <p className="text-[var(--text-muted)] mb-8">
-            Canli yayinlar ve video arsivi
-          </p>
 
           {isLoading && (
             <div className="text-center py-12">
