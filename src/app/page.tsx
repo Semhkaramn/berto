@@ -74,75 +74,73 @@ export default function HomePage() {
   const leftBanner = getBannerByPosition("left");
   const rightBanner = getBannerByPosition("right");
 
+  // Herhangi bir üst banner var mı?
+  const hasTopBanners = topBanner1 || topBanner2 || topBanner3;
+
   const activeLiveStream = liveStreams.find((s) => s.isLive);
-
-  // Banner bileşeni - tekrar kullanılabilir
-  const TopBannerItem = ({ banner, placeholder }: { banner: Banner | undefined; placeholder: string }) => (
-    banner ? (
-      <a
-        href={banner.linkUrl || "#"}
-        target="_blank"
-        rel="noopener noreferrer"
-        className="top-banner block hover:opacity-90 transition-opacity"
-      >
-        <img
-          src={banner.imageUrl}
-          alt="Banner"
-          className="w-full h-20 md:h-24 object-cover"
-        />
-      </a>
-    ) : (
-      <div className="top-banner">
-        <div className="top-banner-placeholder">
-          {placeholder}
-        </div>
-      </div>
-    )
-  );
-
-  const SideBannerItem = ({ banner, placeholder }: { banner: Banner | undefined; placeholder: string }) => (
-    banner ? (
-      <a
-        href={banner.linkUrl || "#"}
-        target="_blank"
-        rel="noopener noreferrer"
-        className="side-banner-item block hover:opacity-90 transition-opacity"
-      >
-        <img
-          src={banner.imageUrl}
-          alt="Banner"
-          className="w-full h-auto object-cover"
-        />
-      </a>
-    ) : (
-      <div className="side-banner-item">
-        <div className="side-banner-placeholder">
-          {placeholder}
-        </div>
-      </div>
-    )
-  );
 
   return (
     <MainLayout>
       <div className="p-4 md:p-6 lg:p-8">
         {/* Main Layout with Side Banners */}
         <div className="flex gap-4">
-          {/* Sol Dikey Banner */}
-          <div className="hidden lg:block w-36 xl:w-44 flex-shrink-0">
-            <div className="side-banner">
-              <SideBannerItem banner={leftBanner} placeholder="Sol Banner Alani" />
+          {/* Sol Dikey Banner - Sadece varsa göster */}
+          {leftBanner && (
+            <div className="hidden lg:block w-36 xl:w-44 flex-shrink-0">
+              <div className="side-banner">
+                <a
+                  href={leftBanner.linkUrl || "#"}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="side-banner-item block hover:opacity-90 transition-opacity"
+                >
+                  <img
+                    src={leftBanner.imageUrl}
+                    alt="Banner"
+                    className="w-full h-auto object-cover"
+                  />
+                </a>
+              </div>
             </div>
-          </div>
+          )}
 
           {/* Ana İçerik */}
           <div className="flex-1 min-w-0">
-            {/* Üst Yatay Bannerlar - Alt Alta */}
-            <div className="top-banner-container">
-              <TopBannerItem banner={topBanner1} placeholder="Ust Banner 1" />
-              <TopBannerItem banner={topBanner2} placeholder="Ust Banner 2" />
-              <TopBannerItem banner={topBanner3} placeholder="Ust Banner 3" />
-            </div>
+            {/* Üst Yatay Bannerlar - Sadece varsa göster */}
+            {hasTopBanners && (
+              <div className="top-banner-container">
+                {topBanner1 && (
+                  <a
+                    href={topBanner1.linkUrl || "#"}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="top-banner block hover:opacity-90 transition-opacity"
+                  >
+                    <img src={topBanner1.imageUrl} alt="Banner" className="w-full h-20 md:h-24 object-cover" />
+                  </a>
+                )}
+                {topBanner2 && (
+                  <a
+                    href={topBanner2.linkUrl || "#"}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="top-banner block hover:opacity-90 transition-opacity"
+                  >
+                    <img src={topBanner2.imageUrl} alt="Banner" className="w-full h-20 md:h-24 object-cover" />
+                  </a>
+                )}
+                {topBanner3 && (
+                  <a
+                    href={topBanner3.linkUrl || "#"}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="top-banner block hover:opacity-90 transition-opacity"
+                  >
+                    <img src={topBanner3.imageUrl} alt="Banner" className="w-full h-20 md:h-24 object-cover" />
+                  </a>
+                )}
+              </div>
+            )}
 
             {/* Quick Access Cards */}
             <div className="grid grid-cols-1 md:grid-cols-3 gap-5 mb-8">
@@ -283,12 +281,25 @@ export default function HomePage() {
             )}
           </div>
 
-          {/* Sağ Dikey Banner */}
-          <div className="hidden lg:block w-36 xl:w-44 flex-shrink-0">
-            <div className="side-banner">
-              <SideBannerItem banner={rightBanner} placeholder="Sag Banner Alani" />
+          {/* Sağ Dikey Banner - Sadece varsa göster */}
+          {rightBanner && (
+            <div className="hidden lg:block w-36 xl:w-44 flex-shrink-0">
+              <div className="side-banner">
+                <a
+                  href={rightBanner.linkUrl || "#"}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="side-banner-item block hover:opacity-90 transition-opacity"
+                >
+                  <img
+                    src={rightBanner.imageUrl}
+                    alt="Banner"
+                    className="w-full h-auto object-cover"
+                  />
+                </a>
+              </div>
             </div>
-          </div>
+          )}
         </div>
       </div>
     </MainLayout>
