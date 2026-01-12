@@ -6,7 +6,7 @@ import Sidebar from "./Sidebar";
 import Footer from "./Footer";
 
 // Sabit site bilgileri - GitHub'dan logo
-const SITE_NAME = "Berto";
+const SITE_NAME = "Slot Berto";
 const SITE_LOGO = "/logo.png";
 
 interface MainLayoutProps {
