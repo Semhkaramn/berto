@@ -8,7 +8,6 @@ export async function GET() {
       settings = await prisma.siteSettings.create({
         data: {
           siteName: "Sponsor Portal",
-          telegramUrl: "https://t.me/username",
         },
       });
     }
@@ -17,7 +16,6 @@ export async function GET() {
     console.error("Settings error:", error);
     return NextResponse.json({
       siteName: "Sponsor Portal",
-      telegramUrl: "https://t.me/username",
     });
   }
 }
@@ -33,7 +31,6 @@ export async function PUT(request: NextRequest) {
         data: {
           siteName: body.siteName,
           logoUrl: body.logoUrl,
-          telegramUrl: body.telegramUrl,
           youtubeChannelId: body.youtubeChannelId,
           youtubeApiKey: body.youtubeApiKey,
         },
@@ -43,7 +40,6 @@ export async function PUT(request: NextRequest) {
         data: {
           siteName: body.siteName,
           logoUrl: body.logoUrl,
-          telegramUrl: body.telegramUrl,
           youtubeChannelId: body.youtubeChannelId,
           youtubeApiKey: body.youtubeApiKey,
         },
