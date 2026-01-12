@@ -102,7 +102,7 @@ export default function SponsorsPage() {
       <div className="p-4 md:p-6">
         <div className="flex items-center justify-between mb-6">
           <div>
-            <h1 className="text-2xl font-bold text-white">Sponsorlar</h1>
+            <h1 className="text-2xl font-bold text-white">Sponsorlar - Berto’nun Güvenle Oynadığı Siteler</h1>
             <p className="text-[var(--text-muted)] text-sm">{sponsors.length} sponsor</p>
           </div>
           <button type="button" onClick={openAddModal} className="btn btn-primary">
