@@ -21,6 +21,7 @@ export default function MainLayout({ children }: MainLayoutProps) {
     logoUrl: null,
     telegramUrl: "https://t.me/username",
   });
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
   useEffect(() => {
     // Fetch settings
@@ -57,13 +58,36 @@ export default function MainLayout({ children }: MainLayoutProps) {
     trackVisit();
   }, []);
 
+  // Mobil menü açıkken body scroll'u kapat
+  useEffect(() => {
+    if (isMobileMenuOpen) {
+      document.body.style.overflow = 'hidden';
+    } else {
+      document.body.style.overflow = '';
+    }
+    return () => {
+      document.body.style.overflow = '';
+    };
+  }, [isMobileMenuOpen]);
+
+  const toggleMobileMenu = () => setIsMobileMenuOpen(!isMobileMenuOpen);
+  const closeMobileMenu = () => setIsMobileMenuOpen(false);
+
   return (
     <div className="min-h-screen bg-[var(--background)]">
-      <Header siteName={settings.siteName} logoUrl={settings.logoUrl || undefined} />
-      <Sidebar />
+      <Header
+        siteName={settings.siteName}
+        logoUrl={settings.logoUrl || undefined}
+        onMenuToggle={toggleMobileMenu}
+        isMobileMenuOpen={isMobileMenuOpen}
+      />
+      <Sidebar
+        isOpen={isMobileMenuOpen}
+        onClose={closeMobileMenu}
+      />
 
-      {/* Main content area - sidebar'ın yanında */}
-      <div className="md:ml-64 ml-16 pt-16 min-h-screen flex flex-col">
+      {/* Main content area - sidebar'ın yanında (sadece desktop) */}
+      <div className="md:ml-64 pt-16 min-h-screen flex flex-col">
         <main className="flex-1">
           {children}
         </main>
