@@ -58,15 +58,17 @@ export default function MainLayout({ children }: MainLayoutProps) {
   }, []);
 
   return (
-    <div className="min-h-screen flex flex-col">
+    <div className="min-h-screen bg-[var(--background)]">
       <Header siteName={settings.siteName} logoUrl={settings.logoUrl || undefined} />
-      <div className="flex flex-1 pt-16">
-        <Sidebar />
-        <main className="flex-1 min-h-screen">
+      <Sidebar />
+
+      {/* Main content area - sidebar'ın yanında */}
+      <div className="md:ml-64 ml-16 pt-16 min-h-screen flex flex-col">
+        <main className="flex-1">
           {children}
         </main>
+        <Footer telegramUrl={settings.telegramUrl || undefined} />
       </div>
-      <Footer telegramUrl={settings.telegramUrl || undefined} />
     </div>
   );
 }
