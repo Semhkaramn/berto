@@ -204,8 +204,8 @@ export default function BannersPage() {
       </div>
 
       {showModal && (
-        <div className="modal-overlay" onClick={() => setShowModal(false)}>
-          <div className="modal-content p-6" onClick={(e) => e.stopPropagation()}>
+        <div className="modal-overlay">
+          <div className="modal-content p-6">
             <div className="flex items-center justify-between mb-6">
               <h3 className="text-lg font-bold text-white">{editingItem ? "Banner Duzenle" : "Yeni Banner"}</h3>
               <button type="button" onClick={() => setShowModal(false)} className="text-[var(--text-muted)] hover:text-white">
