@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from "react";
 import AdminLayout from "@/components/AdminLayout";
+import ImageUpload from "@/components/ImageUpload";
 
 interface Banner {
   id: string;
@@ -209,10 +210,11 @@ export default function BannersPage() {
               </button>
             </div>
             <div className="space-y-4">
-              <div>
-                <label className="block text-sm font-medium text-[var(--text-muted)] mb-2">Gorsel URL</label>
-                <input type="text" value={formData.imageUrl} onChange={(e) => setFormData({ ...formData, imageUrl: e.target.value })} className="input" placeholder="https://..." />
-              </div>
+              <ImageUpload
+                label="Banner Gorseli"
+                value={formData.imageUrl}
+                onChange={(url) => setFormData({ ...formData, imageUrl: url })}
+              />
               <div>
                 <label className="block text-sm font-medium text-[var(--text-muted)] mb-2">Link URL (opsiyonel)</label>
                 <input type="text" value={formData.linkUrl} onChange={(e) => setFormData({ ...formData, linkUrl: e.target.value })} className="input" placeholder="https://..." />
