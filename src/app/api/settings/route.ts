@@ -34,6 +34,8 @@ export async function PUT(request: NextRequest) {
           siteName: body.siteName,
           logoUrl: body.logoUrl,
           telegramUrl: body.telegramUrl,
+          youtubeChannelId: body.youtubeChannelId,
+          youtubeApiKey: body.youtubeApiKey,
         },
       });
     } else {
@@ -42,6 +44,8 @@ export async function PUT(request: NextRequest) {
           siteName: body.siteName,
           logoUrl: body.logoUrl,
           telegramUrl: body.telegramUrl,
+          youtubeChannelId: body.youtubeChannelId,
+          youtubeApiKey: body.youtubeApiKey,
         },
       });
     }
