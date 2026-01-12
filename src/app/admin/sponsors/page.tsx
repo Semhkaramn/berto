@@ -3,6 +3,7 @@
 import { useState, useEffect } from "react";
 import AdminLayout from "@/components/AdminLayout";
 import ImageUpload from "@/components/ImageUpload";
+import { normalizeUrl } from "@/lib/utils";
 
 interface Sponsor {
   id: string;
@@ -66,12 +67,16 @@ export default function SponsorsPage() {
   const handleSubmit = async () => {
     const method = editingItem ? "PUT" : "POST";
     const url = editingItem ? `/api/sponsors/${editingItem.id}` : "/api/sponsors";
+    const normalizedData = {
+      ...formData,
+      linkUrl: normalizeUrl(formData.linkUrl),
+    };
 
     try {
       const res = await fetch(url, {
         method,
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(formData),
+        body: JSON.stringify(normalizedData),
       });
       if (res.ok) {
         setShowModal(false);
