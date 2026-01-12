@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from "react";
 import AdminLayout from "@/components/AdminLayout";
+import ImageUpload from "@/components/ImageUpload";
 
 interface Settings {
   siteName: string;
@@ -67,22 +68,12 @@ export default function SettingsPage() {
                 <p className="text-xs text-[var(--text-muted)] mt-1">Sitenin ust kisminda gorunecek isim</p>
               </div>
 
-              <div>
-                <label className="block text-sm font-medium text-white mb-2">Logo URL</label>
-                <input
-                  type="text"
-                  value={settings.logoUrl || ""}
-                  onChange={(e) => setSettings({ ...settings, logoUrl: e.target.value || null })}
-                  className="input"
-                  placeholder="https://..."
-                />
-                <p className="text-xs text-[var(--text-muted)] mt-1">Logo resmi icin URL (bos birakilirsa varsayilan logo kullanilir)</p>
-                {settings.logoUrl && (
-                  <div className="mt-2 p-2 bg-[var(--background)] rounded-lg">
-                    <img src={settings.logoUrl} alt="Logo" className="h-10 object-contain" />
-                  </div>
-                )}
-              </div>
+              <ImageUpload
+                label="Site Logosu"
+                value={settings.logoUrl || ""}
+                onChange={(url) => setSettings({ ...settings, logoUrl: url || null })}
+                placeholder="https://... (bos birakilirsa varsayilan logo kullanilir)"
+              />
 
               <div>
                 <label className="block text-sm font-medium text-white mb-2">Telegram URL</label>
