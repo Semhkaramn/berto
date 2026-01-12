@@ -1,67 +1,12 @@
 "use client";
 
-import { useEffect, useState } from "react";
 import Link from "next/link";
 import MainLayout from "@/components/MainLayout";
 import SponsorPopup from "@/components/SponsorPopup";
-
-interface Banner {
-  id: string;
-  imageUrl: string;
-  linkUrl: string | null;
-  position: string;
-}
-
-interface Sponsor {
-  id: string;
-  name: string;
-  description: string | null;
-  imageUrl: string;
-  linkUrl: string;
-  type: string;
-}
-
-interface Event {
-  id: string;
-  title: string;
-  description: string | null;
-  imageUrl: string;
-  linkUrl: string;
-}
-
-interface LiveStream {
-  id: string;
-  title: string;
-  isLive: boolean;
-  thumbnailUrl: string | null;
-}
+import { useData } from "@/lib/DataContext";
 
 export default function HomePage() {
-  const [banners, setBanners] = useState<Banner[]>([]);
-  const [sponsors, setSponsors] = useState<Sponsor[]>([]);
-  const [events, setEvents] = useState<Event[]>([]);
-  const [liveStreams, setLiveStreams] = useState<LiveStream[]>([]);
-
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const [bannersRes, sponsorsRes, eventsRes, streamsRes] = await Promise.all([
-          fetch("/api/banners"),
-          fetch("/api/sponsors"),
-          fetch("/api/events"),
-          fetch("/api/livestreams"),
-        ]);
-
-        if (bannersRes.ok) setBanners(await bannersRes.json());
-        if (sponsorsRes.ok) setSponsors(await sponsorsRes.json());
-        if (eventsRes.ok) setEvents(await eventsRes.json());
-        if (streamsRes.ok) setLiveStreams(await streamsRes.json());
-      } catch (error) {
-        console.error("Fetch error:", error);
-      }
-    };
-    fetchData();
-  }, []);
+  const { banners, sponsors, events, liveStreams, isLoading } = useData();
 
   const getBannerByPosition = (position: string) =>
     banners.find((b) => b.position === position);
@@ -91,6 +36,19 @@ export default function HomePage() {
       window.open(linkUrl, "_blank", "noopener,noreferrer");
     }
   };
+
+  if (isLoading) {
+    return (
+      <MainLayout>
+        <div className="flex items-center justify-center min-h-[60vh]">
+          <div className="text-center">
+            <div className="w-12 h-12 border-3 border-[var(--primary)] border-t-transparent rounded-full animate-spin mx-auto mb-4" />
+            <p className="text-[var(--text-muted)]">Yukleniyor...</p>
+          </div>
+        </div>
+      </MainLayout>
+    );
+  }
 
   return (
     <MainLayout>
