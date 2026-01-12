@@ -13,6 +13,7 @@ interface Sponsor {
   type: string;
   isActive: boolean;
   clickCount: number;
+  sortOrder: number;
 }
 
 export default function SponsorsPage() {
@@ -26,6 +27,7 @@ export default function SponsorsPage() {
     linkUrl: "",
     type: "normal",
     isActive: true,
+    sortOrder: 0,
   });
 
   useEffect(() => {
@@ -43,7 +45,7 @@ export default function SponsorsPage() {
 
   const openAddModal = () => {
     setEditingItem(null);
-    setFormData({ name: "", description: "", imageUrl: "", linkUrl: "", type: "normal", isActive: true });
+    setFormData({ name: "", description: "", imageUrl: "", linkUrl: "", type: "normal", isActive: true, sortOrder: 0 });
     setShowModal(true);
   };
 
@@ -56,6 +58,7 @@ export default function SponsorsPage() {
       linkUrl: item.linkUrl,
       type: item.type,
       isActive: item.isActive,
+      sortOrder: item.sortOrder || 0,
     });
     setShowModal(true);
   };
@@ -110,6 +113,7 @@ export default function SponsorsPage() {
                   <th>Gorsel</th>
                   <th>Isim</th>
                   <th>Tip</th>
+                  <th>Sira</th>
                   <th>Tiklanma</th>
                   <th>Durum</th>
                   <th>Islemler</th>
@@ -119,7 +123,13 @@ export default function SponsorsPage() {
                 {sponsors.map((sponsor) => (
                   <tr key={sponsor.id}>
                     <td>
-                      <img src={sponsor.imageUrl} alt={sponsor.name} className="w-12 h-12 rounded-lg object-cover" />
+                      <div className="w-16 h-12 bg-zinc-800 rounded-lg flex items-center justify-center overflow-hidden">
+                        <img
+                          src={sponsor.imageUrl}
+                          alt={sponsor.name}
+                          className="max-w-full max-h-full w-auto h-auto object-contain"
+                        />
+                      </div>
                     </td>
                     <td>
                       <div>
@@ -131,6 +141,9 @@ export default function SponsorsPage() {
                     </td>
                     <td>
                       <span className={`badge badge-${sponsor.type}`}>{sponsor.type.toUpperCase()}</span>
+                    </td>
+                    <td>
+                      <span className="text-white font-medium">{sponsor.sortOrder || 0}</span>
                     </td>
                     <td>
                       <span className="text-[var(--primary)] font-semibold">{sponsor.clickCount || 0}</span>
@@ -154,7 +167,7 @@ export default function SponsorsPage() {
                 ))}
                 {sponsors.length === 0 && (
                   <tr>
-                    <td colSpan={6} className="text-center py-8 text-[var(--text-muted)]">
+                    <td colSpan={7} className="text-center py-8 text-[var(--text-muted)]">
                       Henuz sponsor yok
                     </td>
                   </tr>
@@ -194,13 +207,26 @@ export default function SponsorsPage() {
                 <label className="block text-sm font-medium text-[var(--text-muted)] mb-2">Link URL</label>
                 <input type="text" value={formData.linkUrl} onChange={(e) => setFormData({ ...formData, linkUrl: e.target.value })} className="input" />
               </div>
-              <div>
-                <label className="block text-sm font-medium text-[var(--text-muted)] mb-2">Tip</label>
-                <select value={formData.type} onChange={(e) => setFormData({ ...formData, type: e.target.value })} className="input">
-                  <option value="main">Main</option>
-                  <option value="vip">VIP</option>
-                  <option value="normal">Normal</option>
-                </select>
+              <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <label className="block text-sm font-medium text-[var(--text-muted)] mb-2">Tip</label>
+                  <select value={formData.type} onChange={(e) => setFormData({ ...formData, type: e.target.value })} className="input">
+                    <option value="main">Main</option>
+                    <option value="vip">VIP</option>
+                    <option value="normal">Normal</option>
+                  </select>
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-[var(--text-muted)] mb-2">Gosterim Sirasi</label>
+                  <input
+                    type="number"
+                    value={formData.sortOrder}
+                    onChange={(e) => setFormData({ ...formData, sortOrder: parseInt(e.target.value) || 0 })}
+                    className="input"
+                    min={0}
+                    placeholder="0"
+                  />
+                </div>
               </div>
               <div className="flex items-center gap-2">
                 <input type="checkbox" id="isActive" checked={formData.isActive} onChange={(e) => setFormData({ ...formData, isActive: e.target.checked })} className="w-4 h-4" />
