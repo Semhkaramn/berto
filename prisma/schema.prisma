@@ -32,6 +32,7 @@ model Sponsor {
   type        String       @default("normal") // main, vip, normal
   isActive    Boolean      @default(true)
   clickCount  Int          @default(0)
+  sortOrder   Int          @default(0)
   createdAt   DateTime     @default(now())
   updatedAt   DateTime     @updatedAt
   clicks      ClickEvent[]
