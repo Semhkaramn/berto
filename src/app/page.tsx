@@ -198,20 +198,12 @@ export default function HomePage() {
                   <img
                     src="/sponsorlar.jpg"
                     alt="Sponsorlar"
-                    className="absolute inset-0 w-full h-full object-fill"
+                    className="absolute inset-0 w-full h-full object-fill group-hover:scale-105 transition-transform duration-300"
                   />
                   {/* Fallback gradient */}
                   <div className="absolute inset-0 gradient-main opacity-0" />
                   {/* Overlay */}
                   <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/20 to-transparent" />
-                  {/* Icon */}
-                  <div className="absolute inset-0 flex items-center justify-center">
-                    <div className="w-16 sm:w-18 md:w-20 h-16 sm:h-18 md:h-20 rounded-2xl bg-white/20 backdrop-blur-sm flex items-center justify-center group-hover:scale-110 transition-transform duration-300">
-                      <svg className="w-8 sm:w-9 md:w-10 h-8 sm:h-9 md:h-10 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-                      </svg>
-                    </div>
-                  </div>
                 </div>
                 <div className="p-3 sm:p-4 bg-gradient-to-b from-[var(--surface)] to-[var(--background)]">
                   <div className="flex items-center justify-between">
@@ -237,20 +229,12 @@ export default function HomePage() {
                   <img
                     src="/etkinlikler.jpg"
                     alt="Etkinlikler"
-                    className="absolute inset-0 w-full h-full object-fill"
+                    className="absolute inset-0 w-full h-full object-fill group-hover:scale-105 transition-transform duration-300"
                   />
                   {/* Fallback gradient */}
                   <div className="absolute inset-0 gradient-vip opacity-0" />
                   {/* Overlay */}
                   <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/20 to-transparent" />
-                  {/* Icon */}
-                  <div className="absolute inset-0 flex items-center justify-center">
-                    <div className="w-16 sm:w-18 md:w-20 h-16 sm:h-18 md:h-20 rounded-2xl bg-white/20 backdrop-blur-sm flex items-center justify-center group-hover:scale-110 transition-transform duration-300">
-                      <svg className="w-8 sm:w-9 md:w-10 h-8 sm:h-9 md:h-10 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
-                      </svg>
-                    </div>
-                  </div>
                 </div>
                 <div className="p-3 sm:p-4 bg-gradient-to-b from-[var(--surface)] to-[var(--background)]">
                   <div className="flex items-center justify-between">
@@ -276,7 +260,7 @@ export default function HomePage() {
                   <img
                     src="/yayinlar.jpg"
                     alt="Yayinlar"
-                    className="absolute inset-0 w-full h-full object-fill"
+                    className="absolute inset-0 w-full h-full object-fill group-hover:scale-105 transition-transform duration-300"
                   />
                   {/* Fallback gradient */}
                   <div className="absolute inset-0 bg-gradient-to-br from-red-600 to-rose-700 opacity-0" />
@@ -290,14 +274,6 @@ export default function HomePage() {
                       </span>
                     </div>
                   )}
-                  {/* Icon */}
-                  <div className="absolute inset-0 flex items-center justify-center">
-                    <div className="w-16 sm:w-18 md:w-20 h-16 sm:h-18 md:h-20 rounded-2xl bg-white/20 backdrop-blur-sm flex items-center justify-center group-hover:scale-110 transition-transform duration-300">
-                      <svg className="w-8 sm:w-9 md:w-10 h-8 sm:h-9 md:h-10 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z" />
-                      </svg>
-                    </div>
-                  </div>
                 </div>
                 <div className="p-3 sm:p-4 bg-gradient-to-b from-[var(--surface)] to-[var(--background)]">
                   <div className="flex items-center justify-between">
