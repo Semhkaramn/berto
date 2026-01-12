@@ -2,13 +2,14 @@
 
 import MainLayout from "@/components/MainLayout";
 import { useData } from "@/lib/DataContext";
+import { normalizeUrl } from "@/lib/utils";
 
 export default function EventsPage() {
   const { events, isLoading } = useData();
 
   const handleEventClick = (linkUrl: string) => {
     if (linkUrl) {
-      window.open(linkUrl, "_blank", "noopener,noreferrer");
+      window.open(normalizeUrl(linkUrl), "_blank", "noopener,noreferrer");
     }
   };
 
@@ -65,7 +66,7 @@ export default function EventsPage() {
                       {event.title}
                     </h3>
                     {event.description && (
-                      <p className="text-sm text-[var(--text-muted)] line-clamp-3">
+                      <p className="text-sm text-[var(--text-muted)] whitespace-pre-line">
                         {event.description}
                       </p>
                     )}
