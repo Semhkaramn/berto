@@ -79,9 +79,8 @@ export default function SponsorPopup({ enabled = true }: SponsorPopupProps) {
           </svg>
         </button>
 
-        {/* Başlık - En üstte */}
-        <div className="p-4 border-b border-[var(--border)] bg-[var(--surface)]">
-          <span className="badge badge-main mb-2">SPONSOR</span>
+        {/* Başlık - En üstte, ortalı */}
+        <div className="p-4 border-b border-[var(--border)] bg-[var(--surface)] text-center">
           <h3 className="text-xl font-bold text-white">{popup.title}</h3>
         </div>
 
@@ -94,9 +93,9 @@ export default function SponsorPopup({ enabled = true }: SponsorPopupProps) {
           />
         </div>
 
-        {/* Açıklama - Resmin altında */}
+        {/* Açıklama - Resmin altında, ortalı */}
         {popup.description && (
-          <div className="px-4 py-3 bg-[var(--surface)] border-t border-[var(--border)]">
+          <div className="px-4 py-3 bg-[var(--surface)] border-t border-[var(--border)] text-center">
             <p className="text-sm text-gray-300 whitespace-pre-line">{popup.description}</p>
           </div>
         )}
