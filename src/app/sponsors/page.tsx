@@ -76,13 +76,13 @@ export default function SponsorsPage() {
       <div className="p-4 md:p-6 lg:p-8">
         <div className="max-w-7xl mx-auto">
           {/* Hero Header - Premium */}
-          <div className="text-center mb-12 relative">
+          <div className="text-center mb-8 relative">
             {/* Background Glow */}
             <div className="absolute inset-0 -z-10">
               <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-96 h-32 bg-sky-500/10 blur-3xl rounded-full" />
             </div>
 
-            <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold mb-4">
+            <h1 className="text-xl sm:text-2xl md:text-3xl lg:text-4xl font-bold mb-4 whitespace-nowrap">
               <span
                 className="bg-gradient-to-r from-sky-300 via-cyan-200 to-sky-400 bg-clip-text text-transparent"
                 style={{
@@ -94,15 +94,15 @@ export default function SponsorsPage() {
             </h1>
           </div>
 
-          {/* Search Bar - Premium Glass Design */}
-          <div className="max-w-lg mx-auto mb-16">
+          {/* Search Bar - Compact Design */}
+          <div className="max-w-xs mx-auto mb-10">
             <div className="relative group">
               {/* Glow Effect */}
-              <div className="absolute -inset-1 bg-gradient-to-r from-sky-500/20 via-cyan-500/20 to-sky-500/20 rounded-2xl blur-lg opacity-0 group-focus-within:opacity-100 transition-opacity duration-300" />
+              <div className="absolute -inset-1 bg-gradient-to-r from-sky-500/20 via-cyan-500/20 to-sky-500/20 rounded-xl blur-lg opacity-0 group-focus-within:opacity-100 transition-opacity duration-300" />
 
               <div className="relative">
                 <svg
-                  className="absolute left-5 top-1/2 -translate-y-1/2 w-5 h-5 text-sky-400/60 group-focus-within:text-sky-400 transition-colors"
+                  className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-sky-400/60 group-focus-within:text-sky-400 transition-colors"
                   fill="none"
                   stroke="currentColor"
                   viewBox="0 0 24 24"
@@ -114,14 +114,14 @@ export default function SponsorsPage() {
                   placeholder="Sponsor ara..."
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
-                  className="w-full pl-14 pr-12 py-4 bg-white/5 backdrop-blur-xl border border-white/10 rounded-2xl text-white placeholder-white/40 focus:outline-none focus:border-sky-500/50 focus:bg-white/10 transition-all duration-300 text-lg"
+                  className="w-full pl-9 pr-9 py-2.5 bg-white/5 backdrop-blur-xl border border-white/10 rounded-xl text-white placeholder-white/40 focus:outline-none focus:border-sky-500/50 focus:bg-white/10 transition-all duration-300 text-sm"
                 />
                 {searchQuery && (
                   <button
                     onClick={() => setSearchQuery("")}
-                    className="absolute right-4 top-1/2 -translate-y-1/2 w-8 h-8 flex items-center justify-center rounded-full bg-white/10 text-white/60 hover:bg-white/20 hover:text-white transition-all"
+                    className="absolute right-2.5 top-1/2 -translate-y-1/2 w-6 h-6 flex items-center justify-center rounded-full bg-white/10 text-white/60 hover:bg-white/20 hover:text-white transition-all"
                   >
-                    <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
                     </svg>
                   </button>
@@ -129,7 +129,7 @@ export default function SponsorsPage() {
               </div>
             </div>
             {searchQuery && (
-              <p className="text-center text-sm text-white/50 mt-3">
+              <p className="text-center text-xs text-white/50 mt-2">
                 <span className="font-semibold text-sky-400">{filteredSponsors.length}</span> sonuç bulundu
               </p>
             )}
