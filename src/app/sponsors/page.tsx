@@ -62,7 +62,7 @@ export default function SponsorsPage() {
           {/* Hero Header */}
           <div className="text-center mb-8">
             <h1 className="text-4xl md:text-5xl font-bold mb-4">
-              <span className="text-[#7dd3fc]">Sponsorlar - Berto'nun Güvenle Oynadığı Siteler</span>
+              <span className="text-[#7dd3fc]">Berto'nun Güvenle Oynadığı Siteler</span>
             </h1>
           </div>
 
