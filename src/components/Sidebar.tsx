@@ -83,7 +83,7 @@ export default function Sidebar({ isOpen = false, onClose }: SidebarProps) {
   return (
     <>
       {/* Desktop Sidebar - Sol taraf, tam yükseklik */}
-      <aside className="hidden md:flex flex-col w-64 fixed left-0 top-0 h-screen pt-20 pb-6 px-4 border-r border-[var(--border)] bg-[var(--surface)] z-40">
+      <aside className="hidden md:flex flex-col w-64 fixed left-0 top-0 h-screen pt-20 pb-6 px-4 border-r border-[var(--border)] bg-[var(--surface)] z-40 snow-sidebar">
         <nav className="flex-1 space-y-2">
           {menuItems.map((item) => {
             const isActive = pathname === item.href;
