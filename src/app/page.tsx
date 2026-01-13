@@ -194,14 +194,12 @@ export default function HomePage() {
               {/* Sponsors Card */}
               <Link href="/sponsors" className="card group cursor-pointer overflow-hidden flex flex-col">
                 <div className="relative overflow-hidden aspect-[16/10] bg-gradient-to-br from-[var(--surface)] via-[var(--surface-hover)] to-[var(--surface)]">
-                  {/* Background Image - aspect-ratio ile tutarlı oran, contain ile tam görünüm */}
-                  <div className="absolute inset-0 flex items-center justify-center p-4">
-                    <img
-                      src="/sponsorlar.jpg"
-                      alt="Sponsorlar"
-                      className="max-w-full max-h-full object-contain group-hover:scale-105 transition-transform duration-300 drop-shadow-lg"
-                    />
-                  </div>
+                  {/* Background Image - tam sığacak şekilde */}
+                  <img
+                    src="/sponsorlar.jpg"
+                    alt="Sponsorlar"
+                    className="absolute inset-0 w-full h-full object-fill group-hover:scale-105 transition-transform duration-300"
+                  />
                   {/* Overlay */}
                   <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent pointer-events-none" />
                 </div>
@@ -225,14 +223,12 @@ export default function HomePage() {
               {/* Events Card */}
               <Link href="/events" className="card group cursor-pointer overflow-hidden flex flex-col">
                 <div className="relative overflow-hidden aspect-[16/10] bg-gradient-to-br from-[var(--surface)] via-[var(--surface-hover)] to-[var(--surface)]">
-                  {/* Background Image - aspect-ratio ile tutarlı oran, contain ile tam görünüm */}
-                  <div className="absolute inset-0 flex items-center justify-center p-4">
-                    <img
-                      src="/etkinlikler.jpg"
-                      alt="Etkinlikler"
-                      className="max-w-full max-h-full object-contain group-hover:scale-105 transition-transform duration-300 drop-shadow-lg"
-                    />
-                  </div>
+                  {/* Background Image - tam sığacak şekilde */}
+                  <img
+                    src="/etkinlikler.jpg"
+                    alt="Etkinlikler"
+                    className="absolute inset-0 w-full h-full object-fill group-hover:scale-105 transition-transform duration-300"
+                  />
                   {/* Overlay */}
                   <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent pointer-events-none" />
                 </div>
@@ -256,14 +252,12 @@ export default function HomePage() {
               {/* Live Stream Card */}
               <Link href="/live" className="card group cursor-pointer overflow-hidden flex flex-col sm:col-span-2 lg:col-span-1">
                 <div className="relative overflow-hidden aspect-[16/10] bg-gradient-to-br from-[var(--surface)] via-[var(--surface-hover)] to-[var(--surface)]">
-                  {/* Background Image - aspect-ratio ile tutarlı oran, contain ile tam görünüm */}
-                  <div className="absolute inset-0 flex items-center justify-center p-4">
-                    <img
-                      src="/yayinlar.jpg"
-                      alt="Yayinlar"
-                      className="max-w-full max-h-full object-contain group-hover:scale-105 transition-transform duration-300 drop-shadow-lg"
-                    />
-                  </div>
+                  {/* Background Image - tam sığacak şekilde */}
+                  <img
+                    src="/yayinlar.jpg"
+                    alt="Yayinlar"
+                    className="absolute inset-0 w-full h-full object-fill group-hover:scale-105 transition-transform duration-300"
+                  />
                   {/* Overlay */}
                   <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent pointer-events-none" />
                   {activeLiveStream && (
@@ -309,16 +303,14 @@ export default function HomePage() {
                       onClick={() => handleEventClick(event)}
                       className="card cursor-pointer group overflow-hidden"
                     >
-                      {/* Dikey layout - aspect-ratio ile tutarlı görünüm */}
+                      {/* Dikey layout - tam sığacak şekilde */}
                       <div className="flex flex-col">
                         <div className="relative aspect-[16/10] bg-gradient-to-br from-[var(--surface-hover)] to-[var(--surface)] overflow-hidden">
-                          <div className="absolute inset-0 flex items-center justify-center p-4">
-                            <img
-                              src={event.imageUrl}
-                              alt={event.title}
-                              className="max-w-full max-h-full object-contain group-hover:scale-105 transition-transform duration-300 drop-shadow-lg"
-                            />
-                          </div>
+                          <img
+                            src={event.imageUrl}
+                            alt={event.title}
+                            className="absolute inset-0 w-full h-full object-fill group-hover:scale-105 transition-transform duration-300"
+                          />
                         </div>
                         <div className="p-4 flex-1">
                           <h3 className="font-semibold text-white mb-2 group-hover:text-[var(--primary)] transition-colors line-clamp-2">{event.title}</h3>
