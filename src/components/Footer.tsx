@@ -1,7 +1,15 @@
 "use client";
 
+import Link from "next/link";
 import { useData } from "@/lib/DataContext";
 import { normalizeUrl } from "@/lib/utils";
+
+const pageLinks = [
+  { href: "/", label: "Ana Sayfa" },
+  { href: "/sponsors", label: "Sponsorlar" },
+  { href: "/events", label: "Etkinlikler" },
+  { href: "/live", label: "Yayınlar" },
+];
 
 export default function Footer() {
   const { stats } = useData();
@@ -9,17 +17,31 @@ export default function Footer() {
   return (
     <footer className="border-t border-[var(--border)] bg-[var(--surface)] py-4 px-4 md:px-6">
       <div className="max-w-7xl mx-auto">
+        {/* Sayfa Linkleri */}
+        <div className="flex flex-wrap items-center justify-center gap-4 mb-4">
+          {pageLinks.map((link) => (
+            <Link
+              key={link.href}
+              href={link.href}
+              className="text-sm text-[var(--text-muted)] hover:text-[var(--ice-blue)] transition-colors"
+            >
+              {link.label}
+            </Link>
+          ))}
+        </div>
+
+        {/* İstatistikler - Hepsi buz mavisi */}
         <div className="flex flex-wrap items-center justify-center gap-6 mb-4">
           <div className="flex items-center gap-2">
-            <span className="text-lg font-bold text-[var(--primary)]">{stats.totalVisitors.toLocaleString()}</span>
+            <span className="text-lg font-bold text-[var(--ice-blue)]">{stats.totalVisitors.toLocaleString()}</span>
             <span className="text-xs text-[var(--text-muted)]">Ziyaret</span>
           </div>
           <div className="flex items-center gap-2">
-            <span className="text-lg font-bold text-green-500">{stats.uniqueVisitors.toLocaleString()}</span>
+            <span className="text-lg font-bold text-[var(--ice-blue)]">{stats.uniqueVisitors.toLocaleString()}</span>
             <span className="text-xs text-[var(--text-muted)]">Benzersiz</span>
           </div>
           <div className="flex items-center gap-2">
-            <span className="text-lg font-bold text-blue-500">{stats.todayVisitors.toLocaleString()}</span>
+            <span className="text-lg font-bold text-[var(--ice-blue)]">{stats.todayVisitors.toLocaleString()}</span>
             <span className="text-xs text-[var(--text-muted)]">Bugün</span>
           </div>
         </div>
