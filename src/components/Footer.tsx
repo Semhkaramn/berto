@@ -60,7 +60,7 @@ export default function Footer() {
 
         <div className="flex flex-col sm:flex-row items-center justify-between gap-2 pt-3 border-t border-[var(--border)]">
           <p className="text-xs text-[var(--text-muted)]">
-            © 2024 Slot Betro Tüm Hakları Saklıdır.
+            © 2024 Slot Berto Tüm Hakları Saklıdır.
           </p>
           <a
             href={normalizeUrl("https://t.me/thisisarche")}
