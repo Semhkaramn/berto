@@ -62,7 +62,7 @@ export default function LivePage() {
                 </span>
                 <h2 className="text-xl font-bold text-white">{activeLiveStream.title}</h2>
               </div>
-              <div className="relative bg-black rounded-xl overflow-hidden">
+              <div className="relative bg-black rounded-xl overflow-hidden snow-top-heavy">
                 <div className="aspect-video">
                   <iframe
                     src={activeLiveStream.embedUrl}
@@ -82,7 +82,7 @@ export default function LivePage() {
           {/* No Live Stream */}
           {!isLoading && !activeLiveStream && (
             <section className="mb-10">
-              <div className="text-center py-16 bg-[var(--surface)] rounded-xl border border-[var(--border)]">
+              <div className="text-center py-16 bg-[var(--surface)] rounded-xl border border-[var(--border)] snow-top-heavy">
                 <div className="w-20 h-20 mx-auto rounded-full bg-red-500/20 flex items-center justify-center mb-4">
                   <svg className="w-10 h-10 text-red-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z" />
@@ -102,7 +102,7 @@ export default function LivePage() {
                 {allContent.map((item) => (
                   <div
                     key={item.id}
-                    className="card cursor-pointer group"
+                    className="card cursor-pointer group snow-top"
                     onClick={() => setSelectedVideo({
                       id: item.id,
                       title: item.title,
