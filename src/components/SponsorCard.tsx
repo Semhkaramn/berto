@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState, useRef } from "react";
-import { extractDominantColor, getLighterColor } from "@/lib/colorExtractor";
+import { extractDominantColor, extractNeonColor } from "@/lib/colorExtractor";
 
 interface Sponsor {
   id: string;
@@ -21,25 +21,27 @@ interface SponsorCardProps {
 
 export default function SponsorCard({ sponsor, onClick, index, type }: SponsorCardProps) {
   const [bgColor, setBgColor] = useState<string>("#1a1a2e");
-  const [borderColor, setBorderColor] = useState<string>("rgba(125,211,252,1)");
+  const [neonColor, setNeonColor] = useState<string>("#7dd3fc");
   const [isLoaded, setIsLoaded] = useState(false);
   const cardRef = useRef<HTMLDivElement>(null);
   const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 });
 
   useEffect(() => {
-    const loadColor = async () => {
+    const loadColors = async () => {
       try {
-        const color = await extractDominantColor(sponsor.imageUrl);
-        setBgColor(color);
-        // Buz mavisi tonları kullan
-        setBorderColor("#7dd3fc");
+        const [bgResult, neonResult] = await Promise.all([
+          extractDominantColor(sponsor.imageUrl),
+          extractNeonColor(sponsor.imageUrl)
+        ]);
+        setBgColor(bgResult);
+        setNeonColor(neonResult);
         setIsLoaded(true);
       } catch (error) {
         console.error("Color extraction failed:", error);
         setIsLoaded(true);
       }
     };
-    loadColor();
+    loadColors();
   }, [sponsor.imageUrl]);
 
   // Mouse tracking for spotlight effect
@@ -59,7 +61,7 @@ export default function SponsorCard({ sponsor, onClick, index, type }: SponsorCa
         ref={cardRef}
         onClick={onClick}
         onMouseMove={handleMouseMove}
-        className="group relative rounded-2xl cursor-pointer animate-fadeIn overflow-visible transition-all duration-500 hover:scale-[1.02] snow-top-heavy"
+        className="group relative rounded-2xl cursor-pointer animate-fadeIn overflow-visible transition-all duration-500 hover:scale-[1.02]"
         style={{
           animationDelay: `${index * 150}ms`,
         }}
@@ -67,27 +69,46 @@ export default function SponsorCard({ sponsor, onClick, index, type }: SponsorCa
         {/* Animated Neon Border - Çerçevede Dolaşan Işık Efekti */}
         <div className="absolute inset-0 rounded-2xl overflow-hidden">
           {/* Border background */}
-          <div className="absolute inset-0 rounded-2xl border-2 border-[#7dd3fc]/30" />
+          <div
+            className="absolute inset-0 rounded-2xl border-2"
+            style={{ borderColor: `${neonColor}4D` }}
+          />
 
           {/* Traveling light effect - Top */}
           <div
-            className="absolute h-[2px] w-20 bg-gradient-to-r from-transparent via-[#7dd3fc] to-transparent animate-border-travel-top"
-            style={{ top: 0, left: 0 }}
+            className="absolute h-[2px] w-20 animate-border-travel-top"
+            style={{
+              top: 0,
+              left: 0,
+              background: `linear-gradient(to right, transparent, ${neonColor}, transparent)`
+            }}
           />
           {/* Traveling light effect - Right */}
           <div
-            className="absolute w-[2px] h-20 bg-gradient-to-b from-transparent via-[#7dd3fc] to-transparent animate-border-travel-right"
-            style={{ top: 0, right: 0 }}
+            className="absolute w-[2px] h-20 animate-border-travel-right"
+            style={{
+              top: 0,
+              right: 0,
+              background: `linear-gradient(to bottom, transparent, ${neonColor}, transparent)`
+            }}
           />
           {/* Traveling light effect - Bottom */}
           <div
-            className="absolute h-[2px] w-20 bg-gradient-to-r from-transparent via-[#7dd3fc] to-transparent animate-border-travel-bottom"
-            style={{ bottom: 0, right: 0 }}
+            className="absolute h-[2px] w-20 animate-border-travel-bottom"
+            style={{
+              bottom: 0,
+              right: 0,
+              background: `linear-gradient(to right, transparent, ${neonColor}, transparent)`
+            }}
           />
           {/* Traveling light effect - Left */}
           <div
-            className="absolute w-[2px] h-20 bg-gradient-to-b from-transparent via-[#7dd3fc] to-transparent animate-border-travel-left"
-            style={{ bottom: 0, left: 0 }}
+            className="absolute w-[2px] h-20 animate-border-travel-left"
+            style={{
+              bottom: 0,
+              left: 0,
+              background: `linear-gradient(to bottom, transparent, ${neonColor}, transparent)`
+            }}
           />
         </div>
 
@@ -102,18 +123,18 @@ export default function SponsorCard({ sponsor, onClick, index, type }: SponsorCa
           <div
             className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none"
             style={{
-              background: `radial-gradient(400px circle at ${mousePosition.x}px ${mousePosition.y}px, rgba(125,211,252,0.15), transparent 60%)`,
+              background: `radial-gradient(400px circle at ${mousePosition.x}px ${mousePosition.y}px, ${neonColor}26, transparent 60%)`,
             }}
           />
 
           {/* Premium Corner Glow */}
           <div
             className="absolute -top-20 -right-20 w-40 h-40 rounded-full blur-3xl opacity-30 group-hover:opacity-50 transition-opacity"
-            style={{ background: '#7dd3fc' }}
+            style={{ background: neonColor }}
           />
           <div
             className="absolute -bottom-20 -left-20 w-40 h-40 rounded-full blur-3xl opacity-20 group-hover:opacity-40 transition-opacity"
-            style={{ background: '#7dd3fc' }}
+            style={{ background: neonColor }}
           />
 
           {/* Ana Sponsor Etiketi - Premium Badge */}
@@ -136,7 +157,7 @@ export default function SponsorCard({ sponsor, onClick, index, type }: SponsorCa
               <div
                 className="absolute inset-0 blur-2xl opacity-40 scale-110"
                 style={{
-                  background: `radial-gradient(circle, #7dd3fc 0%, transparent 70%)`,
+                  background: `radial-gradient(circle, ${neonColor} 0%, transparent 70%)`,
                 }}
               />
               <img
@@ -152,7 +173,7 @@ export default function SponsorCard({ sponsor, onClick, index, type }: SponsorCa
             className="px-6 py-5 relative z-10"
             style={{
               background: `linear-gradient(to top, rgba(0,0,0,0.8), rgba(0,0,0,0.4))`,
-              borderTop: `1px solid rgba(125,211,252,0.2)`,
+              borderTop: `1px solid ${neonColor}33`,
               backdropFilter: 'blur(10px)',
             }}
           >
@@ -177,7 +198,7 @@ export default function SponsorCard({ sponsor, onClick, index, type }: SponsorCa
         ref={cardRef}
         onClick={onClick}
         onMouseMove={handleMouseMove}
-        className="group relative rounded-xl cursor-pointer animate-fadeIn overflow-visible transition-all duration-500 hover:scale-[1.03] snow-top"
+        className="group relative rounded-xl cursor-pointer animate-fadeIn overflow-visible transition-all duration-500 hover:scale-[1.03]"
         style={{
           animationDelay: `${index * 100}ms`,
         }}
@@ -185,27 +206,46 @@ export default function SponsorCard({ sponsor, onClick, index, type }: SponsorCa
         {/* Animated Neon Border - Çerçevede Dolaşan Işık Efekti */}
         <div className="absolute inset-0 rounded-xl overflow-hidden">
           {/* Border background */}
-          <div className="absolute inset-0 rounded-xl border-2 border-[#7dd3fc]/30" />
+          <div
+            className="absolute inset-0 rounded-xl border-2"
+            style={{ borderColor: `${neonColor}4D` }}
+          />
 
           {/* Traveling light effect - Top */}
           <div
-            className="absolute h-[2px] w-16 bg-gradient-to-r from-transparent via-[#7dd3fc] to-transparent animate-border-travel-top"
-            style={{ top: 0, left: 0 }}
+            className="absolute h-[2px] w-16 animate-border-travel-top"
+            style={{
+              top: 0,
+              left: 0,
+              background: `linear-gradient(to right, transparent, ${neonColor}, transparent)`
+            }}
           />
           {/* Traveling light effect - Right */}
           <div
-            className="absolute w-[2px] h-16 bg-gradient-to-b from-transparent via-[#7dd3fc] to-transparent animate-border-travel-right"
-            style={{ top: 0, right: 0 }}
+            className="absolute w-[2px] h-16 animate-border-travel-right"
+            style={{
+              top: 0,
+              right: 0,
+              background: `linear-gradient(to bottom, transparent, ${neonColor}, transparent)`
+            }}
           />
           {/* Traveling light effect - Bottom */}
           <div
-            className="absolute h-[2px] w-16 bg-gradient-to-r from-transparent via-[#7dd3fc] to-transparent animate-border-travel-bottom"
-            style={{ bottom: 0, right: 0 }}
+            className="absolute h-[2px] w-16 animate-border-travel-bottom"
+            style={{
+              bottom: 0,
+              right: 0,
+              background: `linear-gradient(to right, transparent, ${neonColor}, transparent)`
+            }}
           />
           {/* Traveling light effect - Left */}
           <div
-            className="absolute w-[2px] h-16 bg-gradient-to-b from-transparent via-[#7dd3fc] to-transparent animate-border-travel-left"
-            style={{ bottom: 0, left: 0 }}
+            className="absolute w-[2px] h-16 animate-border-travel-left"
+            style={{
+              bottom: 0,
+              left: 0,
+              background: `linear-gradient(to bottom, transparent, ${neonColor}, transparent)`
+            }}
           />
         </div>
 
@@ -220,18 +260,27 @@ export default function SponsorCard({ sponsor, onClick, index, type }: SponsorCa
           <div
             className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none"
             style={{
-              background: `radial-gradient(300px circle at ${mousePosition.x}px ${mousePosition.y}px, rgba(125,211,252,0.15), transparent 60%)`,
+              background: `radial-gradient(300px circle at ${mousePosition.x}px ${mousePosition.y}px, ${neonColor}26, transparent 60%)`,
             }}
           />
 
           {/* Corner Glow */}
-          <div className="absolute -top-16 -right-16 w-32 h-32 rounded-full blur-2xl opacity-25 group-hover:opacity-45 transition-opacity bg-[#7dd3fc]" />
+          <div
+            className="absolute -top-16 -right-16 w-32 h-32 rounded-full blur-2xl opacity-25 group-hover:opacity-45 transition-opacity"
+            style={{ background: neonColor }}
+          />
 
           {/* VIP Etiketi */}
           <div className="absolute top-3 right-3 z-20">
             <div className="relative">
-              <div className="absolute inset-0 bg-gradient-to-r from-[#7dd3fc] to-[#38bdf8] rounded-full blur-md opacity-60" />
-              <span className="relative px-3 py-1 text-[10px] font-bold rounded-full bg-gradient-to-r from-[#7dd3fc] to-[#38bdf8] text-black flex items-center gap-1">
+              <div
+                className="absolute inset-0 rounded-full blur-md opacity-60"
+                style={{ background: `linear-gradient(to right, ${neonColor}, ${neonColor})` }}
+              />
+              <span
+                className="relative px-3 py-1 text-[10px] font-bold rounded-full text-black flex items-center gap-1"
+                style={{ background: `linear-gradient(to right, ${neonColor}, ${neonColor})` }}
+              >
                 <svg className="w-3 h-3" fill="currentColor" viewBox="0 0 24 24">
                   <path d="M12 2L15.09 8.26L22 9.27L17 14.14L18.18 21.02L12 17.77L5.82 21.02L7 14.14L2 9.27L8.91 8.26L12 2Z" />
                 </svg>
@@ -246,7 +295,7 @@ export default function SponsorCard({ sponsor, onClick, index, type }: SponsorCa
               <div
                 className="absolute inset-0 blur-xl opacity-30 scale-110"
                 style={{
-                  background: `radial-gradient(circle, #7dd3fc 0%, transparent 70%)`,
+                  background: `radial-gradient(circle, ${neonColor} 0%, transparent 70%)`,
                 }}
               />
               <img
@@ -262,7 +311,7 @@ export default function SponsorCard({ sponsor, onClick, index, type }: SponsorCa
             className="px-5 py-4 relative z-10"
             style={{
               background: 'rgba(0,0,0,0.6)',
-              borderTop: '1px solid rgba(125,211,252,0.2)',
+              borderTop: `1px solid ${neonColor}33`,
               backdropFilter: 'blur(8px)',
             }}
           >
@@ -290,29 +339,48 @@ export default function SponsorCard({ sponsor, onClick, index, type }: SponsorCa
       {/* Animated Neon Border - Çerçevede Dolaşan Işık Efekti */}
       <div className="absolute inset-0 rounded-xl overflow-hidden">
         {/* Border background */}
-        <div className="absolute inset-0 rounded-xl border border-[#7dd3fc]/20" />
+        <div
+          className="absolute inset-0 rounded-xl border"
+          style={{ borderColor: `${neonColor}33` }}
+        />
 
         {/* Traveling light effect - hover'da görünür */}
         <div className="opacity-0 group-hover:opacity-100 transition-opacity duration-300">
           {/* Traveling light effect - Top */}
           <div
-            className="absolute h-[1px] w-12 bg-gradient-to-r from-transparent via-[#7dd3fc] to-transparent animate-border-travel-top"
-            style={{ top: 0, left: 0 }}
+            className="absolute h-[1px] w-12 animate-border-travel-top"
+            style={{
+              top: 0,
+              left: 0,
+              background: `linear-gradient(to right, transparent, ${neonColor}, transparent)`
+            }}
           />
           {/* Traveling light effect - Right */}
           <div
-            className="absolute w-[1px] h-12 bg-gradient-to-b from-transparent via-[#7dd3fc] to-transparent animate-border-travel-right"
-            style={{ top: 0, right: 0 }}
+            className="absolute w-[1px] h-12 animate-border-travel-right"
+            style={{
+              top: 0,
+              right: 0,
+              background: `linear-gradient(to bottom, transparent, ${neonColor}, transparent)`
+            }}
           />
           {/* Traveling light effect - Bottom */}
           <div
-            className="absolute h-[1px] w-12 bg-gradient-to-r from-transparent via-[#7dd3fc] to-transparent animate-border-travel-bottom"
-            style={{ bottom: 0, right: 0 }}
+            className="absolute h-[1px] w-12 animate-border-travel-bottom"
+            style={{
+              bottom: 0,
+              right: 0,
+              background: `linear-gradient(to right, transparent, ${neonColor}, transparent)`
+            }}
           />
           {/* Traveling light effect - Left */}
           <div
-            className="absolute w-[1px] h-12 bg-gradient-to-b from-transparent via-[#7dd3fc] to-transparent animate-border-travel-left"
-            style={{ bottom: 0, left: 0 }}
+            className="absolute w-[1px] h-12 animate-border-travel-left"
+            style={{
+              bottom: 0,
+              left: 0,
+              background: `linear-gradient(to bottom, transparent, ${neonColor}, transparent)`
+            }}
           />
         </div>
       </div>
@@ -328,14 +396,14 @@ export default function SponsorCard({ sponsor, onClick, index, type }: SponsorCa
         <div
           className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none"
           style={{
-            background: `radial-gradient(200px circle at ${mousePosition.x}px ${mousePosition.y}px, rgba(125,211,252,0.15), transparent 60%)`,
+            background: `radial-gradient(200px circle at ${mousePosition.x}px ${mousePosition.y}px, ${neonColor}26, transparent 60%)`,
           }}
         />
 
         {/* Corner Glow */}
         <div
           className="absolute -top-10 -right-10 w-20 h-20 rounded-full blur-xl opacity-0 group-hover:opacity-30 transition-opacity"
-          style={{ background: '#7dd3fc' }}
+          style={{ background: neonColor }}
         />
 
         {/* Logo Alanı */}
@@ -344,7 +412,7 @@ export default function SponsorCard({ sponsor, onClick, index, type }: SponsorCa
             <div
               className="absolute inset-0 blur-lg opacity-0 group-hover:opacity-30 scale-110 transition-opacity"
               style={{
-                background: `radial-gradient(circle, #7dd3fc 0%, transparent 70%)`,
+                background: `radial-gradient(circle, ${neonColor} 0%, transparent 70%)`,
               }}
             />
             <img
@@ -360,7 +428,7 @@ export default function SponsorCard({ sponsor, onClick, index, type }: SponsorCa
           className="px-3 py-3 relative z-10"
           style={{
             background: 'rgba(0,0,0,0.5)',
-            borderTop: `1px solid rgba(125,211,252,0.15)`,
+            borderTop: `1px solid ${neonColor}26`,
           }}
         >
           <h3 className="font-semibold text-white text-sm truncate">{sponsor.name}</h3>
