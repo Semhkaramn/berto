@@ -51,17 +51,35 @@ export default function Header({ siteName, logoUrl, onMenuToggle, isMobileMenuOp
         <button
           type="button"
           onClick={onSnowToggle}
-          className={`absolute right-4 w-8 h-8 rounded-lg flex items-center justify-center transition-all ${
+          className={`absolute right-4 flex items-center gap-2 px-3 py-1.5 rounded-full transition-all duration-300 ${
             snowEnabled
-              ? 'bg-[#7dd3fc]/20 text-[#7dd3fc] border border-[#7dd3fc]/30'
-              : 'text-[var(--text-muted)] hover:text-white hover:bg-[var(--surface-hover)]'
+              ? 'bg-gradient-to-r from-sky-500/20 to-cyan-500/20 text-[#7dd3fc] border border-[#7dd3fc]/40 shadow-[0_0_15px_rgba(125,211,252,0.3)]'
+              : 'bg-[var(--surface)] text-[var(--text-muted)] border border-[var(--border)] hover:text-white hover:border-[var(--text-muted)]'
           }`}
           aria-label="Kar Efekti"
-          title={snowEnabled ? "Kar Efektini Kapat" : "Kar Efektini Ac"}
+          title={snowEnabled ? "Kar Efektini Kapat" : "Kar Efektini Aç"}
         >
-          <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
-            <path d="M12 2L9.5 6.5L4 7L8 11L7 17L12 14L17 17L16 11L20 7L14.5 6.5L12 2Z" />
+          {/* Snowflake Icon */}
+          <svg
+            className={`w-4 h-4 transition-transform duration-300 ${snowEnabled ? 'animate-spin-slow' : ''}`}
+            fill="currentColor"
+            viewBox="0 0 24 24"
+          >
+            <path d="M11 1h2v5.17l2.88-2.88 1.41 1.41L13 8.17V11h2.83l3.47-3.47 1.41 1.41L17.83 12l2.88 2.88-1.41 1.41L16.42 13H13v2.83l4.29 4.3-1.41 1.41L13 18.83V23h-2v-4.17l-2.88 2.88-1.41-1.41L10.17 17V13.17H7.42l-3.46 3.47-1.41-1.41L5.42 12 2.54 9.12l1.41-1.41 3.47 3.46h2.75V8.17L6.71 3.7l1.41-1.41L11 5.17V1z"/>
           </svg>
+
+          {/* Toggle Indicator */}
+          <div className={`w-8 h-4 rounded-full relative transition-all duration-300 ${
+            snowEnabled
+              ? 'bg-[#7dd3fc]'
+              : 'bg-gray-600'
+          }`}>
+            <div className={`absolute top-0.5 w-3 h-3 rounded-full bg-white shadow-md transition-all duration-300 ${
+              snowEnabled
+                ? 'left-[18px]'
+                : 'left-0.5'
+            }`} />
+          </div>
         </button>
       </div>
     </header>
