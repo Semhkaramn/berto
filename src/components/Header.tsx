@@ -33,16 +33,15 @@ export default function Header({ siteName, logoUrl, onMenuToggle, isMobileMenuOp
           )}
         </button>
 
-        {/* Logo & Site Name - Ortada */}
-        <Link href="/" className="flex items-center gap-3">
+        {/* Logo - Ortada */}
+        <Link href="/" className="flex items-center justify-center">
           {logoUrl ? (
-            <img src={logoUrl} alt={siteName} className="h-10 w-auto object-contain" />
+            <img src={logoUrl} alt={siteName} className="h-12 w-auto object-contain" />
           ) : (
-            <div className="w-10 h-10 rounded-lg gradient-main flex items-center justify-center">
-              <span className="text-xl font-bold text-white">S</span>
+            <div className="w-12 h-12 rounded-lg gradient-main flex items-center justify-center">
+              <span className="text-2xl font-bold text-white">S</span>
             </div>
           )}
-          <span className="text-xl font-bold text-white">{siteName}</span>
         </Link>
 
         {/* Snow Toggle Button - Sag tarafta */}
