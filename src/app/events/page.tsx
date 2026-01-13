@@ -46,18 +46,18 @@ export default function EventsPage() {
                 <div
                   key={event.id}
                   onClick={() => handleEventClick(event)}
-                  className="card group animate-fadeIn cursor-pointer snow-top"
+                  className="card group animate-fadeIn cursor-pointer"
                   style={{ animationDelay: `${index * 100}ms` }}
                 >
                   <div className="relative overflow-hidden bg-gradient-to-br from-[var(--surface-hover)] to-[var(--surface)]">
                     {/* Status Badge - Sağ Üst Köşe */}
                     <div className="absolute top-3 right-3 z-10">
                       {event.status === "completed" ? (
-                        <span className="px-3 py-1.5 text-xs font-bold rounded-full bg-red-600 text-white shadow-lg snow-badge">
+                        <span className="px-3 py-1.5 text-xs font-bold rounded-full bg-red-600 text-white shadow-lg ">
                           Bitti
                         </span>
                       ) : (
-                        <span className="px-3 py-1.5 text-xs font-bold rounded-full bg-emerald-500 text-white shadow-lg snow-badge">
+                        <span className="px-3 py-1.5 text-xs font-bold rounded-full bg-emerald-500 text-white shadow-lg ">
                           Aktif
                         </span>
                       )}
