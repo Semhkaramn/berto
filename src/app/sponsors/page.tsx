@@ -113,13 +113,13 @@ export default function SponsorsPage() {
           {!isLoading && mainSponsors.length > 0 && (
             <section className="mb-16">
               <div className="flex items-center justify-center gap-4 mb-8">
-                <div className="h-px flex-1 bg-gradient-to-r from-transparent via-orange-500/50 to-transparent" />
+                <div className="h-px flex-1 bg-gradient-to-r from-transparent via-sky-400/50 to-transparent" />
                 <div className="flex items-center gap-3">
                   <CrownIcon />
                   <h2 className="text-2xl md:text-3xl font-bold text-white">Ana Sponsorlar</h2>
                   <CrownIcon />
                 </div>
-                <div className="h-px flex-1 bg-gradient-to-r from-transparent via-orange-500/50 to-transparent" />
+                <div className="h-px flex-1 bg-gradient-to-r from-transparent via-sky-400/50 to-transparent" />
               </div>
 
               <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
