@@ -93,7 +93,7 @@ export default function Sidebar({ isOpen = false, onClose }: SidebarProps) {
                 href={item.href}
                 className={`flex items-center gap-3 px-4 py-3 rounded-lg transition-all ${
                   isActive
-                    ? "bg-[var(--primary)] text-black font-semibold"
+                    ? "bg-[var(--ice-blue)] text-black font-semibold"
                     : "text-[var(--text-muted)] hover:bg-[var(--surface-hover)] hover:text-white"
                 }`}
               >
@@ -181,7 +181,7 @@ export default function Sidebar({ isOpen = false, onClose }: SidebarProps) {
                 onClick={handleLinkClick}
                 className={`flex items-center gap-3 px-4 py-3 rounded-lg transition-all ${
                   isActive
-                    ? "bg-[var(--primary)] text-black font-semibold"
+                    ? "bg-[var(--ice-blue)] text-black font-semibold"
                     : "text-[var(--text-muted)] hover:bg-[var(--surface-hover)] hover:text-white"
                 }`}
               >
