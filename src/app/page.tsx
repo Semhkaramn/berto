@@ -155,7 +155,7 @@ export default function HomePage() {
                       {/* Kanal Bilgileri */}
                       <div className="flex-1 min-w-0">
                         <div className="flex items-center gap-2 mb-1">
-                          <h3 className="font-bold text-white truncate group-hover:text-[#0088cc] transition-colors">
+                          <h3 className="font-bold text-white group-hover:text-[#0088cc] transition-colors break-words">
                             {channel.title || channel.username}
                           </h3>
                           <svg className="w-4 h-4 text-[#0088cc] flex-shrink-0" fill="currentColor" viewBox="0 0 24 24">
@@ -206,7 +206,7 @@ export default function HomePage() {
                 <div className="p-3 sm:p-4 bg-gradient-to-b from-[var(--surface)] to-[var(--background)] flex-1">
                   <div className="flex items-center justify-between">
                     <div className="min-w-0 flex-1">
-                      <h3 className="text-base sm:text-lg font-bold text-white mb-0.5 group-hover:text-[var(--primary)] transition-colors truncate">SPONSORLAR</h3>
+                      <h3 className="text-base sm:text-lg font-bold text-white mb-0.5 group-hover:text-[var(--primary)] transition-colors">SPONSORLAR</h3>
                       <p className="text-xs sm:text-sm text-[var(--text-muted)]">
                         {sponsors.length} aktif sponsor
                       </p>
@@ -235,7 +235,7 @@ export default function HomePage() {
                 <div className="p-3 sm:p-4 bg-gradient-to-b from-[var(--surface)] to-[var(--background)] flex-1">
                   <div className="flex items-center justify-between">
                     <div className="min-w-0 flex-1">
-                      <h3 className="text-base sm:text-lg font-bold text-white mb-0.5 group-hover:text-purple-400 transition-colors truncate">ETKİNLİKLER</h3>
+                      <h3 className="text-base sm:text-lg font-bold text-white mb-0.5 group-hover:text-purple-400 transition-colors">ETKİNLİKLER</h3>
                       <p className="text-xs sm:text-sm text-[var(--text-muted)]">
                         {events.length} yaklasan etkinlik
                       </p>
@@ -272,7 +272,7 @@ export default function HomePage() {
                 <div className="p-3 sm:p-4 bg-gradient-to-b from-[var(--surface)] to-[var(--background)] flex-1">
                   <div className="flex items-center justify-between">
                     <div className="min-w-0 flex-1">
-                      <h3 className="text-base sm:text-lg font-bold text-white mb-0.5 group-hover:text-red-400 transition-colors truncate">CANLI YAYIN</h3>
+                      <h3 className="text-base sm:text-lg font-bold text-white mb-0.5 group-hover:text-red-400 transition-colors">CANLI YAYIN</h3>
                       <p className="text-xs sm:text-sm text-[var(--text-muted)]">
                         {activeLiveStream ? "Yayın devam ediyor!" : "Yayin yok"}
                       </p>
