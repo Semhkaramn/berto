@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import { extractDominantColor, getLighterColor } from "@/lib/colorExtractor";
 
 interface Sponsor {
@@ -23,6 +23,8 @@ export default function SponsorCard({ sponsor, onClick, index, type }: SponsorCa
   const [bgColor, setBgColor] = useState<string>("#1a1a2e");
   const [borderColor, setBorderColor] = useState<string>("rgba(255,255,255,0.1)");
   const [isLoaded, setIsLoaded] = useState(false);
+  const cardRef = useRef<HTMLDivElement>(null);
+  const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 });
 
   useEffect(() => {
     const loadColor = async () => {
@@ -39,193 +41,348 @@ export default function SponsorCard({ sponsor, onClick, index, type }: SponsorCa
     loadColor();
   }, [sponsor.imageUrl]);
 
-  // Ana Sponsor Kartı - Premium Tasarım
+  // Mouse tracking for spotlight effect
+  const handleMouseMove = (e: React.MouseEvent<HTMLDivElement>) => {
+    if (!cardRef.current) return;
+    const rect = cardRef.current.getBoundingClientRect();
+    setMousePosition({
+      x: e.clientX - rect.left,
+      y: e.clientY - rect.top,
+    });
+  };
+
+  // Ana Sponsor Kartı - Ultra Premium Tasarım
   if (type === "main") {
     return (
       <div
+        ref={cardRef}
         onClick={onClick}
-        className="group relative rounded-2xl cursor-pointer animate-fadeIn overflow-hidden transition-all duration-300 hover:scale-[1.02]"
+        onMouseMove={handleMouseMove}
+        className="group relative rounded-2xl cursor-pointer animate-fadeIn overflow-hidden transition-all duration-500 hover:scale-[1.02]"
         style={{
           animationDelay: `${index * 150}ms`,
-          background: `linear-gradient(160deg, #0a0a0f 0%, ${bgColor}30 50%, #0a0a0f 100%)`,
         }}
       >
-        {/* Neon Border Glow Animation */}
-        <div
-          className="absolute inset-0 rounded-2xl opacity-70 group-hover:opacity-100 transition-opacity duration-300"
-          style={{
-            background: `linear-gradient(90deg, transparent, ${borderColor}, transparent)`,
-            backgroundSize: '200% 100%',
-            animation: 'borderGlow 3s linear infinite',
-            padding: '2px',
-            WebkitMask: 'linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0)',
-            WebkitMaskComposite: 'xor',
-            maskComposite: 'exclude',
-          }}
-        />
-
-        {/* Inner glow */}
-        <div
-          className="absolute inset-0 rounded-2xl pointer-events-none"
-          style={{
-            boxShadow: `inset 0 0 30px ${bgColor}20, 0 0 40px ${bgColor}30`,
-          }}
-        />
-
-        {/* Ana Sponsor Etiketi */}
-        <div className="absolute top-4 left-4 z-10">
-          <span className="px-3 py-1.5 text-xs font-bold rounded-full bg-gradient-to-r from-yellow-500 to-orange-500 text-white shadow-lg">
-            ANA SPONSOR
-          </span>
-        </div>
-
-        {/* Logo Alanı */}
-        <div className="pt-14 pb-6 px-6 flex items-center justify-center relative z-10">
-          <img
-            src={sponsor.imageUrl}
-            alt={sponsor.name}
-            className="max-w-full max-h-40 object-contain drop-shadow-xl group-hover:scale-105 transition-transform duration-300"
+        {/* Animated Neon Border - Dönen Işık Efekti */}
+        <div className="absolute inset-0 rounded-2xl p-[2px] overflow-hidden">
+          <div
+            className="absolute inset-[-100%] animate-spin-slow"
+            style={{
+              background: `conic-gradient(from 0deg, transparent, ${borderColor}, #fbbf24, ${borderColor}, transparent, ${borderColor}, #f59e0b, ${borderColor}, transparent)`,
+              animationDuration: '3s',
+            }}
           />
         </div>
 
-        {/* Alt Bilgi Alanı */}
+        {/* Inner Card Container */}
         <div
-          className="px-6 py-5 border-t relative z-10"
+          className="relative rounded-2xl h-full overflow-hidden"
           style={{
-            borderColor: `${borderColor}30`,
-            background: `linear-gradient(to top, rgba(0,0,0,0.6), transparent)`
+            background: `linear-gradient(160deg, rgba(10,10,15,0.98) 0%, ${bgColor}40 50%, rgba(10,10,15,0.98) 100%)`,
           }}
         >
-          <h3 className="text-xl font-bold text-white mb-1">{sponsor.name}</h3>
-          {sponsor.description && (
-            <p className="text-sm text-white/70 line-clamp-2">{sponsor.description}</p>
-          )}
+          {/* Spotlight Effect on Hover */}
+          <div
+            className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none"
+            style={{
+              background: `radial-gradient(400px circle at ${mousePosition.x}px ${mousePosition.y}px, ${borderColor}30, transparent 60%)`,
+            }}
+          />
+
+          {/* Floating Particles */}
+          <div className="absolute inset-0 overflow-hidden pointer-events-none">
+            {[...Array(6)].map((_, i) => (
+              <div
+                key={i}
+                className="absolute w-1 h-1 rounded-full opacity-60"
+                style={{
+                  background: borderColor,
+                  left: `${15 + i * 15}%`,
+                  top: `${20 + (i % 3) * 25}%`,
+                  animation: `particleFloat ${3 + i * 0.5}s ease-in-out infinite`,
+                  animationDelay: `${i * 0.3}s`,
+                  boxShadow: `0 0 10px ${borderColor}`,
+                }}
+              />
+            ))}
+          </div>
+
+          {/* Premium Corner Glow */}
+          <div
+            className="absolute -top-20 -right-20 w-40 h-40 rounded-full blur-3xl opacity-30 group-hover:opacity-50 transition-opacity"
+            style={{ background: borderColor }}
+          />
+          <div
+            className="absolute -bottom-20 -left-20 w-40 h-40 rounded-full blur-3xl opacity-20 group-hover:opacity-40 transition-opacity"
+            style={{ background: borderColor }}
+          />
+
+          {/* Ana Sponsor Etiketi - Premium Badge */}
+          <div className="absolute top-4 left-4 z-20">
+            <div className="relative">
+              <div className="absolute inset-0 bg-gradient-to-r from-yellow-500 to-orange-500 rounded-full blur-md opacity-60" />
+              <span className="relative px-4 py-1.5 text-xs font-bold rounded-full bg-gradient-to-r from-yellow-500 via-amber-500 to-orange-500 text-white shadow-xl flex items-center gap-1.5">
+                <svg className="w-3.5 h-3.5" fill="currentColor" viewBox="0 0 24 24">
+                  <path d="M5 16L3 5l5.5 5L12 4l3.5 6L21 5l-2 11H5zm14 3c0 .6-.4 1-1 1H6c-.6 0-1-.4-1-1v-1h14v1z"/>
+                </svg>
+                ANA SPONSOR
+              </span>
+            </div>
+          </div>
+
+          {/* Shine Sweep Effect */}
+          <div className="absolute inset-0 overflow-hidden pointer-events-none">
+            <div className="shine-effect" />
+          </div>
+
+          {/* Logo Alanı */}
+          <div className="pt-16 pb-8 px-8 flex items-center justify-center relative z-10">
+            <div className="relative">
+              {/* Logo Glow */}
+              <div
+                className="absolute inset-0 blur-2xl opacity-40 scale-110"
+                style={{
+                  background: `radial-gradient(circle, ${borderColor} 0%, transparent 70%)`,
+                }}
+              />
+              <img
+                src={sponsor.imageUrl}
+                alt={sponsor.name}
+                className="relative max-w-full max-h-44 object-contain drop-shadow-2xl group-hover:scale-110 transition-transform duration-500"
+              />
+            </div>
+          </div>
+
+          {/* Alt Bilgi Alanı - Glassmorphism */}
+          <div
+            className="px-6 py-5 relative z-10"
+            style={{
+              background: `linear-gradient(to top, rgba(0,0,0,0.8), rgba(0,0,0,0.4))`,
+              borderTop: `1px solid ${borderColor}30`,
+              backdropFilter: 'blur(10px)',
+            }}
+          >
+            <h3
+              className="text-xl font-bold mb-1"
+              style={{
+                background: `linear-gradient(135deg, #fff 0%, ${borderColor} 100%)`,
+                WebkitBackgroundClip: 'text',
+                WebkitTextFillColor: 'transparent',
+              }}
+            >
+              {sponsor.name}
+            </h3>
+            {sponsor.description && (
+              <p className="text-sm text-white/70 line-clamp-2">{sponsor.description}</p>
+            )}
+
+            {/* Visit Button */}
+            <div className="mt-4 flex items-center gap-2 text-sm font-medium text-white/60 group-hover:text-white/90 transition-colors">
+              <span>Siteyi Ziyaret Et</span>
+              <svg className="w-4 h-4 group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 7l5 5m0 0l-5 5m5-5H6" />
+              </svg>
+            </div>
+          </div>
         </div>
       </div>
     );
   }
 
-  // VIP Sponsor Kartı
+  // VIP Sponsor Kartı - Premium Mor/Pembe Tema
   if (type === "vip") {
     return (
       <div
+        ref={cardRef}
         onClick={onClick}
-        className="group relative rounded-xl cursor-pointer animate-fadeIn overflow-hidden transition-all duration-300 hover:scale-[1.03]"
+        onMouseMove={handleMouseMove}
+        className="group relative rounded-xl cursor-pointer animate-fadeIn overflow-hidden transition-all duration-500 hover:scale-[1.03]"
         style={{
           animationDelay: `${index * 100}ms`,
-          background: `linear-gradient(160deg, #0a0a0f 0%, ${bgColor}25 50%, #0a0a0f 100%)`,
         }}
       >
-        {/* Neon Border Glow Animation */}
-        <div
-          className="absolute inset-0 rounded-xl opacity-60 group-hover:opacity-100 transition-opacity duration-300"
-          style={{
-            background: `linear-gradient(90deg, transparent, ${borderColor}, transparent)`,
-            backgroundSize: '200% 100%',
-            animation: 'borderGlow 3s linear infinite',
-            animationDelay: `${index * 0.5}s`,
-            padding: '2px',
-            WebkitMask: 'linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0)',
-            WebkitMaskComposite: 'xor',
-            maskComposite: 'exclude',
-          }}
-        />
-
-        {/* Inner glow */}
-        <div
-          className="absolute inset-0 rounded-xl pointer-events-none"
-          style={{
-            boxShadow: `inset 0 0 20px ${bgColor}15, 0 0 30px ${bgColor}25`,
-          }}
-        />
-
-        {/* VIP Etiketi */}
-        <div className="absolute top-3 right-3 z-10">
-          <span className="px-2.5 py-1 text-[10px] font-bold rounded-full bg-gradient-to-r from-purple-500 to-pink-500 text-white">
-            VIP
-          </span>
-        </div>
-
-        {/* Logo Alanı */}
-        <div className="pt-10 pb-4 px-5 flex items-center justify-center relative z-10">
-          <img
-            src={sponsor.imageUrl}
-            alt={sponsor.name}
-            className="max-w-full max-h-28 object-contain drop-shadow-lg group-hover:scale-105 transition-transform duration-300"
+        {/* Animated Neon Border - VIP Dönen Işık */}
+        <div className="absolute inset-0 rounded-xl p-[2px] overflow-hidden">
+          <div
+            className="absolute inset-[-100%] animate-spin-slow"
+            style={{
+              background: `conic-gradient(from 0deg, transparent, #a855f7, #ec4899, #a855f7, transparent, #ec4899, #a855f7, transparent)`,
+              animationDuration: '4s',
+            }}
           />
         </div>
 
-        {/* Alt Bilgi Alanı */}
+        {/* Inner Card Container */}
         <div
-          className="px-5 py-4 border-t relative z-10"
+          className="relative rounded-xl h-full overflow-hidden"
           style={{
-            borderColor: `${borderColor}25`,
-            background: `rgba(0,0,0,0.4)`
+            background: `linear-gradient(160deg, rgba(10,10,15,0.98) 0%, ${bgColor}35 50%, rgba(10,10,15,0.98) 100%)`,
           }}
         >
-          <h3 className="text-base font-semibold text-white mb-1">{sponsor.name}</h3>
-          {sponsor.description && (
-            <p className="text-xs text-white/60 line-clamp-2">{sponsor.description}</p>
-          )}
+          {/* Spotlight Effect */}
+          <div
+            className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none"
+            style={{
+              background: `radial-gradient(300px circle at ${mousePosition.x}px ${mousePosition.y}px, rgba(168,85,247,0.2), transparent 60%)`,
+            }}
+          />
+
+          {/* Floating Particles */}
+          <div className="absolute inset-0 overflow-hidden pointer-events-none">
+            {[...Array(4)].map((_, i) => (
+              <div
+                key={i}
+                className="absolute w-1 h-1 rounded-full"
+                style={{
+                  background: i % 2 === 0 ? '#a855f7' : '#ec4899',
+                  left: `${20 + i * 20}%`,
+                  top: `${25 + (i % 2) * 30}%`,
+                  animation: `particleFloat ${3.5 + i * 0.3}s ease-in-out infinite`,
+                  animationDelay: `${i * 0.4}s`,
+                  boxShadow: `0 0 8px ${i % 2 === 0 ? '#a855f7' : '#ec4899'}`,
+                }}
+              />
+            ))}
+          </div>
+
+          {/* Corner Glow */}
+          <div className="absolute -top-16 -right-16 w-32 h-32 rounded-full blur-2xl opacity-25 group-hover:opacity-45 transition-opacity bg-gradient-to-br from-purple-500 to-pink-500" />
+
+          {/* VIP Etiketi */}
+          <div className="absolute top-3 right-3 z-20">
+            <div className="relative">
+              <div className="absolute inset-0 bg-gradient-to-r from-purple-500 to-pink-500 rounded-full blur-md opacity-60" />
+              <span className="relative px-3 py-1 text-[10px] font-bold rounded-full bg-gradient-to-r from-purple-500 to-pink-500 text-white flex items-center gap-1">
+                <svg className="w-3 h-3" fill="currentColor" viewBox="0 0 24 24">
+                  <path d="M12 2L15.09 8.26L22 9.27L17 14.14L18.18 21.02L12 17.77L5.82 21.02L7 14.14L2 9.27L8.91 8.26L12 2Z" />
+                </svg>
+                VIP
+              </span>
+            </div>
+          </div>
+
+          {/* Shine Effect */}
+          <div className="absolute inset-0 overflow-hidden pointer-events-none">
+            <div className="shine-effect" />
+          </div>
+
+          {/* Logo Alanı */}
+          <div className="pt-12 pb-5 px-5 flex items-center justify-center relative z-10">
+            <div className="relative">
+              <div
+                className="absolute inset-0 blur-xl opacity-30 scale-110"
+                style={{
+                  background: `radial-gradient(circle, ${borderColor} 0%, transparent 70%)`,
+                }}
+              />
+              <img
+                src={sponsor.imageUrl}
+                alt={sponsor.name}
+                className="relative max-w-full max-h-32 object-contain drop-shadow-xl group-hover:scale-110 transition-transform duration-500"
+              />
+            </div>
+          </div>
+
+          {/* Alt Bilgi Alanı */}
+          <div
+            className="px-5 py-4 relative z-10"
+            style={{
+              background: 'rgba(0,0,0,0.6)',
+              borderTop: '1px solid rgba(168,85,247,0.2)',
+              backdropFilter: 'blur(8px)',
+            }}
+          >
+            <h3 className="text-base font-bold text-white mb-1">{sponsor.name}</h3>
+            {sponsor.description && (
+              <p className="text-xs text-white/60 line-clamp-2">{sponsor.description}</p>
+            )}
+          </div>
         </div>
       </div>
     );
   }
 
-  // Normal Sponsor Kartı
+  // Normal Sponsor Kartı - Elegant Minimal
   return (
     <div
+      ref={cardRef}
       onClick={onClick}
-      className="group rounded-xl overflow-hidden cursor-pointer animate-fadeIn transition-all duration-300 hover:scale-[1.04] relative"
+      onMouseMove={handleMouseMove}
+      className="group rounded-xl overflow-hidden cursor-pointer animate-fadeIn transition-all duration-500 hover:scale-[1.05] relative"
       style={{
         animationDelay: `${index * 50}ms`,
-        background: `linear-gradient(160deg, #0a0a0f 0%, ${bgColor}20 50%, #0a0a0f 100%)`,
       }}
     >
-      {/* Neon Border Glow Animation */}
-      <div
-        className="absolute inset-0 rounded-xl opacity-50 group-hover:opacity-90 transition-opacity duration-300"
-        style={{
-          background: `linear-gradient(90deg, transparent, ${borderColor}, transparent)`,
-          backgroundSize: '200% 100%',
-          animation: 'borderGlow 3s linear infinite',
-          animationDelay: `${index * 0.3}s`,
-          padding: '1px',
-          WebkitMask: 'linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0)',
-          WebkitMaskComposite: 'xor',
-          maskComposite: 'exclude',
-        }}
-      />
-
-      {/* Inner glow */}
-      <div
-        className="absolute inset-0 rounded-xl pointer-events-none"
-        style={{
-          boxShadow: `inset 0 0 15px ${bgColor}10, 0 0 20px ${bgColor}20`,
-        }}
-      />
-
-      {/* Logo Alanı */}
-      <div className="h-24 flex items-center justify-center p-4 relative z-10">
-        <img
-          src={sponsor.imageUrl}
-          alt={sponsor.name}
-          className="max-w-full max-h-16 object-contain group-hover:scale-110 transition-transform duration-300"
+      {/* Animated Neon Border */}
+      <div className="absolute inset-0 rounded-xl p-[1px] overflow-hidden opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+        <div
+          className="absolute inset-[-100%] animate-spin-slow"
+          style={{
+            background: `conic-gradient(from 0deg, transparent, ${borderColor}, #7dd3fc, ${borderColor}, transparent)`,
+            animationDuration: '5s',
+          }}
         />
       </div>
 
-      {/* Alt Bilgi */}
+      {/* Static Border (visible by default) */}
       <div
-        className="px-3 py-3 border-t relative z-10"
+        className="absolute inset-0 rounded-xl group-hover:opacity-0 transition-opacity duration-300"
         style={{
-          borderColor: `${borderColor}20`,
-          background: 'rgba(0,0,0,0.35)'
+          border: `1px solid ${borderColor}40`,
+        }}
+      />
+
+      {/* Inner Card */}
+      <div
+        className="relative rounded-xl h-full overflow-hidden"
+        style={{
+          background: `linear-gradient(160deg, rgba(10,10,15,0.95) 0%, ${bgColor}25 50%, rgba(10,10,15,0.95) 100%)`,
         }}
       >
-        <h3 className="font-medium text-white text-sm truncate">{sponsor.name}</h3>
-        {sponsor.description && (
-          <p className="text-xs text-white/50 mt-0.5 line-clamp-1">{sponsor.description}</p>
-        )}
+        {/* Spotlight Effect */}
+        <div
+          className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none"
+          style={{
+            background: `radial-gradient(200px circle at ${mousePosition.x}px ${mousePosition.y}px, ${borderColor}25, transparent 60%)`,
+          }}
+        />
+
+        {/* Corner Glow */}
+        <div
+          className="absolute -top-10 -right-10 w-20 h-20 rounded-full blur-xl opacity-0 group-hover:opacity-30 transition-opacity"
+          style={{ background: borderColor }}
+        />
+
+        {/* Logo Alanı */}
+        <div className="h-28 flex items-center justify-center p-4 relative z-10">
+          <div className="relative">
+            <div
+              className="absolute inset-0 blur-lg opacity-0 group-hover:opacity-30 scale-110 transition-opacity"
+              style={{
+                background: `radial-gradient(circle, ${borderColor} 0%, transparent 70%)`,
+              }}
+            />
+            <img
+              src={sponsor.imageUrl}
+              alt={sponsor.name}
+              className="relative max-w-full max-h-20 object-contain group-hover:scale-110 transition-transform duration-500"
+            />
+          </div>
+        </div>
+
+        {/* Alt Bilgi */}
+        <div
+          className="px-3 py-3 relative z-10"
+          style={{
+            background: 'rgba(0,0,0,0.5)',
+            borderTop: `1px solid ${borderColor}20`,
+          }}
+        >
+          <h3 className="font-semibold text-white text-sm truncate">{sponsor.name}</h3>
+          {sponsor.description && (
+            <p className="text-xs text-white/50 mt-0.5 line-clamp-1">{sponsor.description}</p>
+          )}
+        </div>
       </div>
     </div>
   );
