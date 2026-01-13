@@ -62,11 +62,11 @@ export default function EventsPage() {
                         </span>
                       )}
                     </div>
-                    <div className="h-52 flex items-center justify-center p-4">
+                    <div className="h-52 relative overflow-hidden">
                       <img
                         src={event.imageUrl}
                         alt={event.title}
-                        className="max-w-full max-h-full object-contain group-hover:scale-105 transition-transform duration-300"
+                        className="absolute inset-0 w-full h-full object-fill group-hover:scale-105 transition-transform duration-300"
                       />
                     </div>
                     <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none" />
