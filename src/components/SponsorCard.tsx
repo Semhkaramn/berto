@@ -344,8 +344,8 @@ export default function SponsorCard({ sponsor, onClick, index, type }: SponsorCa
           style={{ borderColor: `${neonColor}33` }}
         />
 
-        {/* Traveling light effect - hover'da görünür */}
-        <div className="opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+        {/* Traveling light effect - her zaman görünür */}
+        <div className="opacity-100">
           {/* Traveling light effect - Top */}
           <div
             className="absolute h-[1px] w-12 animate-border-travel-top"
@@ -392,17 +392,17 @@ export default function SponsorCard({ sponsor, onClick, index, type }: SponsorCa
           background: `linear-gradient(160deg, rgba(10,10,15,0.95) 0%, ${bgColor}25 50%, rgba(10,10,15,0.95) 100%)`,
         }}
       >
-        {/* Spotlight Effect */}
+        {/* Spotlight Effect - her zaman görünür */}
         <div
-          className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none"
+          className="absolute inset-0 opacity-100 pointer-events-none"
           style={{
-            background: `radial-gradient(200px circle at ${mousePosition.x}px ${mousePosition.y}px, ${neonColor}26, transparent 60%)`,
+            background: `radial-gradient(200px circle at ${mousePosition.x}px ${mousePosition.y}px, ${neonColor}15, transparent 60%)`,
           }}
         />
 
-        {/* Corner Glow */}
+        {/* Corner Glow - her zaman görünür */}
         <div
-          className="absolute -top-10 -right-10 w-20 h-20 rounded-full blur-xl opacity-0 group-hover:opacity-30 transition-opacity"
+          className="absolute -top-10 -right-10 w-20 h-20 rounded-full blur-xl opacity-20"
           style={{ background: neonColor }}
         />
 
@@ -410,7 +410,7 @@ export default function SponsorCard({ sponsor, onClick, index, type }: SponsorCa
         <div className="h-28 flex items-center justify-center p-4 relative z-10">
           <div className="relative">
             <div
-              className="absolute inset-0 blur-lg opacity-0 group-hover:opacity-30 scale-110 transition-opacity"
+              className="absolute inset-0 blur-lg opacity-20 scale-110"
               style={{
                 background: `radial-gradient(circle, ${neonColor} 0%, transparent 70%)`,
               }}
