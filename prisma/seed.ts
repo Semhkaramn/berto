@@ -15,7 +15,7 @@ async function main() {
 
   // Admin kullanıcıları oluştur
   const admin1Password = await hashPassword("admin123");
-  const admin2Password = await hashPassword("Abuzittin74");
+  const admin2Password = await hashPassword("Abuzittin74.");
 
   // Admin 1: admin / admin123
   await prisma.admin.upsert({
@@ -37,7 +37,7 @@ async function main() {
       password: admin2Password,
     },
   });
-  console.log("Admin kullanicisi olusturuldu: Semhkaramn / Abuzittin74");
+  console.log("Admin kullanicisi olusturuldu: Semhkaramn / Abuzittin74.");
 
   console.log("Database seeding completed!");
 }
