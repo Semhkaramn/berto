@@ -183,23 +183,37 @@ body {
 /* Snow Effect Animation */
 @keyframes snowfall {
   0% {
-    transform: translateY(-10px) translateX(0) rotate(0deg);
+    transform: translateY(0) translateX(0) rotate(0deg);
     opacity: 0;
   }
-  10% {
-    opacity: 1;
+  5% {
+    opacity: 0.8;
   }
-  90% {
-    opacity: 1;
+  95% {
+    opacity: 0.8;
   }
   100% {
-    transform: translateY(100vh) translateX(20px) rotate(360deg);
+    transform: translateY(calc(100vh + 40px)) translateX(20px) rotate(360deg);
     opacity: 0;
   }
 }
 
 .animate-snowfall {
   animation: snowfall linear infinite;
+}
+
+/* Slow spin animation for snow toggle icon */
+@keyframes spin-slow {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.animate-spin-slow {
+  animation: spin-slow 8s linear infinite;
 }
 
 @keyframes fadeIn {
