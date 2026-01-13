@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import Header from "./Header";
 import Sidebar from "./Sidebar";
 import Footer from "./Footer";
+import SnowEffect from "./SnowEffect";
 
 // Sabit site bilgileri - GitHub'dan logo
 const SITE_NAME = "Slot Berto";
@@ -15,6 +16,22 @@ interface MainLayoutProps {
 
 export default function MainLayout({ children }: MainLayoutProps) {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const [snowEnabled, setSnowEnabled] = useState(true);
+
+  // LocalStorage'dan kar efekti durumunu yükle
+  useEffect(() => {
+    const saved = localStorage.getItem("snowEnabled");
+    if (saved !== null) {
+      setSnowEnabled(saved === "true");
+    }
+  }, []);
+
+  // Kar efekti toggle
+  const toggleSnow = () => {
+    const newState = !snowEnabled;
+    setSnowEnabled(newState);
+    localStorage.setItem("snowEnabled", String(newState));
+  };
 
   useEffect(() => {
     // Track visit
@@ -54,11 +71,14 @@ export default function MainLayout({ children }: MainLayoutProps) {
 
   return (
     <div className="min-h-screen bg-[var(--background)]">
+      <SnowEffect enabled={snowEnabled} />
       <Header
         siteName={SITE_NAME}
         logoUrl={SITE_LOGO}
         onMenuToggle={toggleMobileMenu}
         isMobileMenuOpen={isMobileMenuOpen}
+        snowEnabled={snowEnabled}
+        onSnowToggle={toggleSnow}
       />
       <Sidebar
         isOpen={isMobileMenuOpen}
