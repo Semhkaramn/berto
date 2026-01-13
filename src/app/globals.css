@@ -216,6 +216,20 @@ body {
   animation: spin-slow 8s linear infinite;
 }
 
+/* Neon Border Spin Animation for Sponsor Cards */
+@keyframes neon-spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.animate-neon-spin {
+  animation: neon-spin 3s linear infinite;
+}
+
 @keyframes fadeIn {
   from {
     opacity: 0;
