@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { usePathname } from "next/navigation";
 import Header from "./Header";
 import Sidebar from "./Sidebar";
 import Footer from "./Footer";
@@ -17,6 +18,12 @@ interface MainLayoutProps {
 export default function MainLayout({ children }: MainLayoutProps) {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [snowEnabled, setSnowEnabled] = useState(true);
+  const pathname = usePathname();
+
+  // Sayfa değiştiğinde mobil menüyü kapat
+  useEffect(() => {
+    setIsMobileMenuOpen(false);
+  }, [pathname]);
 
   // LocalStorage'dan kar efekti durumunu yükle
   useEffect(() => {
