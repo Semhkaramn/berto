@@ -134,7 +134,7 @@ export default function HomePage() {
                     href={`https://t.me/${channel.username}`}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="group bg-gradient-to-br from-[#0088cc]/20 to-[#0088cc]/5 border border-[#0088cc]/30 rounded-xl p-4 hover:border-[#0088cc]/60 hover:from-[#0088cc]/30 hover:to-[#0088cc]/10 transition-all duration-300"
+                    className="group bg-gradient-to-br from-[#0088cc]/20 to-[#0088cc]/5 border border-[#0088cc]/30 rounded-xl p-4 hover:border-[#0088cc]/60 hover:from-[#0088cc]/30 hover:to-[#0088cc]/10 transition-all duration-300 snow-top-light"
                   >
                     <div className="flex items-center gap-4">
                       {/* Kanal Fotoğrafı */}
@@ -192,7 +192,7 @@ export default function HomePage() {
             {/* Quick Access Cards - Responsive grid */}
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-5 mb-6 sm:mb-8">
               {/* Sponsors Card */}
-              <Link href="/sponsors" className="card group cursor-pointer overflow-hidden flex flex-col">
+              <Link href="/sponsors" className="card group cursor-pointer overflow-hidden flex flex-col snow-top">
                 <div className="relative overflow-hidden aspect-[16/10] bg-gradient-to-br from-[var(--surface)] via-[var(--surface-hover)] to-[var(--surface)]">
                   {/* Background Image - tam sığacak şekilde */}
                   <img
@@ -221,7 +221,7 @@ export default function HomePage() {
               </Link>
 
               {/* Events Card */}
-              <Link href="/events" className="card group cursor-pointer overflow-hidden flex flex-col">
+              <Link href="/events" className="card group cursor-pointer overflow-hidden flex flex-col snow-top">
                 <div className="relative overflow-hidden aspect-[16/10] bg-gradient-to-br from-[var(--surface)] via-[var(--surface-hover)] to-[var(--surface)]">
                   {/* Background Image - tam sığacak şekilde */}
                   <img
@@ -250,7 +250,7 @@ export default function HomePage() {
               </Link>
 
               {/* Live Stream Card */}
-              <Link href="/live" className="card group cursor-pointer overflow-hidden flex flex-col sm:col-span-2 lg:col-span-1">
+              <Link href="/live" className="card group cursor-pointer overflow-hidden flex flex-col sm:col-span-2 lg:col-span-1 snow-top">
                 <div className="relative overflow-hidden aspect-[16/10] bg-gradient-to-br from-[var(--surface)] via-[var(--surface-hover)] to-[var(--surface)]">
                   {/* Background Image - tam sığacak şekilde */}
                   <img
@@ -301,11 +301,23 @@ export default function HomePage() {
                     <div
                       key={event.id}
                       onClick={() => handleEventClick(event)}
-                      className="card cursor-pointer group overflow-hidden"
+                      className="card cursor-pointer group overflow-hidden snow-top"
                     >
                       {/* Dikey layout - tam sığacak şekilde */}
                       <div className="flex flex-col">
                         <div className="relative aspect-[16/10] bg-gradient-to-br from-[var(--surface-hover)] to-[var(--surface)] overflow-hidden">
+                          {/* Status Badge */}
+                          <div className="absolute top-3 right-3 z-10">
+                            {event.status === "completed" ? (
+                              <span className="px-3 py-1.5 text-xs font-bold rounded-full bg-red-600 text-white shadow-lg snow-badge">
+                                Bitti
+                              </span>
+                            ) : (
+                              <span className="px-3 py-1.5 text-xs font-bold rounded-full bg-emerald-500 text-white shadow-lg snow-badge">
+                                Aktif
+                              </span>
+                            )}
+                          </div>
                           <img
                             src={event.imageUrl}
                             alt={event.title}
