@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import Image from "next/image";
 import { useData } from "@/lib/DataContext";
 import { normalizeUrl } from "@/lib/utils";
 
@@ -17,6 +18,17 @@ export default function Footer() {
   return (
     <footer className="border-t border-[var(--border)] bg-[var(--surface)] py-4 px-4 md:px-6">
       <div className="max-w-7xl mx-auto">
+        {/* Logo */}
+        <div className="flex items-center justify-center mb-4">
+          <Image
+            src="/logo.png"
+            alt="Slot Betro Logo"
+            width={80}
+            height={80}
+            className="object-contain"
+          />
+        </div>
+
         {/* Sayfa Linkleri */}
         <div className="flex flex-wrap items-center justify-center gap-4 mb-4">
           {pageLinks.map((link) => (
@@ -48,7 +60,7 @@ export default function Footer() {
 
         <div className="flex flex-col sm:flex-row items-center justify-between gap-2 pt-3 border-t border-[var(--border)]">
           <p className="text-xs text-[var(--text-muted)]">
-            2024 Slot Berto Tüm hakları saklıdır.
+            © 2024 Slot Betro Tüm Hakları Saklıdır.
           </p>
           <a
             href={normalizeUrl("https://t.me/thisisarche")}
