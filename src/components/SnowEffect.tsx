@@ -51,10 +51,10 @@ export default function SnowEffect({ enabled }: SnowEffectProps) {
           className="absolute rounded-full bg-white animate-snowfall"
           style={{
             left: `${flake.left}%`,
-            top: 0,
+            top: '-20px',
             width: `${flake.size}px`,
             height: `${flake.size}px`,
-            opacity: flake.opacity,
+            opacity: 0,
             animationDuration: `${flake.duration}s`,
             animationDelay: `${flake.delay}s`,
             boxShadow: '0 0 4px rgba(255, 255, 255, 0.8)',
