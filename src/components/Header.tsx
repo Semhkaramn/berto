@@ -13,7 +13,7 @@ interface HeaderProps {
 
 export default function Header({ siteName, logoUrl, onMenuToggle, isMobileMenuOpen, snowEnabled, onSnowToggle }: HeaderProps) {
   return (
-    <header className="fixed top-0 left-0 right-0 z-50 border-b border-[var(--border)] snow-header" style={{ backgroundColor: '#0c1623' }}>
+    <header className="fixed top-0 left-0 right-0 z-50 border-b border-[var(--border)]" style={{ backgroundColor: '#0c1623' }}>
       <div className="flex items-center justify-center px-4 md:px-6 h-16 relative">
         {/* Mobile Menu Button - Sol tarafta mutlak konumlandırma */}
         <button
