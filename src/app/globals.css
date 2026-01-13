@@ -3,8 +3,8 @@
 @tailwind utilities;
 
 :root {
-  --primary: #ff6b35;
-  --primary-hover: #e85a2a;
+  --primary: #7dd3fc;
+  --primary-hover: #38bdf8;
   --secondary: #1a1d23;
   --background: #09121b;
   --header-bg: #0c1623;
@@ -18,8 +18,8 @@
   --danger: #ef4444;
   --warning: #f59e0b;
   --info: #3b82f6;
-  --accent: #ff6b35;
-  --accent-secondary: #ff9f1c;
+  --accent: #7dd3fc;
+  --accent-secondary: #38bdf8;
 }
 
 * {
