@@ -193,20 +193,22 @@ export default function HomePage() {
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-5 mb-6 sm:mb-8">
               {/* Sponsors Card */}
               <Link href="/sponsors" className="card group cursor-pointer overflow-hidden flex flex-col">
-                <div className="relative overflow-hidden h-40 sm:h-48">
-                  {/* Background Image - sabit yükseklik, cover */}
-                  <img
-                    src="/sponsorlar.jpg"
-                    alt="Sponsorlar"
-                    className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
-                  />
+                <div className="relative overflow-hidden aspect-[16/10] bg-gradient-to-br from-[var(--surface)] via-[var(--surface-hover)] to-[var(--surface)]">
+                  {/* Background Image - aspect-ratio ile tutarlı oran, contain ile tam görünüm */}
+                  <div className="absolute inset-0 flex items-center justify-center p-4">
+                    <img
+                      src="/sponsorlar.jpg"
+                      alt="Sponsorlar"
+                      className="max-w-full max-h-full object-contain group-hover:scale-105 transition-transform duration-300 drop-shadow-lg"
+                    />
+                  </div>
                   {/* Overlay */}
-                  <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/30 to-transparent" />
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent pointer-events-none" />
                 </div>
                 <div className="p-3 sm:p-4 bg-gradient-to-b from-[var(--surface)] to-[var(--background)] flex-1">
                   <div className="flex items-center justify-between">
                     <div className="min-w-0 flex-1">
-                      <h3 className="text-base sm:text-lg font-bold text-white mb-0.5 group-hover:text-[var(--primary)] transition-colors truncate">Sponsorlar</h3>
+                      <h3 className="text-base sm:text-lg font-bold text-white mb-0.5 group-hover:text-[var(--primary)] transition-colors truncate">SPONSORLAR</h3>
                       <p className="text-xs sm:text-sm text-[var(--text-muted)]">
                         {sponsors.length} aktif sponsor
                       </p>
@@ -222,20 +224,22 @@ export default function HomePage() {
 
               {/* Events Card */}
               <Link href="/events" className="card group cursor-pointer overflow-hidden flex flex-col">
-                <div className="relative overflow-hidden h-40 sm:h-48">
-                  {/* Background Image - sabit yükseklik, cover */}
-                  <img
-                    src="/etkinlikler.jpg"
-                    alt="Etkinlikler"
-                    className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
-                  />
+                <div className="relative overflow-hidden aspect-[16/10] bg-gradient-to-br from-[var(--surface)] via-[var(--surface-hover)] to-[var(--surface)]">
+                  {/* Background Image - aspect-ratio ile tutarlı oran, contain ile tam görünüm */}
+                  <div className="absolute inset-0 flex items-center justify-center p-4">
+                    <img
+                      src="/etkinlikler.jpg"
+                      alt="Etkinlikler"
+                      className="max-w-full max-h-full object-contain group-hover:scale-105 transition-transform duration-300 drop-shadow-lg"
+                    />
+                  </div>
                   {/* Overlay */}
-                  <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/30 to-transparent" />
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent pointer-events-none" />
                 </div>
                 <div className="p-3 sm:p-4 bg-gradient-to-b from-[var(--surface)] to-[var(--background)] flex-1">
                   <div className="flex items-center justify-between">
                     <div className="min-w-0 flex-1">
-                      <h3 className="text-base sm:text-lg font-bold text-white mb-0.5 group-hover:text-purple-400 transition-colors truncate">Etkinlikler</h3>
+                      <h3 className="text-base sm:text-lg font-bold text-white mb-0.5 group-hover:text-purple-400 transition-colors truncate">ETKİNLİKLER</h3>
                       <p className="text-xs sm:text-sm text-[var(--text-muted)]">
                         {events.length} yaklasan etkinlik
                       </p>
@@ -251,15 +255,17 @@ export default function HomePage() {
 
               {/* Live Stream Card */}
               <Link href="/live" className="card group cursor-pointer overflow-hidden flex flex-col sm:col-span-2 lg:col-span-1">
-                <div className="relative overflow-hidden h-40 sm:h-48">
-                  {/* Background Image - sabit yükseklik, cover */}
-                  <img
-                    src="/yayinlar.jpg"
-                    alt="Yayinlar"
-                    className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
-                  />
+                <div className="relative overflow-hidden aspect-[16/10] bg-gradient-to-br from-[var(--surface)] via-[var(--surface-hover)] to-[var(--surface)]">
+                  {/* Background Image - aspect-ratio ile tutarlı oran, contain ile tam görünüm */}
+                  <div className="absolute inset-0 flex items-center justify-center p-4">
+                    <img
+                      src="/yayinlar.jpg"
+                      alt="Yayinlar"
+                      className="max-w-full max-h-full object-contain group-hover:scale-105 transition-transform duration-300 drop-shadow-lg"
+                    />
+                  </div>
                   {/* Overlay */}
-                  <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/30 to-transparent" />
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent pointer-events-none" />
                   {activeLiveStream && (
                     <div className="absolute top-2 sm:top-3 right-2 sm:right-3 z-20">
                       <span className="badge badge-live flex items-center gap-1 sm:gap-2 text-xs sm:text-sm">
@@ -272,9 +278,9 @@ export default function HomePage() {
                 <div className="p-3 sm:p-4 bg-gradient-to-b from-[var(--surface)] to-[var(--background)] flex-1">
                   <div className="flex items-center justify-between">
                     <div className="min-w-0 flex-1">
-                      <h3 className="text-base sm:text-lg font-bold text-white mb-0.5 group-hover:text-red-400 transition-colors truncate">Yayinlar</h3>
+                      <h3 className="text-base sm:text-lg font-bold text-white mb-0.5 group-hover:text-red-400 transition-colors truncate">CANLI YAYIN</h3>
                       <p className="text-xs sm:text-sm text-[var(--text-muted)]">
-                        {activeLiveStream ? "Yayin devam ediyor!" : "Yayin yok"}
+                        {activeLiveStream ? "Yayın devam ediyor!" : "Yayin yok"}
                       </p>
                     </div>
                     <div className="w-8 sm:w-10 h-8 sm:h-10 rounded-full bg-red-500/10 flex items-center justify-center group-hover:bg-red-500/20 transition-colors flex-shrink-0 ml-2">
@@ -293,7 +299,7 @@ export default function HomePage() {
                 <div className="flex items-center justify-between mb-3 sm:mb-4">
                   <h2 className="text-lg sm:text-xl font-bold text-white">Son Etkinlikler</h2>
                   <Link href="/events" className="text-xs sm:text-sm text-[var(--primary)] hover:text-[var(--primary-hover)] font-medium">
-                    Tumunu Gor
+                    Tümünü Gör
                   </Link>
                 </div>
                 <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-4">
@@ -303,14 +309,16 @@ export default function HomePage() {
                       onClick={() => handleEventClick(event)}
                       className="card cursor-pointer group overflow-hidden"
                     >
-                      {/* Dikey layout */}
+                      {/* Dikey layout - aspect-ratio ile tutarlı görünüm */}
                       <div className="flex flex-col">
-                        <div className="w-full h-40 bg-gradient-to-br from-[var(--surface-hover)] to-[var(--surface)] flex items-center justify-center p-4">
-                          <img
-                            src={event.imageUrl}
-                            alt={event.title}
-                            className="max-w-full max-h-full object-contain group-hover:scale-105 transition-transform duration-300"
-                          />
+                        <div className="relative aspect-[16/10] bg-gradient-to-br from-[var(--surface-hover)] to-[var(--surface)] overflow-hidden">
+                          <div className="absolute inset-0 flex items-center justify-center p-4">
+                            <img
+                              src={event.imageUrl}
+                              alt={event.title}
+                              className="max-w-full max-h-full object-contain group-hover:scale-105 transition-transform duration-300 drop-shadow-lg"
+                            />
+                          </div>
                         </div>
                         <div className="p-4 flex-1">
                           <h3 className="font-semibold text-white mb-2 group-hover:text-[var(--primary)] transition-colors line-clamp-2">{event.title}</h3>
