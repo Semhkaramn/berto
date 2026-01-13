@@ -837,3 +837,66 @@ body {
   backdrop-filter: none !important;
   -webkit-backdrop-filter: none !important;
 }
+
+/* ========================================
+   BORDER TRAVELING LIGHT ANIMATIONS
+   ======================================== */
+
+/* Top edge - moves left to right */
+@keyframes border-travel-top {
+  0% {
+    left: -80px;
+  }
+  100% {
+    left: 100%;
+  }
+}
+
+/* Right edge - moves top to bottom */
+@keyframes border-travel-right {
+  0% {
+    top: -80px;
+  }
+  100% {
+    top: 100%;
+  }
+}
+
+/* Bottom edge - moves right to left */
+@keyframes border-travel-bottom {
+  0% {
+    right: -80px;
+  }
+  100% {
+    right: 100%;
+  }
+}
+
+/* Left edge - moves bottom to top */
+@keyframes border-travel-left {
+  0% {
+    bottom: -80px;
+  }
+  100% {
+    bottom: 100%;
+  }
+}
+
+.animate-border-travel-top {
+  animation: border-travel-top 3s linear infinite;
+}
+
+.animate-border-travel-right {
+  animation: border-travel-right 3s linear infinite;
+  animation-delay: 0.75s;
+}
+
+.animate-border-travel-bottom {
+  animation: border-travel-bottom 3s linear infinite;
+  animation-delay: 1.5s;
+}
+
+.animate-border-travel-left {
+  animation: border-travel-left 3s linear infinite;
+  animation-delay: 2.25s;
+}
