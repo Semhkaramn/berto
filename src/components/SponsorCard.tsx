@@ -6,7 +6,7 @@ import { extractDominantColor, getLighterColor } from "@/lib/colorExtractor";
 interface Sponsor {
   id: string;
   name: string;
-  description?: string;
+  description: string | null;
   imageUrl: string;
   linkUrl: string;
   type: string;
