@@ -19,20 +19,6 @@ interface SponsorCardProps {
   type: "main" | "vip" | "normal";
 }
 
-// Crown Icon for Main Sponsors
-const CrownIcon = () => (
-  <svg className="w-6 h-6 text-yellow-400 crown-icon" fill="currentColor" viewBox="0 0 24 24">
-    <path d="M5 16L3 5l5.5 5L12 4l3.5 6L21 5l-2 11H5zm14 3c0 .6-.4 1-1 1H6c-.6 0-1-.4-1-1v-1h14v1z"/>
-  </svg>
-);
-
-// Star Icon for VIP Sponsors
-const StarIcon = ({ className = "" }: { className?: string }) => (
-  <svg className={`w-5 h-5 text-purple-300 twinkle-star ${className}`} fill="currentColor" viewBox="0 0 24 24">
-    <path d="M12 2L15.09 8.26L22 9.27L17 14.14L18.18 21.02L12 17.77L5.82 21.02L7 14.14L2 9.27L8.91 8.26L12 2Z" />
-  </svg>
-);
-
 export default function SponsorCard({ sponsor, onClick, index, type }: SponsorCardProps) {
   const [bgColor, setBgColor] = useState<string>("#1a1a2e");
   const [borderColor, setBorderColor] = useState<string>("rgba(255,255,255,0.1)");
@@ -53,178 +39,139 @@ export default function SponsorCard({ sponsor, onClick, index, type }: SponsorCa
     loadColor();
   }, [sponsor.imageUrl]);
 
+  // Ana Sponsor Kartı - Premium Tasarım
   if (type === "main") {
     return (
       <div
         onClick={onClick}
-        className="group relative rounded-2xl cursor-pointer animate-fadeIn overflow-hidden transition-all duration-500 hover:scale-[1.02]"
+        className="group relative rounded-2xl cursor-pointer animate-fadeIn overflow-hidden transition-all duration-300 hover:scale-[1.02]"
         style={{
           animationDelay: `${index * 150}ms`,
-          background: `linear-gradient(145deg, ${bgColor}, ${bgColor}dd)`,
+          background: `linear-gradient(160deg, ${bgColor}dd 0%, ${bgColor}99 100%)`,
           border: `2px solid ${borderColor}`,
-          boxShadow: isLoaded ? `0 0 30px ${bgColor}40, 0 0 60px ${bgColor}20` : undefined,
+          boxShadow: isLoaded ? `0 8px 32px ${bgColor}50` : undefined,
         }}
       >
-        {/* Ribbon */}
-        <div className="ribbon" />
+        {/* Ana Sponsor Etiketi */}
+        <div className="absolute top-4 left-4 z-10">
+          <span className="px-3 py-1.5 text-xs font-bold rounded-full bg-gradient-to-r from-yellow-500 to-orange-500 text-white shadow-lg">
+            ANA SPONSOR
+          </span>
+        </div>
 
-        {/* Shine Effect */}
-        <div className="shine-effect" />
+        {/* Logo Alanı */}
+        <div className="pt-14 pb-6 px-6 flex items-center justify-center">
+          <img
+            src={sponsor.imageUrl}
+            alt={sponsor.name}
+            className="max-w-full max-h-40 object-contain drop-shadow-xl group-hover:scale-105 transition-transform duration-300"
+          />
+        </div>
 
-        <div className="relative p-8 flex flex-col z-10">
-          {/* Logo Container */}
-          <div className="flex-1 flex items-center justify-center p-6">
-            <div className="relative">
-              <img
-                src={sponsor.imageUrl}
-                alt={sponsor.name}
-                className="max-w-full max-h-48 object-contain drop-shadow-2xl group-hover:scale-110 transition-transform duration-700"
-              />
-              {/* Glow behind logo */}
-              <div
-                className="absolute inset-0 blur-3xl -z-10 scale-150 transition-opacity duration-500 opacity-50 group-hover:opacity-80"
-                style={{ backgroundColor: bgColor }}
-              />
+        {/* Alt Bilgi Alanı */}
+        <div
+          className="px-6 py-5 border-t"
+          style={{
+            borderColor: `${borderColor}50`,
+            background: `linear-gradient(to top, rgba(0,0,0,0.4), transparent)`
+          }}
+        >
+          <div className="flex items-center justify-between">
+            <div className="flex-1">
+              <h3 className="text-xl font-bold text-white mb-1">{sponsor.name}</h3>
+              {sponsor.description && (
+                <p className="text-sm text-white/70 line-clamp-2">{sponsor.description}</p>
+              )}
             </div>
-          </div>
-
-          {/* Info Card */}
-          <div
-            className="backdrop-blur-xl rounded-2xl p-5 border"
-            style={{
-              backgroundColor: 'rgba(0,0,0,0.5)',
-              borderColor: borderColor
-            }}
-          >
-            <div className="flex items-center gap-4 mb-3">
-              <div
-                className="w-12 h-12 rounded-xl flex items-center justify-center shadow-lg"
-                style={{
-                  background: `linear-gradient(135deg, ${bgColor}, ${bgColor}cc)`,
-                  boxShadow: `0 4px 15px ${bgColor}50`
-                }}
-              >
-                <CrownIcon />
-              </div>
-              <div className="flex-1">
-                <h3 className="text-2xl font-bold text-white">{sponsor.name}</h3>
-                <span className="text-sm font-medium" style={{ color: borderColor }}>Ana Sponsor</span>
-              </div>
-              {/* Visit Button */}
-              <div className="w-12 h-12 rounded-full bg-white/10 flex items-center justify-center opacity-0 group-hover:opacity-100 transform translate-x-4 group-hover:translate-x-0 transition-all duration-300">
-                <svg className="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
-                </svg>
-              </div>
+            <div className="w-10 h-10 rounded-full bg-white/10 flex items-center justify-center ml-4 group-hover:bg-white/20 transition-colors">
+              <svg className="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
+              </svg>
             </div>
-            {sponsor.description && (
-              <p className="text-white/80 text-sm whitespace-pre-line">{sponsor.description}</p>
-            )}
           </div>
         </div>
       </div>
     );
   }
 
+  // VIP Sponsor Kartı
   if (type === "vip") {
     return (
       <div
         onClick={onClick}
-        className="group relative rounded-xl cursor-pointer animate-fadeIn overflow-hidden transition-all duration-500 hover:scale-[1.03]"
+        className="group relative rounded-xl cursor-pointer animate-fadeIn overflow-hidden transition-all duration-300 hover:scale-[1.03]"
         style={{
           animationDelay: `${index * 100}ms`,
-          background: `linear-gradient(145deg, ${bgColor}, ${bgColor}dd)`,
+          background: `linear-gradient(160deg, ${bgColor}cc 0%, ${bgColor}88 100%)`,
           border: `2px solid ${borderColor}`,
-          boxShadow: isLoaded ? `0 0 20px ${bgColor}30, 0 0 40px ${bgColor}15` : undefined,
+          boxShadow: isLoaded ? `0 6px 24px ${bgColor}40` : undefined,
         }}
       >
-        {/* VIP Ribbon */}
-        <div className="ribbon ribbon-vip" />
-
-        {/* Shine Effect */}
-        <div className="shine-effect" />
-
-        <div className="relative p-6 flex flex-col z-10">
-          {/* Logo */}
-          <div className="flex-1 flex items-center justify-center p-4">
-            <img
-              src={sponsor.imageUrl}
-              alt={sponsor.name}
-              className="max-w-full max-h-32 object-contain drop-shadow-xl group-hover:scale-110 transition-transform duration-500"
-            />
-          </div>
-
-          {/* Info */}
-          <div
-            className="backdrop-blur-lg rounded-xl p-4 border"
-            style={{
-              backgroundColor: 'rgba(0,0,0,0.4)',
-              borderColor: borderColor
-            }}
-          >
-            <div className="flex items-center gap-3 mb-2">
-              <div
-                className="w-8 h-8 rounded-lg flex items-center justify-center"
-                style={{
-                  background: `linear-gradient(135deg, ${bgColor}, ${bgColor}cc)`,
-                }}
-              >
-                <StarIcon className="w-4 h-4" />
-              </div>
-              <span className="text-white font-semibold text-lg">{sponsor.name}</span>
-            </div>
-            {sponsor.description && (
-              <p className="text-white/70 text-sm whitespace-pre-line">{sponsor.description}</p>
-            )}
-          </div>
+        {/* VIP Etiketi */}
+        <div className="absolute top-3 right-3 z-10">
+          <span className="px-2.5 py-1 text-[10px] font-bold rounded-full bg-gradient-to-r from-purple-500 to-pink-500 text-white">
+            VIP
+          </span>
         </div>
 
-        {/* Hover Border Glow */}
+        {/* Logo Alanı */}
+        <div className="pt-10 pb-4 px-5 flex items-center justify-center">
+          <img
+            src={sponsor.imageUrl}
+            alt={sponsor.name}
+            className="max-w-full max-h-28 object-contain drop-shadow-lg group-hover:scale-105 transition-transform duration-300"
+          />
+        </div>
+
+        {/* Alt Bilgi Alanı */}
         <div
-          className="absolute inset-0 border-2 rounded-xl transition-colors duration-300 pointer-events-none opacity-0 group-hover:opacity-100"
-          style={{ borderColor: borderColor }}
-        />
+          className="px-5 py-4 border-t"
+          style={{
+            borderColor: `${borderColor}40`,
+            background: `rgba(0,0,0,0.3)`
+          }}
+        >
+          <h3 className="text-base font-semibold text-white mb-1">{sponsor.name}</h3>
+          {sponsor.description && (
+            <p className="text-xs text-white/60 line-clamp-2">{sponsor.description}</p>
+          )}
+        </div>
       </div>
     );
   }
 
-  // Normal sponsor card
+  // Normal Sponsor Kartı
   return (
     <div
       onClick={onClick}
-      className="group rounded-xl overflow-hidden cursor-pointer animate-fadeIn transition-all duration-400 hover:scale-[1.05]"
+      className="group rounded-xl overflow-hidden cursor-pointer animate-fadeIn transition-all duration-300 hover:scale-[1.04]"
       style={{
         animationDelay: `${index * 50}ms`,
-        background: `linear-gradient(145deg, ${bgColor}, ${bgColor}ee)`,
+        background: `linear-gradient(160deg, ${bgColor}bb 0%, ${bgColor}77 100%)`,
         border: `1px solid ${borderColor}`,
-        boxShadow: isLoaded ? `0 4px 20px ${bgColor}20` : undefined,
+        boxShadow: isLoaded ? `0 4px 16px ${bgColor}30` : undefined,
       }}
     >
-      {/* Logo Container */}
-      <div
-        className="h-28 flex items-center justify-center p-4 relative overflow-hidden"
-        style={{ backgroundColor: `${bgColor}80` }}
-      >
+      {/* Logo Alanı */}
+      <div className="h-24 flex items-center justify-center p-4">
         <img
           src={sponsor.imageUrl}
           alt={sponsor.name}
-          className="max-w-full max-h-20 object-contain group-hover:scale-110 transition-transform duration-300"
+          className="max-w-full max-h-16 object-contain group-hover:scale-110 transition-transform duration-300"
         />
-        {/* Subtle shine on hover */}
-        <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/10 to-transparent opacity-0 group-hover:opacity-100 transform -translate-x-full group-hover:translate-x-full transition-all duration-700" />
       </div>
 
-      {/* Info */}
+      {/* Alt Bilgi */}
       <div
-        className="p-3"
+        className="px-3 py-3 border-t"
         style={{
-          backgroundColor: 'rgba(0,0,0,0.3)',
-          borderTop: `1px solid ${borderColor}`
+          borderColor: `${borderColor}30`,
+          background: 'rgba(0,0,0,0.25)'
         }}
       >
-        <h3 className="font-medium text-white text-sm truncate group-hover:text-[#7dd3fc] transition-colors">{sponsor.name}</h3>
+        <h3 className="font-medium text-white text-sm truncate">{sponsor.name}</h3>
         {sponsor.description && (
-          <p className="text-xs text-white/60 mt-1 whitespace-pre-line line-clamp-2">{sponsor.description}</p>
+          <p className="text-xs text-white/50 mt-0.5 line-clamp-1">{sponsor.description}</p>
         )}
       </div>
     </div>
