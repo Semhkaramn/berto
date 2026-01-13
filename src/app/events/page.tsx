@@ -53,11 +53,11 @@ export default function EventsPage() {
                     {/* Status Badge - Sağ Üst Köşe */}
                     <div className="absolute top-3 right-3 z-10">
                       {event.status === "completed" ? (
-                        <span className="px-3 py-1 text-xs font-semibold rounded-full bg-gray-500/80 text-white backdrop-blur-sm">
+                        <span className="px-3 py-1.5 text-xs font-bold rounded-full bg-red-600 text-white shadow-lg">
                           Bitti
                         </span>
                       ) : (
-                        <span className="px-3 py-1 text-xs font-semibold rounded-full bg-green-500/80 text-white backdrop-blur-sm">
+                        <span className="px-3 py-1.5 text-xs font-bold rounded-full bg-emerald-500 text-white shadow-lg">
                           Aktif
                         </span>
                       )}
