@@ -21,7 +21,7 @@ interface SponsorCardProps {
 
 export default function SponsorCard({ sponsor, onClick, index, type }: SponsorCardProps) {
   const [bgColor, setBgColor] = useState<string>("#1a1a2e");
-  const [borderColor, setBorderColor] = useState<string>("rgba(255,255,255,0.1)");
+  const [borderColor, setBorderColor] = useState<string>("rgba(125,211,252,1)");
   const [isLoaded, setIsLoaded] = useState(false);
   const cardRef = useRef<HTMLDivElement>(null);
   const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 });
@@ -31,7 +31,8 @@ export default function SponsorCard({ sponsor, onClick, index, type }: SponsorCa
       try {
         const color = await extractDominantColor(sponsor.imageUrl);
         setBgColor(color);
-        setBorderColor(getLighterColor(color, 2));
+        // Buz mavisi tonları kullan
+        setBorderColor("#7dd3fc");
         setIsLoaded(true);
       } catch (error) {
         console.error("Color extraction failed:", error);
@@ -63,20 +64,36 @@ export default function SponsorCard({ sponsor, onClick, index, type }: SponsorCa
           animationDelay: `${index * 150}ms`,
         }}
       >
-        {/* Animated Neon Border - Dönen Işık Efekti */}
-        <div className="absolute inset-0 rounded-2xl p-[2px] overflow-hidden">
+        {/* Animated Neon Border - Çerçevede Dolaşan Işık Efekti */}
+        <div className="absolute inset-0 rounded-2xl overflow-hidden">
+          {/* Border background */}
+          <div className="absolute inset-0 rounded-2xl border-2 border-[#7dd3fc]/30" />
+
+          {/* Traveling light effect - Top */}
           <div
-            className="absolute inset-[-100%] animate-spin-slow"
-            style={{
-              background: `conic-gradient(from 0deg, transparent, ${borderColor}, #fbbf24, ${borderColor}, transparent, ${borderColor}, #f59e0b, ${borderColor}, transparent)`,
-              animationDuration: '3s',
-            }}
+            className="absolute h-[2px] w-20 bg-gradient-to-r from-transparent via-[#7dd3fc] to-transparent animate-border-travel-top"
+            style={{ top: 0, left: 0 }}
+          />
+          {/* Traveling light effect - Right */}
+          <div
+            className="absolute w-[2px] h-20 bg-gradient-to-b from-transparent via-[#7dd3fc] to-transparent animate-border-travel-right"
+            style={{ top: 0, right: 0 }}
+          />
+          {/* Traveling light effect - Bottom */}
+          <div
+            className="absolute h-[2px] w-20 bg-gradient-to-r from-transparent via-[#7dd3fc] to-transparent animate-border-travel-bottom"
+            style={{ bottom: 0, right: 0 }}
+          />
+          {/* Traveling light effect - Left */}
+          <div
+            className="absolute w-[2px] h-20 bg-gradient-to-b from-transparent via-[#7dd3fc] to-transparent animate-border-travel-left"
+            style={{ bottom: 0, left: 0 }}
           />
         </div>
 
         {/* Inner Card Container */}
         <div
-          className="relative rounded-2xl h-full overflow-hidden"
+          className="relative rounded-2xl h-full overflow-hidden m-[2px]"
           style={{
             background: `linear-gradient(160deg, rgba(10,10,15,0.98) 0%, ${bgColor}40 50%, rgba(10,10,15,0.98) 100%)`,
           }}
@@ -85,36 +102,18 @@ export default function SponsorCard({ sponsor, onClick, index, type }: SponsorCa
           <div
             className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none"
             style={{
-              background: `radial-gradient(400px circle at ${mousePosition.x}px ${mousePosition.y}px, ${borderColor}30, transparent 60%)`,
+              background: `radial-gradient(400px circle at ${mousePosition.x}px ${mousePosition.y}px, rgba(125,211,252,0.15), transparent 60%)`,
             }}
           />
-
-          {/* Floating Particles */}
-          <div className="absolute inset-0 overflow-hidden pointer-events-none">
-            {[...Array(6)].map((_, i) => (
-              <div
-                key={i}
-                className="absolute w-1 h-1 rounded-full opacity-60"
-                style={{
-                  background: borderColor,
-                  left: `${15 + i * 15}%`,
-                  top: `${20 + (i % 3) * 25}%`,
-                  animation: `particleFloat ${3 + i * 0.5}s ease-in-out infinite`,
-                  animationDelay: `${i * 0.3}s`,
-                  boxShadow: `0 0 10px ${borderColor}`,
-                }}
-              />
-            ))}
-          </div>
 
           {/* Premium Corner Glow */}
           <div
             className="absolute -top-20 -right-20 w-40 h-40 rounded-full blur-3xl opacity-30 group-hover:opacity-50 transition-opacity"
-            style={{ background: borderColor }}
+            style={{ background: '#7dd3fc' }}
           />
           <div
             className="absolute -bottom-20 -left-20 w-40 h-40 rounded-full blur-3xl opacity-20 group-hover:opacity-40 transition-opacity"
-            style={{ background: borderColor }}
+            style={{ background: '#7dd3fc' }}
           />
 
           {/* Ana Sponsor Etiketi - Premium Badge */}
@@ -130,11 +129,6 @@ export default function SponsorCard({ sponsor, onClick, index, type }: SponsorCa
             </div>
           </div>
 
-          {/* Shine Sweep Effect */}
-          <div className="absolute inset-0 overflow-hidden pointer-events-none">
-            <div className="shine-effect" />
-          </div>
-
           {/* Logo Alanı */}
           <div className="pt-16 pb-8 px-8 flex items-center justify-center relative z-10">
             <div className="relative">
@@ -142,7 +136,7 @@ export default function SponsorCard({ sponsor, onClick, index, type }: SponsorCa
               <div
                 className="absolute inset-0 blur-2xl opacity-40 scale-110"
                 style={{
-                  background: `radial-gradient(circle, ${borderColor} 0%, transparent 70%)`,
+                  background: `radial-gradient(circle, #7dd3fc 0%, transparent 70%)`,
                 }}
               />
               <img
@@ -158,31 +152,18 @@ export default function SponsorCard({ sponsor, onClick, index, type }: SponsorCa
             className="px-6 py-5 relative z-10"
             style={{
               background: `linear-gradient(to top, rgba(0,0,0,0.8), rgba(0,0,0,0.4))`,
-              borderTop: `1px solid ${borderColor}30`,
+              borderTop: `1px solid rgba(125,211,252,0.2)`,
               backdropFilter: 'blur(10px)',
             }}
           >
             <h3
-              className="text-xl font-bold mb-1"
-              style={{
-                background: `linear-gradient(135deg, #fff 0%, ${borderColor} 100%)`,
-                WebkitBackgroundClip: 'text',
-                WebkitTextFillColor: 'transparent',
-              }}
+              className="text-xl font-bold mb-1 text-white"
             >
               {sponsor.name}
             </h3>
             {sponsor.description && (
               <p className="text-sm text-white/70 line-clamp-2">{sponsor.description}</p>
             )}
-
-            {/* Visit Button */}
-            <div className="mt-4 flex items-center gap-2 text-sm font-medium text-white/60 group-hover:text-white/90 transition-colors">
-              <span>Siteyi Ziyaret Et</span>
-              <svg className="w-4 h-4 group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 7l5 5m0 0l-5 5m5-5H6" />
-              </svg>
-            </div>
           </div>
         </div>
       </div>
@@ -201,20 +182,36 @@ export default function SponsorCard({ sponsor, onClick, index, type }: SponsorCa
           animationDelay: `${index * 100}ms`,
         }}
       >
-        {/* Animated Neon Border - VIP Dönen Işık */}
-        <div className="absolute inset-0 rounded-xl p-[2px] overflow-hidden">
+        {/* Animated Neon Border - Çerçevede Dolaşan Işık Efekti */}
+        <div className="absolute inset-0 rounded-xl overflow-hidden">
+          {/* Border background */}
+          <div className="absolute inset-0 rounded-xl border-2 border-[#7dd3fc]/30" />
+
+          {/* Traveling light effect - Top */}
           <div
-            className="absolute inset-[-100%] animate-spin-slow"
-            style={{
-              background: `conic-gradient(from 0deg, transparent, #a855f7, #ec4899, #a855f7, transparent, #ec4899, #a855f7, transparent)`,
-              animationDuration: '4s',
-            }}
+            className="absolute h-[2px] w-16 bg-gradient-to-r from-transparent via-[#7dd3fc] to-transparent animate-border-travel-top"
+            style={{ top: 0, left: 0 }}
+          />
+          {/* Traveling light effect - Right */}
+          <div
+            className="absolute w-[2px] h-16 bg-gradient-to-b from-transparent via-[#7dd3fc] to-transparent animate-border-travel-right"
+            style={{ top: 0, right: 0 }}
+          />
+          {/* Traveling light effect - Bottom */}
+          <div
+            className="absolute h-[2px] w-16 bg-gradient-to-r from-transparent via-[#7dd3fc] to-transparent animate-border-travel-bottom"
+            style={{ bottom: 0, right: 0 }}
+          />
+          {/* Traveling light effect - Left */}
+          <div
+            className="absolute w-[2px] h-16 bg-gradient-to-b from-transparent via-[#7dd3fc] to-transparent animate-border-travel-left"
+            style={{ bottom: 0, left: 0 }}
           />
         </div>
 
         {/* Inner Card Container */}
         <div
-          className="relative rounded-xl h-full overflow-hidden"
+          className="relative rounded-xl h-full overflow-hidden m-[2px]"
           style={{
             background: `linear-gradient(160deg, rgba(10,10,15,0.98) 0%, ${bgColor}35 50%, rgba(10,10,15,0.98) 100%)`,
           }}
@@ -223,36 +220,18 @@ export default function SponsorCard({ sponsor, onClick, index, type }: SponsorCa
           <div
             className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none"
             style={{
-              background: `radial-gradient(300px circle at ${mousePosition.x}px ${mousePosition.y}px, rgba(168,85,247,0.2), transparent 60%)`,
+              background: `radial-gradient(300px circle at ${mousePosition.x}px ${mousePosition.y}px, rgba(125,211,252,0.15), transparent 60%)`,
             }}
           />
 
-          {/* Floating Particles */}
-          <div className="absolute inset-0 overflow-hidden pointer-events-none">
-            {[...Array(4)].map((_, i) => (
-              <div
-                key={i}
-                className="absolute w-1 h-1 rounded-full"
-                style={{
-                  background: i % 2 === 0 ? '#a855f7' : '#ec4899',
-                  left: `${20 + i * 20}%`,
-                  top: `${25 + (i % 2) * 30}%`,
-                  animation: `particleFloat ${3.5 + i * 0.3}s ease-in-out infinite`,
-                  animationDelay: `${i * 0.4}s`,
-                  boxShadow: `0 0 8px ${i % 2 === 0 ? '#a855f7' : '#ec4899'}`,
-                }}
-              />
-            ))}
-          </div>
-
           {/* Corner Glow */}
-          <div className="absolute -top-16 -right-16 w-32 h-32 rounded-full blur-2xl opacity-25 group-hover:opacity-45 transition-opacity bg-gradient-to-br from-purple-500 to-pink-500" />
+          <div className="absolute -top-16 -right-16 w-32 h-32 rounded-full blur-2xl opacity-25 group-hover:opacity-45 transition-opacity bg-[#7dd3fc]" />
 
           {/* VIP Etiketi */}
           <div className="absolute top-3 right-3 z-20">
             <div className="relative">
-              <div className="absolute inset-0 bg-gradient-to-r from-purple-500 to-pink-500 rounded-full blur-md opacity-60" />
-              <span className="relative px-3 py-1 text-[10px] font-bold rounded-full bg-gradient-to-r from-purple-500 to-pink-500 text-white flex items-center gap-1">
+              <div className="absolute inset-0 bg-gradient-to-r from-[#7dd3fc] to-[#38bdf8] rounded-full blur-md opacity-60" />
+              <span className="relative px-3 py-1 text-[10px] font-bold rounded-full bg-gradient-to-r from-[#7dd3fc] to-[#38bdf8] text-black flex items-center gap-1">
                 <svg className="w-3 h-3" fill="currentColor" viewBox="0 0 24 24">
                   <path d="M12 2L15.09 8.26L22 9.27L17 14.14L18.18 21.02L12 17.77L5.82 21.02L7 14.14L2 9.27L8.91 8.26L12 2Z" />
                 </svg>
@@ -261,18 +240,13 @@ export default function SponsorCard({ sponsor, onClick, index, type }: SponsorCa
             </div>
           </div>
 
-          {/* Shine Effect */}
-          <div className="absolute inset-0 overflow-hidden pointer-events-none">
-            <div className="shine-effect" />
-          </div>
-
           {/* Logo Alanı */}
           <div className="pt-12 pb-5 px-5 flex items-center justify-center relative z-10">
             <div className="relative">
               <div
                 className="absolute inset-0 blur-xl opacity-30 scale-110"
                 style={{
-                  background: `radial-gradient(circle, ${borderColor} 0%, transparent 70%)`,
+                  background: `radial-gradient(circle, #7dd3fc 0%, transparent 70%)`,
                 }}
               />
               <img
@@ -288,7 +262,7 @@ export default function SponsorCard({ sponsor, onClick, index, type }: SponsorCa
             className="px-5 py-4 relative z-10"
             style={{
               background: 'rgba(0,0,0,0.6)',
-              borderTop: '1px solid rgba(168,85,247,0.2)',
+              borderTop: '1px solid rgba(125,211,252,0.2)',
               backdropFilter: 'blur(8px)',
             }}
           >
@@ -313,28 +287,39 @@ export default function SponsorCard({ sponsor, onClick, index, type }: SponsorCa
         animationDelay: `${index * 50}ms`,
       }}
     >
-      {/* Animated Neon Border */}
-      <div className="absolute inset-0 rounded-xl p-[1px] overflow-hidden opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-        <div
-          className="absolute inset-[-100%] animate-spin-slow"
-          style={{
-            background: `conic-gradient(from 0deg, transparent, ${borderColor}, #7dd3fc, ${borderColor}, transparent)`,
-            animationDuration: '5s',
-          }}
-        />
-      </div>
+      {/* Animated Neon Border - Çerçevede Dolaşan Işık Efekti */}
+      <div className="absolute inset-0 rounded-xl overflow-hidden">
+        {/* Border background */}
+        <div className="absolute inset-0 rounded-xl border border-[#7dd3fc]/20" />
 
-      {/* Static Border (visible by default) */}
-      <div
-        className="absolute inset-0 rounded-xl group-hover:opacity-0 transition-opacity duration-300"
-        style={{
-          border: `1px solid ${borderColor}40`,
-        }}
-      />
+        {/* Traveling light effect - hover'da görünür */}
+        <div className="opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+          {/* Traveling light effect - Top */}
+          <div
+            className="absolute h-[1px] w-12 bg-gradient-to-r from-transparent via-[#7dd3fc] to-transparent animate-border-travel-top"
+            style={{ top: 0, left: 0 }}
+          />
+          {/* Traveling light effect - Right */}
+          <div
+            className="absolute w-[1px] h-12 bg-gradient-to-b from-transparent via-[#7dd3fc] to-transparent animate-border-travel-right"
+            style={{ top: 0, right: 0 }}
+          />
+          {/* Traveling light effect - Bottom */}
+          <div
+            className="absolute h-[1px] w-12 bg-gradient-to-r from-transparent via-[#7dd3fc] to-transparent animate-border-travel-bottom"
+            style={{ bottom: 0, right: 0 }}
+          />
+          {/* Traveling light effect - Left */}
+          <div
+            className="absolute w-[1px] h-12 bg-gradient-to-b from-transparent via-[#7dd3fc] to-transparent animate-border-travel-left"
+            style={{ bottom: 0, left: 0 }}
+          />
+        </div>
+      </div>
 
       {/* Inner Card */}
       <div
-        className="relative rounded-xl h-full overflow-hidden"
+        className="relative rounded-xl h-full overflow-hidden m-[1px]"
         style={{
           background: `linear-gradient(160deg, rgba(10,10,15,0.95) 0%, ${bgColor}25 50%, rgba(10,10,15,0.95) 100%)`,
         }}
@@ -343,14 +328,14 @@ export default function SponsorCard({ sponsor, onClick, index, type }: SponsorCa
         <div
           className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none"
           style={{
-            background: `radial-gradient(200px circle at ${mousePosition.x}px ${mousePosition.y}px, ${borderColor}25, transparent 60%)`,
+            background: `radial-gradient(200px circle at ${mousePosition.x}px ${mousePosition.y}px, rgba(125,211,252,0.15), transparent 60%)`,
           }}
         />
 
         {/* Corner Glow */}
         <div
           className="absolute -top-10 -right-10 w-20 h-20 rounded-full blur-xl opacity-0 group-hover:opacity-30 transition-opacity"
-          style={{ background: borderColor }}
+          style={{ background: '#7dd3fc' }}
         />
 
         {/* Logo Alanı */}
@@ -359,7 +344,7 @@ export default function SponsorCard({ sponsor, onClick, index, type }: SponsorCa
             <div
               className="absolute inset-0 blur-lg opacity-0 group-hover:opacity-30 scale-110 transition-opacity"
               style={{
-                background: `radial-gradient(circle, ${borderColor} 0%, transparent 70%)`,
+                background: `radial-gradient(circle, #7dd3fc 0%, transparent 70%)`,
               }}
             />
             <img
@@ -375,7 +360,7 @@ export default function SponsorCard({ sponsor, onClick, index, type }: SponsorCa
           className="px-3 py-3 relative z-10"
           style={{
             background: 'rgba(0,0,0,0.5)',
-            borderTop: `1px solid ${borderColor}20`,
+            borderTop: `1px solid rgba(125,211,252,0.15)`,
           }}
         >
           <h3 className="font-semibold text-white text-sm truncate">{sponsor.name}</h3>
