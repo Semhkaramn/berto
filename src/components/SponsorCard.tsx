@@ -59,7 +59,7 @@ export default function SponsorCard({ sponsor, onClick, index, type }: SponsorCa
         ref={cardRef}
         onClick={onClick}
         onMouseMove={handleMouseMove}
-        className="group relative rounded-2xl cursor-pointer animate-fadeIn overflow-hidden transition-all duration-500 hover:scale-[1.02]"
+        className="group relative rounded-2xl cursor-pointer animate-fadeIn overflow-visible transition-all duration-500 hover:scale-[1.02] snow-top-heavy"
         style={{
           animationDelay: `${index * 150}ms`,
         }}
@@ -177,7 +177,7 @@ export default function SponsorCard({ sponsor, onClick, index, type }: SponsorCa
         ref={cardRef}
         onClick={onClick}
         onMouseMove={handleMouseMove}
-        className="group relative rounded-xl cursor-pointer animate-fadeIn overflow-hidden transition-all duration-500 hover:scale-[1.03]"
+        className="group relative rounded-xl cursor-pointer animate-fadeIn overflow-visible transition-all duration-500 hover:scale-[1.03] snow-top"
         style={{
           animationDelay: `${index * 100}ms`,
         }}
