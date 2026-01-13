@@ -1,55 +1,30 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import Link from "next/link";
 import MainLayout from "@/components/MainLayout";
+import SponsorPopup from "@/components/SponsorPopup";
 import { useData } from "@/lib/DataContext";
 import { normalizeUrl } from "@/lib/utils";
-import SponsorCard from "@/components/SponsorCard";
 
-// Crown Icon for section headers with glow effect
-const CrownIcon = () => (
-  <div className="relative">
-    <div className="absolute inset-0 blur-md bg-yellow-400/50" />
-    <svg className="relative w-7 h-7 text-yellow-400 crown-icon drop-shadow-lg" fill="currentColor" viewBox="0 0 24 24">
-      <path d="M5 16L3 5l5.5 5L12 4l3.5 6L21 5l-2 11H5zm14 3c0 .6-.4 1-1 1H6c-.6 0-1-.4-1-1v-1h14v1z"/>
-    </svg>
-  </div>
-);
+export default function HomePage() {
+  const { banners, sponsors, events, liveStreams, telegramChannels, isLoading } = useData();
 
-// Star Icon for section headers with glow effect
-const StarIcon = () => (
-  <div className="relative">
-    <div className="absolute inset-0 blur-sm bg-purple-400/50" />
-    <svg className="relative w-6 h-6 text-purple-300 twinkle-star drop-shadow-lg" fill="currentColor" viewBox="0 0 24 24">
-      <path d="M12 2L15.09 8.26L22 9.27L17 14.14L18.18 21.02L12 17.77L5.82 21.02L7 14.14L2 9.27L8.91 8.26L12 2Z" />
-    </svg>
-  </div>
-);
+  const getBannerByPosition = (position: string) =>
+    banners.find((b) => b.position === position);
 
-// Diamond Icon for normal sponsors
-const DiamondIcon = () => (
-  <div className="relative">
-    <div className="absolute inset-0 blur-sm bg-sky-400/40" />
-    <svg className="relative w-5 h-5 text-sky-300 drop-shadow-lg" fill="currentColor" viewBox="0 0 24 24">
-      <path d="M12 2L2 9l10 13 10-13L12 2zm0 3.84L18.26 9 12 18.18 5.74 9 12 5.84z"/>
-    </svg>
-  </div>
-);
+  // Üst yatay bannerlar
+  const topBanner1 = getBannerByPosition("top-1");
+  const topBanner2 = getBannerByPosition("top-2");
+  const topBanner3 = getBannerByPosition("top-3");
 
-export default function SponsorsPage() {
-  const { sponsors, isLoading } = useData();
-  const [searchQuery, setSearchQuery] = useState("");
+  // Yan dikey bannerlar
+  const leftBanner = getBannerByPosition("left");
+  const rightBanner = getBannerByPosition("right");
 
-  // Filter sponsors by name
-  const filteredSponsors = useMemo(() => {
-    if (!searchQuery.trim()) return sponsors;
-    const query = searchQuery.toLowerCase().trim();
-    return sponsors.filter((s) => s.name.toLowerCase().includes(query));
-  }, [sponsors, searchQuery]);
+  // Herhangi bir üst banner var mı?
+  const hasTopBanners = topBanner1 || topBanner2 || topBanner3;
 
-  const mainSponsors = filteredSponsors.filter((s) => s.type === "main");
-  const vipSponsors = filteredSponsors.filter((s) => s.type === "vip");
-  const normalSponsors = filteredSponsors.filter((s) => s.type === "normal");
+  const activeLiveStream = liveStreams.find((s) => s.isLive);
 
   // Tıklama takibi fonksiyonu
   const trackClick = async (type: string, targetId: string) => {
@@ -64,209 +39,321 @@ export default function SponsorsPage() {
     }
   };
 
-  const handleSponsorClick = (sponsor: { id: string; linkUrl: string }) => {
-    if (sponsor.linkUrl) {
-      trackClick("sponsor", sponsor.id);
-      window.open(normalizeUrl(sponsor.linkUrl), "_blank", "noopener,noreferrer");
+  const handleEventClick = (event: { id: string; linkUrl: string }) => {
+    if (event.linkUrl) {
+      trackClick("event", event.id);
+      window.open(normalizeUrl(event.linkUrl), "_blank", "noopener,noreferrer");
     }
   };
 
+  const handleBannerClick = (banner: { id: string; linkUrl: string | null }) => {
+    if (banner.linkUrl) {
+      trackClick("banner", banner.id);
+      window.open(normalizeUrl(banner.linkUrl), "_blank", "noopener,noreferrer");
+    }
+  };
+
+  if (isLoading) {
+    return (
+      <MainLayout>
+        <div className="flex items-center justify-center min-h-[60vh]">
+          <div className="text-center">
+            <div className="w-12 h-12 border-3 border-[var(--primary)] border-t-transparent rounded-full animate-spin mx-auto mb-4" />
+            <p className="text-[var(--text-muted)]">Yukleniyor...</p>
+          </div>
+        </div>
+      </MainLayout>
+    );
+  }
+
   return (
     <MainLayout>
-      <div className="p-4 md:p-6 lg:p-8">
-        <div className="max-w-7xl mx-auto">
-          {/* Hero Header - Premium */}
-          <div className="text-center mb-12 relative">
-            {/* Background Glow */}
-            <div className="absolute inset-0 -z-10">
-              <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-96 h-32 bg-sky-500/10 blur-3xl rounded-full" />
-            </div>
-
-            <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold mb-4">
-              <span
-                className="bg-gradient-to-r from-sky-300 via-cyan-200 to-sky-400 bg-clip-text text-transparent"
-                style={{
-                  textShadow: '0 0 40px rgba(125, 211, 252, 0.3)',
-                }}
+      <div className="p-3 sm:p-4 md:p-6 lg:p-8">
+        {/* Main Layout with Side Banners */}
+        <div className="flex gap-4">
+          {/* Sol Dikey Banner - Sadece büyük ekranlarda */}
+          {leftBanner && (
+            <div className="hidden xl:block w-44 2xl:w-52 flex-shrink-0">
+              <div
+                onClick={() => handleBannerClick(leftBanner)}
+                className="sticky top-4 hover:opacity-90 transition-opacity cursor-pointer"
               >
-                Berto'nun Güvenle Oynadığı Siteler
-              </span>
-            </h1>
-            <p className="text-white/50 text-lg">En güvenilir ve kaliteli platformlar</p>
-          </div>
-
-          {/* Search Bar - Premium Glass Design */}
-          <div className="max-w-lg mx-auto mb-16">
-            <div className="relative group">
-              {/* Glow Effect */}
-              <div className="absolute -inset-1 bg-gradient-to-r from-sky-500/20 via-cyan-500/20 to-sky-500/20 rounded-2xl blur-lg opacity-0 group-focus-within:opacity-100 transition-opacity duration-300" />
-
-              <div className="relative">
-                <svg
-                  className="absolute left-5 top-1/2 -translate-y-1/2 w-5 h-5 text-sky-400/60 group-focus-within:text-sky-400 transition-colors"
-                  fill="none"
-                  stroke="currentColor"
-                  viewBox="0 0 24 24"
-                >
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
-                </svg>
-                <input
-                  type="text"
-                  placeholder="Sponsor ara..."
-                  value={searchQuery}
-                  onChange={(e) => setSearchQuery(e.target.value)}
-                  className="w-full pl-14 pr-12 py-4 bg-white/5 backdrop-blur-xl border border-white/10 rounded-2xl text-white placeholder-white/40 focus:outline-none focus:border-sky-500/50 focus:bg-white/10 transition-all duration-300 text-lg"
+                <img
+                  src={leftBanner.imageUrl}
+                  alt="Banner"
+                  className="w-full h-auto object-contain rounded-lg"
                 />
-                {searchQuery && (
-                  <button
-                    onClick={() => setSearchQuery("")}
-                    className="absolute right-4 top-1/2 -translate-y-1/2 w-8 h-8 flex items-center justify-center rounded-full bg-white/10 text-white/60 hover:bg-white/20 hover:text-white transition-all"
-                  >
-                    <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
-                    </svg>
-                  </button>
-                )}
               </div>
             </div>
-            {searchQuery && (
-              <p className="text-center text-sm text-white/50 mt-3">
-                <span className="font-semibold text-sky-400">{filteredSponsors.length}</span> sonuç bulundu
-              </p>
+          )}
+
+          {/* Ana İçerik */}
+          <div className="flex-1 min-w-0">
+            {/* Üst Yatay Bannerlar - Tam genişlik */}
+            {hasTopBanners && (
+              <div className="space-y-3 mb-6">
+                {topBanner1 && (
+                  <div
+                    onClick={() => handleBannerClick(topBanner1)}
+                    className="block hover:opacity-90 transition-opacity cursor-pointer bg-[var(--surface)] rounded-lg overflow-hidden w-full"
+                  >
+                    <div className="w-full">
+                      <img src={topBanner1.imageUrl} alt="Banner" className="w-full h-auto object-cover" />
+                    </div>
+                  </div>
+                )}
+                {topBanner2 && (
+                  <div
+                    onClick={() => handleBannerClick(topBanner2)}
+                    className="block hover:opacity-90 transition-opacity cursor-pointer bg-[var(--surface)] rounded-lg overflow-hidden w-full"
+                  >
+                    <div className="w-full">
+                      <img src={topBanner2.imageUrl} alt="Banner" className="w-full h-auto object-cover" />
+                    </div>
+                  </div>
+                )}
+                {topBanner3 && (
+                  <div
+                    onClick={() => handleBannerClick(topBanner3)}
+                    className="block hover:opacity-90 transition-opacity cursor-pointer bg-[var(--surface)] rounded-lg overflow-hidden w-full"
+                  >
+                    <div className="w-full">
+                      <img src={topBanner3.imageUrl} alt="Banner" className="w-full h-auto object-cover" />
+                    </div>
+                  </div>
+                )}
+              </div>
+            )}
+
+            {/* Telegram Kanalları Kartları */}
+            {telegramChannels.length > 0 && (
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-6">
+                {telegramChannels.slice(0, 2).map((channel) => (
+                  <a
+                    key={channel.id}
+                    href={`https://t.me/${channel.username}`}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="group bg-gradient-to-br from-[#0088cc]/20 to-[#0088cc]/5 border border-[#0088cc]/30 rounded-xl p-4 hover:border-[#0088cc]/60 hover:from-[#0088cc]/30 hover:to-[#0088cc]/10 transition-all duration-300"
+                  >
+                    <div className="flex items-center gap-4">
+                      {/* Kanal Fotoğrafı */}
+                      <div className="w-14 h-14 sm:w-16 sm:h-16 rounded-full bg-[#0088cc]/30 flex items-center justify-center overflow-hidden flex-shrink-0 group-hover:scale-105 transition-transform duration-300">
+                        {channel.photoUrl ? (
+                          <img
+                            src={channel.photoUrl}
+                            alt={channel.title || channel.username}
+                            className="w-full h-full object-cover"
+                          />
+                        ) : (
+                          <svg className="w-7 h-7 sm:w-8 sm:h-8 text-[#0088cc]" fill="currentColor" viewBox="0 0 24 24">
+                            <path d="M11.944 0A12 12 0 0 0 0 12a12 12 0 0 0 12 12 12 12 0 0 0 12-12A12 12 0 0 0 12 0a12 12 0 0 0-.056 0zm4.962 7.224c.1-.002.321.023.465.14a.506.506 0 0 1 .171.325c.016.093.036.306.02.472-.18 1.898-.962 6.502-1.36 8.627-.168.9-.499 1.201-.82 1.23-.696.065-1.225-.46-1.9-.902-1.056-.693-1.653-1.124-2.678-1.8-1.185-.78-.417-1.21.258-1.91.177-.184 3.247-2.977 3.307-3.23.007-.032.014-.15-.056-.212s-.174-.041-.249-.024c-.106.024-1.793 1.14-5.061 3.345-.48.33-.913.49-1.302.48-.428-.008-1.252-.241-1.865-.44-.752-.245-1.349-.374-1.297-.789.027-.216.325-.437.893-.663 3.498-1.524 5.83-2.529 6.998-3.014 3.332-1.386 4.025-1.627 4.476-1.635z"/>
+                          </svg>
+                        )}
+                      </div>
+
+                      {/* Kanal Bilgileri */}
+                      <div className="flex-1 min-w-0">
+                        <div className="flex items-center gap-2 mb-1">
+                          <h3 className="font-bold text-white truncate group-hover:text-[#0088cc] transition-colors">
+                            {channel.title || channel.username}
+                          </h3>
+                          <svg className="w-4 h-4 text-[#0088cc] flex-shrink-0" fill="currentColor" viewBox="0 0 24 24">
+                            <path d="M11.944 0A12 12 0 0 0 0 12a12 12 0 0 0 12 12 12 12 0 0 0 12-12A12 12 0 0 0 12 0a12 12 0 0 0-.056 0zm4.962 7.224c.1-.002.321.023.465.14a.506.506 0 0 1 .171.325c.016.093.036.306.02.472-.18 1.898-.962 6.502-1.36 8.627-.168.9-.499 1.201-.82 1.23-.696.065-1.225-.46-1.9-.902-1.056-.693-1.653-1.124-2.678-1.8-1.185-.78-.417-1.21.258-1.91.177-.184 3.247-2.977 3.307-3.23.007-.032.014-.15-.056-.212s-.174-.041-.249-.024c-.106.024-1.793 1.14-5.061 3.345-.48.33-.913.49-1.302.48-.428-.008-1.252-.241-1.865-.44-.752-.245-1.349-.374-1.297-.789.027-.216.325-.437.893-.663 3.498-1.524 5.83-2.529 6.998-3.014 3.332-1.386 4.025-1.627 4.476-1.635z"/>
+                          </svg>
+                        </div>
+                        <p className="text-sm text-[#0088cc]">@{channel.username}</p>
+                        {channel.memberCount && (
+                          <p className="text-xs text-[var(--text-muted)] mt-1">
+                            {channel.memberCount.toLocaleString()} uye
+                          </p>
+                        )}
+                      </div>
+
+                      {/* Ok İkonu */}
+                      <div className="w-8 h-8 rounded-full bg-[#0088cc]/20 flex items-center justify-center group-hover:bg-[#0088cc]/40 transition-colors flex-shrink-0">
+                        <svg className="w-4 h-4 text-[#0088cc]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                        </svg>
+                      </div>
+                    </div>
+
+                    {/* Açıklama */}
+                    {channel.description && (
+                      <p className="text-xs text-[var(--text-muted)] mt-3 line-clamp-2 pl-18 sm:pl-20">
+                        {channel.description}
+                      </p>
+                    )}
+                  </a>
+                ))}
+              </div>
+            )}
+
+            {/* Quick Access Cards - Responsive grid */}
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-5 mb-6 sm:mb-8">
+              {/* Sponsors Card */}
+              <Link href="/sponsors" className="card group cursor-pointer overflow-hidden flex flex-col">
+                <div className="relative overflow-hidden aspect-[16/10] bg-gradient-to-br from-[var(--surface)] via-[var(--surface-hover)] to-[var(--surface)]">
+                  {/* Background Image - aspect-ratio ile tutarlı oran, contain ile tam görünüm */}
+                  <div className="absolute inset-0 flex items-center justify-center p-4">
+                    <img
+                      src="/sponsorlar.jpg"
+                      alt="Sponsorlar"
+                      className="max-w-full max-h-full object-contain group-hover:scale-105 transition-transform duration-300 drop-shadow-lg"
+                    />
+                  </div>
+                  {/* Overlay */}
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent pointer-events-none" />
+                </div>
+                <div className="p-3 sm:p-4 bg-gradient-to-b from-[var(--surface)] to-[var(--background)] flex-1">
+                  <div className="flex items-center justify-between">
+                    <div className="min-w-0 flex-1">
+                      <h3 className="text-base sm:text-lg font-bold text-white mb-0.5 group-hover:text-[var(--primary)] transition-colors truncate">SPONSORLAR</h3>
+                      <p className="text-xs sm:text-sm text-[var(--text-muted)]">
+                        {sponsors.length} aktif sponsor
+                      </p>
+                    </div>
+                    <div className="w-8 sm:w-10 h-8 sm:h-10 rounded-full bg-[var(--primary)]/10 flex items-center justify-center group-hover:bg-[var(--primary)]/20 transition-colors flex-shrink-0 ml-2">
+                      <svg className="w-4 sm:w-5 h-4 sm:h-5 text-[var(--primary)]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                      </svg>
+                    </div>
+                  </div>
+                </div>
+              </Link>
+
+              {/* Events Card */}
+              <Link href="/events" className="card group cursor-pointer overflow-hidden flex flex-col">
+                <div className="relative overflow-hidden aspect-[16/10] bg-gradient-to-br from-[var(--surface)] via-[var(--surface-hover)] to-[var(--surface)]">
+                  {/* Background Image - aspect-ratio ile tutarlı oran, contain ile tam görünüm */}
+                  <div className="absolute inset-0 flex items-center justify-center p-4">
+                    <img
+                      src="/etkinlikler.jpg"
+                      alt="Etkinlikler"
+                      className="max-w-full max-h-full object-contain group-hover:scale-105 transition-transform duration-300 drop-shadow-lg"
+                    />
+                  </div>
+                  {/* Overlay */}
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent pointer-events-none" />
+                </div>
+                <div className="p-3 sm:p-4 bg-gradient-to-b from-[var(--surface)] to-[var(--background)] flex-1">
+                  <div className="flex items-center justify-between">
+                    <div className="min-w-0 flex-1">
+                      <h3 className="text-base sm:text-lg font-bold text-white mb-0.5 group-hover:text-purple-400 transition-colors truncate">ETKİNLİKLER</h3>
+                      <p className="text-xs sm:text-sm text-[var(--text-muted)]">
+                        {events.length} yaklasan etkinlik
+                      </p>
+                    </div>
+                    <div className="w-8 sm:w-10 h-8 sm:h-10 rounded-full bg-purple-500/10 flex items-center justify-center group-hover:bg-purple-500/20 transition-colors flex-shrink-0 ml-2">
+                      <svg className="w-4 sm:w-5 h-4 sm:h-5 text-purple-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                      </svg>
+                    </div>
+                  </div>
+                </div>
+              </Link>
+
+              {/* Live Stream Card */}
+              <Link href="/live" className="card group cursor-pointer overflow-hidden flex flex-col sm:col-span-2 lg:col-span-1">
+                <div className="relative overflow-hidden aspect-[16/10] bg-gradient-to-br from-[var(--surface)] via-[var(--surface-hover)] to-[var(--surface)]">
+                  {/* Background Image - aspect-ratio ile tutarlı oran, contain ile tam görünüm */}
+                  <div className="absolute inset-0 flex items-center justify-center p-4">
+                    <img
+                      src="/yayinlar.jpg"
+                      alt="Yayinlar"
+                      className="max-w-full max-h-full object-contain group-hover:scale-105 transition-transform duration-300 drop-shadow-lg"
+                    />
+                  </div>
+                  {/* Overlay */}
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent pointer-events-none" />
+                  {activeLiveStream && (
+                    <div className="absolute top-2 sm:top-3 right-2 sm:right-3 z-20">
+                      <span className="badge badge-live flex items-center gap-1 sm:gap-2 text-xs sm:text-sm">
+                        <span className="w-1.5 sm:w-2 h-1.5 sm:h-2 rounded-full bg-white animate-pulse" />
+                        CANLI
+                      </span>
+                    </div>
+                  )}
+                </div>
+                <div className="p-3 sm:p-4 bg-gradient-to-b from-[var(--surface)] to-[var(--background)] flex-1">
+                  <div className="flex items-center justify-between">
+                    <div className="min-w-0 flex-1">
+                      <h3 className="text-base sm:text-lg font-bold text-white mb-0.5 group-hover:text-red-400 transition-colors truncate">CANLI YAYIN</h3>
+                      <p className="text-xs sm:text-sm text-[var(--text-muted)]">
+                        {activeLiveStream ? "Yayın devam ediyor!" : "Yayin yok"}
+                      </p>
+                    </div>
+                    <div className="w-8 sm:w-10 h-8 sm:h-10 rounded-full bg-red-500/10 flex items-center justify-center group-hover:bg-red-500/20 transition-colors flex-shrink-0 ml-2">
+                      <svg className="w-4 sm:w-5 h-4 sm:h-5 text-red-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                      </svg>
+                    </div>
+                  </div>
+                </div>
+              </Link>
+            </div>
+
+            {/* Latest Events - Responsive cards */}
+            {events.length > 0 && (
+              <section>
+                <div className="flex items-center justify-between mb-3 sm:mb-4">
+                  <h2 className="text-lg sm:text-xl font-bold text-white">Son Etkinlikler</h2>
+                  <Link href="/events" className="text-xs sm:text-sm text-[var(--primary)] hover:text-[var(--primary-hover)] font-medium">
+                    Tümünü Gör
+                  </Link>
+                </div>
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-4">
+                  {events.slice(0, 3).map((event) => (
+                    <div
+                      key={event.id}
+                      onClick={() => handleEventClick(event)}
+                      className="card cursor-pointer group overflow-hidden"
+                    >
+                      {/* Dikey layout - aspect-ratio ile tutarlı görünüm */}
+                      <div className="flex flex-col">
+                        <div className="relative aspect-[16/10] bg-gradient-to-br from-[var(--surface-hover)] to-[var(--surface)] overflow-hidden">
+                          <div className="absolute inset-0 flex items-center justify-center p-4">
+                            <img
+                              src={event.imageUrl}
+                              alt={event.title}
+                              className="max-w-full max-h-full object-contain group-hover:scale-105 transition-transform duration-300 drop-shadow-lg"
+                            />
+                          </div>
+                        </div>
+                        <div className="p-4 flex-1">
+                          <h3 className="font-semibold text-white mb-2 group-hover:text-[var(--primary)] transition-colors line-clamp-2">{event.title}</h3>
+                          {event.description && (
+                            <p className="text-xs sm:text-sm text-[var(--text-muted)] whitespace-pre-line line-clamp-3">
+                              {event.description}
+                            </p>
+                          )}
+                        </div>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </section>
             )}
           </div>
 
-          {isLoading && (
-            <div className="text-center py-24">
-              <div className="relative w-16 h-16 mx-auto mb-6">
-                {/* Outer glow ring */}
-                <div className="absolute inset-0 rounded-full bg-gradient-to-r from-sky-500 to-cyan-500 blur-lg opacity-50 animate-pulse" />
-                {/* Spinning border */}
-                <div className="absolute inset-0 rounded-full border-2 border-transparent border-t-sky-400 border-r-cyan-400 animate-spin" />
-                <div className="absolute inset-1 rounded-full border-2 border-transparent border-b-sky-300 border-l-cyan-300 animate-spin" style={{ animationDirection: 'reverse', animationDuration: '1.5s' }} />
-                {/* Center dot */}
-                <div className="absolute inset-4 rounded-full bg-gradient-to-br from-sky-400 to-cyan-400 animate-pulse" />
+          {/* Sağ Dikey Banner - Sadece büyük ekranlarda */}
+          {rightBanner && (
+            <div className="hidden xl:block w-44 2xl:w-52 flex-shrink-0">
+              <div
+                onClick={() => handleBannerClick(rightBanner)}
+                className="sticky top-4 hover:opacity-90 transition-opacity cursor-pointer"
+              >
+                <img
+                  src={rightBanner.imageUrl}
+                  alt="Banner"
+                  className="w-full h-auto object-contain rounded-lg"
+                />
               </div>
-              <p className="text-white/60 text-lg">Sponsorlar yükleniyor...</p>
-            </div>
-          )}
-
-          {/* ==================== MAIN SPONSORS ==================== */}
-          {!isLoading && mainSponsors.length > 0 && (
-            <section className="mb-20 relative">
-              {/* Section Glow */}
-              <div className="absolute -top-10 left-1/2 -translate-x-1/2 w-full max-w-2xl h-20 bg-gradient-to-r from-transparent via-amber-500/10 to-transparent blur-3xl pointer-events-none" />
-
-              <div className="flex items-center justify-center gap-4 mb-10">
-                <div className="h-[2px] flex-1 bg-gradient-to-r from-transparent via-amber-500/60 to-transparent" />
-                <div className="flex items-center gap-4 px-6 py-3 rounded-2xl bg-gradient-to-r from-amber-500/10 via-yellow-500/15 to-amber-500/10 border border-amber-500/20 backdrop-blur-sm">
-                  <CrownIcon />
-                  <h2 className="text-2xl md:text-3xl font-bold bg-gradient-to-r from-yellow-300 via-amber-200 to-yellow-400 bg-clip-text text-transparent">
-                    Ana Sponsorlar
-                  </h2>
-                  <CrownIcon />
-                </div>
-                <div className="h-[2px] flex-1 bg-gradient-to-r from-transparent via-amber-500/60 to-transparent" />
-              </div>
-
-              <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-                {mainSponsors.map((sponsor, index) => (
-                  <SponsorCard
-                    key={sponsor.id}
-                    sponsor={sponsor}
-                    onClick={() => handleSponsorClick(sponsor)}
-                    index={index}
-                    type="main"
-                  />
-                ))}
-              </div>
-            </section>
-          )}
-
-          {/* ==================== VIP SPONSORS ==================== */}
-          {!isLoading && vipSponsors.length > 0 && (
-            <section className="mb-20 relative">
-              {/* Section Glow */}
-              <div className="absolute -top-10 left-1/2 -translate-x-1/2 w-full max-w-2xl h-20 bg-gradient-to-r from-transparent via-purple-500/10 to-transparent blur-3xl pointer-events-none" />
-
-              <div className="flex items-center justify-center gap-4 mb-10">
-                <div className="h-[2px] flex-1 bg-gradient-to-r from-transparent via-purple-500/60 to-transparent" />
-                <div className="flex items-center gap-4 px-6 py-3 rounded-2xl bg-gradient-to-r from-purple-500/10 via-pink-500/15 to-purple-500/10 border border-purple-500/20 backdrop-blur-sm">
-                  <StarIcon />
-                  <h2 className="text-2xl md:text-3xl font-bold bg-gradient-to-r from-purple-300 via-pink-200 to-purple-400 bg-clip-text text-transparent">
-                    VIP Sponsorlar
-                  </h2>
-                  <StarIcon />
-                </div>
-                <div className="h-[2px] flex-1 bg-gradient-to-r from-transparent via-purple-500/60 to-transparent" />
-              </div>
-
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                {vipSponsors.map((sponsor, index) => (
-                  <SponsorCard
-                    key={sponsor.id}
-                    sponsor={sponsor}
-                    onClick={() => handleSponsorClick(sponsor)}
-                    index={index}
-                    type="vip"
-                  />
-                ))}
-              </div>
-            </section>
-          )}
-
-          {/* ==================== NORMAL SPONSORS ==================== */}
-          {!isLoading && normalSponsors.length > 0 && (
-            <section className="relative">
-              {/* Section Glow */}
-              <div className="absolute -top-10 left-1/2 -translate-x-1/2 w-full max-w-xl h-16 bg-gradient-to-r from-transparent via-sky-500/10 to-transparent blur-3xl pointer-events-none" />
-
-              <div className="flex items-center justify-center gap-4 mb-10">
-                <div className="h-[2px] flex-1 bg-gradient-to-r from-transparent via-sky-500/40 to-transparent" />
-                <div className="flex items-center gap-3 px-5 py-2.5 rounded-xl bg-sky-500/5 border border-sky-500/15 backdrop-blur-sm">
-                  <DiamondIcon />
-                  <h2 className="text-xl md:text-2xl font-bold bg-gradient-to-r from-sky-300 via-cyan-200 to-sky-400 bg-clip-text text-transparent">
-                    Sponsorlar
-                  </h2>
-                  <DiamondIcon />
-                </div>
-                <div className="h-[2px] flex-1 bg-gradient-to-r from-transparent via-sky-500/40 to-transparent" />
-              </div>
-
-              <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-5">
-                {normalSponsors.map((sponsor, index) => (
-                  <SponsorCard
-                    key={sponsor.id}
-                    sponsor={sponsor}
-                    onClick={() => handleSponsorClick(sponsor)}
-                    index={index}
-                    type="normal"
-                  />
-                ))}
-              </div>
-            </section>
-          )}
-
-          {/* Empty State - Premium */}
-          {!isLoading && filteredSponsors.length === 0 && (
-            <div className="text-center py-24">
-              <div className="relative w-28 h-28 mx-auto mb-8">
-                {/* Animated rings */}
-                <div className="absolute inset-0 rounded-full border border-white/10 animate-ping" style={{ animationDuration: '3s' }} />
-                <div className="absolute inset-2 rounded-full border border-white/10 animate-ping" style={{ animationDuration: '3s', animationDelay: '0.5s' }} />
-                {/* Main circle */}
-                <div className="absolute inset-0 rounded-full bg-gradient-to-br from-white/10 to-white/5 backdrop-blur-sm flex items-center justify-center border border-white/10">
-                  <svg className="w-14 h-14 text-white/30" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1} d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-                  </svg>
-                </div>
-              </div>
-              <h3 className="text-2xl font-bold text-white mb-3">Henüz sponsor yok</h3>
-              <p className="text-white/50 text-lg">Sponsorlar eklendiğinde burada görünecek</p>
             </div>
           )}
         </div>
       </div>
+      <SponsorPopup />
     </MainLayout>
   );
 }
