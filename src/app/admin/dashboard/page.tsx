@@ -95,7 +95,7 @@ export default function AdminDashboard() {
   }, []);
 
   const statCards = [
-    { label: "Toplam Ziyaret", value: stats.totalVisitors, color: "text-[var(--primary)]", bg: "from-orange-500/20 to-orange-600/10" },
+    { label: "Toplam Ziyaret", value: stats.totalVisitors, color: "text-[var(--ice-blue)]", bg: "from-sky-400/20 to-sky-500/10" },
     { label: "Benzersiz Ziyaretci", value: stats.uniqueVisitors, color: "text-green-500", bg: "from-green-500/20 to-green-600/10" },
     { label: "Bugünün Ziyaretcileri", value: stats.todayVisitors, color: "text-blue-500", bg: "from-blue-500/20 to-blue-600/10" },
     { label: "Toplam Tıklanma", value: stats.totalClicks || 0, color: "text-purple-500", bg: "from-purple-500/20 to-purple-600/10" },
