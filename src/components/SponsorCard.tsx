@@ -47,11 +47,31 @@ export default function SponsorCard({ sponsor, onClick, index, type }: SponsorCa
         className="group relative rounded-2xl cursor-pointer animate-fadeIn overflow-hidden transition-all duration-300 hover:scale-[1.02]"
         style={{
           animationDelay: `${index * 150}ms`,
-          background: `linear-gradient(160deg, ${bgColor}dd 0%, ${bgColor}99 100%)`,
-          border: `2px solid ${borderColor}`,
-          boxShadow: isLoaded ? `0 8px 32px ${bgColor}50` : undefined,
+          background: `linear-gradient(160deg, #0a0a0f 0%, ${bgColor}30 50%, #0a0a0f 100%)`,
         }}
       >
+        {/* Neon Border Glow Animation */}
+        <div
+          className="absolute inset-0 rounded-2xl opacity-70 group-hover:opacity-100 transition-opacity duration-300"
+          style={{
+            background: `linear-gradient(90deg, transparent, ${borderColor}, transparent)`,
+            backgroundSize: '200% 100%',
+            animation: 'borderGlow 3s linear infinite',
+            padding: '2px',
+            WebkitMask: 'linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0)',
+            WebkitMaskComposite: 'xor',
+            maskComposite: 'exclude',
+          }}
+        />
+
+        {/* Inner glow */}
+        <div
+          className="absolute inset-0 rounded-2xl pointer-events-none"
+          style={{
+            boxShadow: `inset 0 0 30px ${bgColor}20, 0 0 40px ${bgColor}30`,
+          }}
+        />
+
         {/* Ana Sponsor Etiketi */}
         <div className="absolute top-4 left-4 z-10">
           <span className="px-3 py-1.5 text-xs font-bold rounded-full bg-gradient-to-r from-yellow-500 to-orange-500 text-white shadow-lg">
@@ -60,7 +80,7 @@ export default function SponsorCard({ sponsor, onClick, index, type }: SponsorCa
         </div>
 
         {/* Logo Alanı */}
-        <div className="pt-14 pb-6 px-6 flex items-center justify-center">
+        <div className="pt-14 pb-6 px-6 flex items-center justify-center relative z-10">
           <img
             src={sponsor.imageUrl}
             alt={sponsor.name}
@@ -70,25 +90,16 @@ export default function SponsorCard({ sponsor, onClick, index, type }: SponsorCa
 
         {/* Alt Bilgi Alanı */}
         <div
-          className="px-6 py-5 border-t"
+          className="px-6 py-5 border-t relative z-10"
           style={{
-            borderColor: `${borderColor}50`,
-            background: `linear-gradient(to top, rgba(0,0,0,0.4), transparent)`
+            borderColor: `${borderColor}30`,
+            background: `linear-gradient(to top, rgba(0,0,0,0.6), transparent)`
           }}
         >
-          <div className="flex items-center justify-between">
-            <div className="flex-1">
-              <h3 className="text-xl font-bold text-white mb-1">{sponsor.name}</h3>
-              {sponsor.description && (
-                <p className="text-sm text-white/70 line-clamp-2">{sponsor.description}</p>
-              )}
-            </div>
-            <div className="w-10 h-10 rounded-full bg-white/10 flex items-center justify-center ml-4 group-hover:bg-white/20 transition-colors">
-              <svg className="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
-              </svg>
-            </div>
-          </div>
+          <h3 className="text-xl font-bold text-white mb-1">{sponsor.name}</h3>
+          {sponsor.description && (
+            <p className="text-sm text-white/70 line-clamp-2">{sponsor.description}</p>
+          )}
         </div>
       </div>
     );
@@ -102,11 +113,32 @@ export default function SponsorCard({ sponsor, onClick, index, type }: SponsorCa
         className="group relative rounded-xl cursor-pointer animate-fadeIn overflow-hidden transition-all duration-300 hover:scale-[1.03]"
         style={{
           animationDelay: `${index * 100}ms`,
-          background: `linear-gradient(160deg, ${bgColor}cc 0%, ${bgColor}88 100%)`,
-          border: `2px solid ${borderColor}`,
-          boxShadow: isLoaded ? `0 6px 24px ${bgColor}40` : undefined,
+          background: `linear-gradient(160deg, #0a0a0f 0%, ${bgColor}25 50%, #0a0a0f 100%)`,
         }}
       >
+        {/* Neon Border Glow Animation */}
+        <div
+          className="absolute inset-0 rounded-xl opacity-60 group-hover:opacity-100 transition-opacity duration-300"
+          style={{
+            background: `linear-gradient(90deg, transparent, ${borderColor}, transparent)`,
+            backgroundSize: '200% 100%',
+            animation: 'borderGlow 3s linear infinite',
+            animationDelay: `${index * 0.5}s`,
+            padding: '2px',
+            WebkitMask: 'linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0)',
+            WebkitMaskComposite: 'xor',
+            maskComposite: 'exclude',
+          }}
+        />
+
+        {/* Inner glow */}
+        <div
+          className="absolute inset-0 rounded-xl pointer-events-none"
+          style={{
+            boxShadow: `inset 0 0 20px ${bgColor}15, 0 0 30px ${bgColor}25`,
+          }}
+        />
+
         {/* VIP Etiketi */}
         <div className="absolute top-3 right-3 z-10">
           <span className="px-2.5 py-1 text-[10px] font-bold rounded-full bg-gradient-to-r from-purple-500 to-pink-500 text-white">
@@ -115,7 +147,7 @@ export default function SponsorCard({ sponsor, onClick, index, type }: SponsorCa
         </div>
 
         {/* Logo Alanı */}
-        <div className="pt-10 pb-4 px-5 flex items-center justify-center">
+        <div className="pt-10 pb-4 px-5 flex items-center justify-center relative z-10">
           <img
             src={sponsor.imageUrl}
             alt={sponsor.name}
@@ -125,10 +157,10 @@ export default function SponsorCard({ sponsor, onClick, index, type }: SponsorCa
 
         {/* Alt Bilgi Alanı */}
         <div
-          className="px-5 py-4 border-t"
+          className="px-5 py-4 border-t relative z-10"
           style={{
-            borderColor: `${borderColor}40`,
-            background: `rgba(0,0,0,0.3)`
+            borderColor: `${borderColor}25`,
+            background: `rgba(0,0,0,0.4)`
           }}
         >
           <h3 className="text-base font-semibold text-white mb-1">{sponsor.name}</h3>
@@ -144,16 +176,37 @@ export default function SponsorCard({ sponsor, onClick, index, type }: SponsorCa
   return (
     <div
       onClick={onClick}
-      className="group rounded-xl overflow-hidden cursor-pointer animate-fadeIn transition-all duration-300 hover:scale-[1.04]"
+      className="group rounded-xl overflow-hidden cursor-pointer animate-fadeIn transition-all duration-300 hover:scale-[1.04] relative"
       style={{
         animationDelay: `${index * 50}ms`,
-        background: `linear-gradient(160deg, ${bgColor}bb 0%, ${bgColor}77 100%)`,
-        border: `1px solid ${borderColor}`,
-        boxShadow: isLoaded ? `0 4px 16px ${bgColor}30` : undefined,
+        background: `linear-gradient(160deg, #0a0a0f 0%, ${bgColor}20 50%, #0a0a0f 100%)`,
       }}
     >
+      {/* Neon Border Glow Animation */}
+      <div
+        className="absolute inset-0 rounded-xl opacity-50 group-hover:opacity-90 transition-opacity duration-300"
+        style={{
+          background: `linear-gradient(90deg, transparent, ${borderColor}, transparent)`,
+          backgroundSize: '200% 100%',
+          animation: 'borderGlow 3s linear infinite',
+          animationDelay: `${index * 0.3}s`,
+          padding: '1px',
+          WebkitMask: 'linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0)',
+          WebkitMaskComposite: 'xor',
+          maskComposite: 'exclude',
+        }}
+      />
+
+      {/* Inner glow */}
+      <div
+        className="absolute inset-0 rounded-xl pointer-events-none"
+        style={{
+          boxShadow: `inset 0 0 15px ${bgColor}10, 0 0 20px ${bgColor}20`,
+        }}
+      />
+
       {/* Logo Alanı */}
-      <div className="h-24 flex items-center justify-center p-4">
+      <div className="h-24 flex items-center justify-center p-4 relative z-10">
         <img
           src={sponsor.imageUrl}
           alt={sponsor.name}
@@ -163,10 +216,10 @@ export default function SponsorCard({ sponsor, onClick, index, type }: SponsorCa
 
       {/* Alt Bilgi */}
       <div
-        className="px-3 py-3 border-t"
+        className="px-3 py-3 border-t relative z-10"
         style={{
-          borderColor: `${borderColor}30`,
-          background: 'rgba(0,0,0,0.25)'
+          borderColor: `${borderColor}20`,
+          background: 'rgba(0,0,0,0.35)'
         }}
       >
         <h3 className="font-medium text-white text-sm truncate">{sponsor.name}</h3>
