@@ -92,7 +92,6 @@ export default function SponsorsPage() {
                 Berto'nun Güvenle Oynadığı Siteler
               </span>
             </h1>
-            <p className="text-white/50 text-lg">En güvenilir ve kaliteli platformlar</p>
           </div>
 
           {/* Search Bar - Premium Glass Design */}
