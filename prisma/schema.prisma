@@ -168,3 +168,18 @@ model TelegramChannel {
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
 }
+
+// Site İstatistikleri - Tek satırda tutulur
+model SiteStats {
+  id              String   @id @default("main")
+  totalVisitors   Int      @default(0)  // Toplam ziyaret
+  uniqueVisitors  Int      @default(0)  // Benzersiz ziyaretçi
+  todayVisitors   Int      @default(0)  // Bugünkü ziyaret
+  totalClicks     Int      @default(0)  // Toplam tıklama
+  sponsorClicks   Int      @default(0)  // Sponsor tıklamaları
+  bannerClicks    Int      @default(0)  // Banner tıklamaları
+  eventClicks     Int      @default(0)  // Etkinlik tıklamaları
+  popupClicks     Int      @default(0)  // Popup tıklamaları
+  lastResetDate   DateTime @default(now()) // Son günlük reset tarihi
+  updatedAt       DateTime @updatedAt
+}
