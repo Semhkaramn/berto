@@ -14,6 +14,8 @@ export async function POST(request: NextRequest) {
       where: { visitorHash },
     });
 
+    let isNewVisitor = false;
+
     // Create visitor if not exists
     if (!visitor) {
       visitor = await prisma.visitor.create({
@@ -22,12 +24,30 @@ export async function POST(request: NextRequest) {
           visitorHash,
         },
       });
+      isNewVisitor = true;
     }
 
     // Record visit
     await prisma.visit.create({
       data: {
         visitorId: visitor.visitorId,
+      },
+    });
+
+    // Update SiteStats - upsert ile yoksa oluştur
+    await prisma.siteStats.upsert({
+      where: { id: "main" },
+      create: {
+        id: "main",
+        totalVisitors: 1,
+        uniqueVisitors: 1,
+        todayVisitors: 1,
+      },
+      update: {
+        totalVisitors: { increment: 1 },
+        todayVisitors: { increment: 1 },
+        // Yeni ziyaretçi ise uniqueVisitors'ı da artır
+        ...(isNewVisitor && { uniqueVisitors: { increment: 1 } }),
       },
     });
 
