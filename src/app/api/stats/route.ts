@@ -1,53 +1,54 @@
 import { NextResponse } from "next/server";
 import prisma from "@/lib/prisma";
 
-export async function GET() {
-  try {
-    // Get total visits
-    const totalVisitors = await prisma.visit.count();
+// Günlük istatistikleri sıfırla (yeni gün başladıysa)
+async function checkAndResetDailyStats() {
+  const stats = await prisma.siteStats.findUnique({
+    where: { id: "main" },
+  });
 
-    // Get unique visitors
-    const uniqueVisitors = await prisma.visitor.count();
+  if (!stats) {
+    // İlk kez oluştur
+    return await prisma.siteStats.create({
+      data: { id: "main" },
+    });
+  }
 
-    // Get today's visits
-    const today = new Date();
-    today.setHours(0, 0, 0, 0);
-    const todayVisitors = await prisma.visit.count({
-      where: {
-        visitedAt: {
-          gte: today,
-        },
+  // Son reset tarihini kontrol et
+  const today = new Date();
+  today.setHours(0, 0, 0, 0);
+
+  const lastReset = new Date(stats.lastResetDate);
+  lastReset.setHours(0, 0, 0, 0);
+
+  // Eğer yeni gün başladıysa todayVisitors'ı sıfırla
+  if (today > lastReset) {
+    return await prisma.siteStats.update({
+      where: { id: "main" },
+      data: {
+        todayVisitors: 0,
+        lastResetDate: today,
       },
     });
+  }
 
-    // Get click statistics
-    const totalClicks = await prisma.clickEvent.count();
+  return stats;
+}
 
-    const sponsorClicks = await prisma.clickEvent.count({
-      where: { type: "sponsor" },
-    });
-
-    const bannerClicks = await prisma.clickEvent.count({
-      where: { type: "banner" },
-    });
-
-    const eventClicks = await prisma.clickEvent.count({
-      where: { type: "event" },
-    });
-
-    const popupClicks = await prisma.clickEvent.count({
-      where: { type: "popup" },
-    });
+export async function GET() {
+  try {
+    // Günlük reset kontrolü yap ve istatistikleri al
+    const stats = await checkAndResetDailyStats();
 
     return NextResponse.json({
-      totalVisitors,
-      uniqueVisitors,
-      todayVisitors,
-      totalClicks,
-      sponsorClicks,
-      bannerClicks,
-      eventClicks,
-      popupClicks,
+      totalVisitors: stats.totalVisitors,
+      uniqueVisitors: stats.uniqueVisitors,
+      todayVisitors: stats.todayVisitors,
+      totalClicks: stats.totalClicks,
+      sponsorClicks: stats.sponsorClicks,
+      bannerClicks: stats.bannerClicks,
+      eventClicks: stats.eventClicks,
+      popupClicks: stats.popupClicks,
     });
   } catch (error) {
     console.error("Stats error:", error);
