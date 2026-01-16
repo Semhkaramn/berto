@@ -111,9 +111,6 @@ export default function AdminLoginPage() {
             )}
           </button>
 
-          <p className="text-center text-xs text-[var(--text-muted)] mt-4">
-            Varsayilan: admin / admin123
-          </p>
         </form>
       </div>
     </div>
