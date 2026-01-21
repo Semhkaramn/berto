@@ -45,11 +45,14 @@ async function fetchTelegramChannelInfo(username: string) {
   }
 }
 
-// GET - Tüm aktif telegram kanallarını getir
-export async function GET() {
+// GET - Tüm telegram kanallarını getir
+export async function GET(request: NextRequest) {
   try {
+    const { searchParams } = new URL(request.url);
+    const showAll = searchParams.get("all") === "true";
+
     const channels = await prisma.telegramChannel.findMany({
-      where: { isActive: true },
+      where: showAll ? {} : { isActive: true },
       orderBy: { sortOrder: "asc" },
     });
     return NextResponse.json(channels);
