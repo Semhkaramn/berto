@@ -125,14 +125,14 @@ export default function SocialPage() {
 
   const fetchSocials = async () => {
     try {
-      const res = await fetch("/api/social-media");
+      const res = await fetch("/api/social-media?all=true");
       if (res.ok) setSocials(await res.json());
     } catch (error) { console.error("Fetch error:", error); }
   };
 
   const fetchTelegramChannels = async () => {
     try {
-      const res = await fetch("/api/telegram-channels");
+      const res = await fetch("/api/telegram-channels?all=true");
       if (res.ok) setTelegramChannels(await res.json());
     } catch (error) { console.error("Fetch error:", error); }
   };
