@@ -39,7 +39,7 @@ export default function BannersPage() {
 
   const fetchBanners = async () => {
     try {
-      const res = await fetch("/api/banners");
+      const res = await fetch("/api/banners?all=true");
       if (res.ok) setBanners(await res.json());
     } catch (error) {
       console.error("Fetch error:", error);
