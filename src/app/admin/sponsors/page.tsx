@@ -37,7 +37,7 @@ export default function SponsorsPage() {
 
   const fetchSponsors = async () => {
     try {
-      const res = await fetch("/api/sponsors");
+      const res = await fetch("/api/sponsors?all=true");
       if (res.ok) setSponsors(await res.json());
     } catch (error) {
       console.error("Fetch error:", error);
