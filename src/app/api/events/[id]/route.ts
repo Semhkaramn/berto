@@ -16,6 +16,7 @@ export async function PUT(
         imageUrl: body.imageUrl,
         linkUrl: body.linkUrl,
         isActive: body.isActive,
+        status: body.status,
       },
     });
     return NextResponse.json(event);
