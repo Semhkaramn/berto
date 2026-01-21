@@ -89,7 +89,7 @@ export default function EventsPage() {
                       {event.title}
                     </h3>
                     {event.description && (
-                      <p className="text-sm text-[var(--text-muted)] whitespace-pre-line">
+                      <p className="text-sm text-[var(--text-muted)] whitespace-pre-line line-clamp-3">
                         {event.description}
                       </p>
                     )}
