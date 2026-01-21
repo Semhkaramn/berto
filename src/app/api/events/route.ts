@@ -1,10 +1,13 @@
 import { NextRequest, NextResponse } from "next/server";
 import prisma from "@/lib/prisma";
 
-export async function GET() {
+export async function GET(request: NextRequest) {
   try {
+    const { searchParams } = new URL(request.url);
+    const showAll = searchParams.get("all") === "true";
+
     const events = await prisma.event.findMany({
-      where: { isActive: true },
+      where: showAll ? {} : { isActive: true },
       orderBy: { createdAt: "desc" },
     });
     return NextResponse.json(events);
@@ -24,6 +27,7 @@ export async function POST(request: NextRequest) {
         imageUrl: body.imageUrl,
         linkUrl: body.linkUrl,
         isActive: body.isActive ?? true,
+        status: body.status ?? "active",
       },
     });
     return NextResponse.json(event);
